@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro | Feedback Antigravity</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page">
+
+    <button id="theme-toggle" class="theme-switch" aria-label="Toggle Theme"></button>
+
+    <div class="glass-card fade-in">
+        <div class="auth-header">
+            <h1>Criar Conta</h1>
+            <p>Preencha os dados abaixo para começar</p>
+        </div>
+
+        <form id="registerForm">
+            <div class="error-msg" id="errorMessage"></div>
+
+            <div class="form-group">
+                <label for="username" class="form-label">Usuário</label>
+                <input type="text" id="username" class="form-input" placeholder="ex: joaosilva" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" class="form-input" placeholder="seu@email.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Senha</label>
+                <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="submitBtn">Registrar</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Já tem uma conta? <a href="login.html">Faça Login</a></p>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Check if already logged in
+        Auth.redirectIfAuthenticated();
+
+        const registerForm = document.getElementById('registerForm');
+        const errorDiv = document.getElementById('errorMessage');
+        const submitBtn = document.getElementById('submitBtn');
+
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            errorDiv.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Registrando...';
+
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Auto login after register
+                    Auth.saveToken(data.token, data.username);
+                    window.location.href = '/home.html';
+                } else {
+                    throw new Error(data.message || 'Falha no registro');
+                }
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Registrar';
+            }
+        });
+    </script>
+</body>
+</html>

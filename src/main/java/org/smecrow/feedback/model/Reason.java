@@ -1,0 +1,5 @@
+package org.smecrow.feedback.model;
+
+public enum Reason {
+    SEM_CONEXAO, LENTIDAO, UPGRADE, TROCA_DE_LUGAR, SEGUNDO_PONTO, N2, OUTROS
+}

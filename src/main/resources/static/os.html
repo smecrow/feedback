@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordens de serviço</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="os_style.css">
+    <!-- Flatpickr CSS (Dark Theme) -->
+    <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/plugins/monthSelect/index.js"></script>
+    <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/plugins/monthSelect/style.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav style="padding: 1rem 2rem; display: flex; align-items: center; border-bottom: 1px solid var(--glass-border); background: var(--glass-bg); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; gap: 2rem;">
+        
+        <!-- Left Group: Title + Nav Links -->
+        <div style="display: flex; align-items: center; gap: 2rem;">
+            <div style="font-weight: 700; font-size: 1.2rem; color: var(--accent-color);">Ordens de serviço</div>
+            <div style="display: flex; gap: 1.5rem; align-items: center;">
+                <a href="home.html" style="color: var(--text-color); text-decoration: none; opacity: 0.7; transition: opacity 0.2s; font-size: 0.95rem;">Home</a>
+                <a href="os.html" style="color: var(--accent-color); text-decoration: none; font-weight: 600; font-size: 0.95rem;">OS</a>
+            </div>
+        </div>
+
+        <!-- Right Group: Actions -->
+        <div style="margin-left: auto; display: flex; gap: 1rem; align-items: center;">
+            <button onclick="Auth.logout()" class="btn btn-primary" style="width: auto; padding: 0.5rem 1rem; font-size: 0.9rem;">Sair</button>
+        </div>
+    </nav>
+
+    <div style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h1>Ordens de serviço</h1>
+            <button onclick="openCreateModal()" class="btn btn-primary" style="width: auto;">+ Nova OS</button>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <!-- Search Client -->
+            <div class="search-container">
+                <input type="text" id="clientSearch" class="form-input" placeholder="Pesquisar cliente..." autocomplete="off">
+                <div id="searchResults" class="search-results-dropdown"></div>
+            </div>
+
+            <!-- Month Filter (Flatpickr) -->
+            <input type="text" id="monthPicker" class="form-input" placeholder="Selecione o Mês" style="width: auto; cursor: pointer; background: var(--input-bg);">
+
+            <!-- Right Aligned Group -->
+            <div style="display: flex; gap: 1rem; margin-left: auto; align-items: center;">
+                <!-- Done Filter Toggle -->
+                <button id="toggleDoneBtn" class="btn" style="width: auto; background: var(--glass-border); color: var(--text-color);">Mostrar Feitas</button>
+                <button id="resetFiltersBtn" class="btn" style="width: auto; background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted);">Limpar Filtros</button>
+            </div>
+        </div>
+
+        <!-- Reason filters -->
+        <div style="margin-bottom: 2rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <span style="display: flex; align-items: center; margin-right: 0.5rem; color: var(--text-muted); font-size: 0.9rem;">Filtrar por motivo:</span>
+            <button class="reason-btn reason-SEM_CONEXAO" onclick="filterByReason('SEM_CONEXAO')">Sem Conexão</button>
+            <button class="reason-btn reason-LENTIDAO" onclick="filterByReason('LENTIDAO')">Lentidão</button>
+            <button class="reason-btn reason-UPGRADE" onclick="filterByReason('UPGRADE')">Upgrade</button>
+            <button class="reason-btn reason-TROCA_DE_LUGAR" onclick="filterByReason('TROCA_DE_LUGAR')">Troca de Lugar</button>
+            <button class="reason-btn reason-SEGUNDO_PONTO" onclick="filterByReason('SEGUNDO_PONTO')">Segundo Ponto</button>
+            <button class="reason-btn reason-N2" onclick="filterByReason('N2')">Nível 2</button>
+            <button class="reason-btn reason-OUTROS" onclick="filterByReason('OUTROS')">Outros</button>
+        </div>
+
+        <!-- Content Table -->
+        <div class="table-container fade-in">
+            <table class="os-table">
+                <thead>
+                    <tr>
+                        <th style="cursor: pointer;" onclick="handleSort('client')">Cliente ↕</th>
+                        <th style="cursor: pointer;" onclick="handleSort('reason')">Motivo ↕</th>
+                        <th style="cursor: pointer;" onclick="handleSort('createdAt')">Data Criação ↕</th>
+                        <th style="width: 150px; cursor: pointer;" onclick="handleSort('done')">Status ↕</th>
+                        <th style="width: 100px;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="osList">
+                    <!-- Items inserted via JS -->
+                    <tr><td colspan="6" style="text-align: center; padding: 2rem;">Carregando OS...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination controls if needed (simple ver) -->
+        <div id="paginationControls" style="display: flex; justify-content: center; gap: 1rem; margin-top: 2rem;"></div>
+    </div>
+
+    <!-- Create OS Modal -->
+    <div id="createModal" class="modal-overlay">
+        <div class="glass-card modal-content fade-in">
+            <div class="auth-header">
+                <h2>Nova Ordem de Serviço</h2>
+                <p>Preencha os dados do cliente</p>
+            </div>
+            
+            <form id="createOsForm">
+                <div class="form-group">
+                    <label class="form-label">Cliente</label>
+                    <input type="text" id="newClientName" class="form-input" placeholder="Nome do cliente" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Motivo</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                         <button type="button" class="reason-btn reason-SEM_CONEXAO" onclick="selectReason(this, 'SEM_CONEXAO')">Sem Conexão</button>
+                        <button type="button" class="reason-btn reason-LENTIDAO" onclick="selectReason(this, 'LENTIDAO')">Lentidão</button>
+                        <button type="button" class="reason-btn reason-UPGRADE" onclick="selectReason(this, 'UPGRADE')">Upgrade</button>
+                        <button type="button" class="reason-btn reason-TROCA_DE_LUGAR" onclick="selectReason(this, 'TROCA_DE_LUGAR')">Troca de Lugar</button>
+                        <button type="button" class="reason-btn reason-SEGUNDO_PONTO" onclick="selectReason(this, 'SEGUNDO_PONTO')">Segundo Ponto</button>
+                        <button type="button" class="reason-btn reason-N2" onclick="selectReason(this, 'N2')">Nível 2</button>
+                        <button type="button" class="reason-btn reason-OUTROS" onclick="selectReason(this, 'OUTROS')">Outros</button>
+                    </div>
+                    <input type="hidden" id="selectedReason" required>
+                    <div class="error-msg" id="reasonError">Selecione um motivo</div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="button" onclick="closeCreateModal()" class="btn" style="background: transparent; border: 1px solid var(--glass-border); color: var(--text-color);">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Criar OS</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal-overlay">
+        <div class="glass-card modal-content fade-in" style="max-width: 400px; text-align: center;">
+            <div style="margin-bottom: 1.5rem;">
+                <h2 style="color: #ef4444; margin-bottom: 0.5rem;">Excluir OS?</h2>
+                <p style="color: var(--text-muted);">Tem certeza que deseja excluir esta Ordem de Serviço? Esta ação não pode ser desfeita.</p>
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button onclick="closeConfirmModal()" class="btn" style="background: transparent; border: 1px solid var(--glass-border); color: var(--text-color); width: auto;">Cancelar</button>
+                <button onclick="confirmDeleteAction()" class="btn btn-primary" style="background-color: #ef4444; width: auto;">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="auth.js"></script>
+    <script src="os_manager.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+package org.smecrow.feedback.config;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+@Configuration
+public class DatabaseCleanupConfig {
+
+    @Bean
+    public CommandLineRunner dropConstraints(JdbcTemplate jdbcTemplate) {
+        return args -> {
+            try {
+                // Drop the restrictive check constraint on the reason column to allow new Enum values
+                jdbcTemplate.execute("ALTER TABLE os DROP CONSTRAINT IF EXISTS os_reason_check");
+                System.out.println("Database Cleanup: Removed os_reason_check constraint successfully.");
+            } catch (Exception e) {
+                System.out.println("Database Cleanup: Constraint removal skipped or failed: " + e.getMessage());
+            }
+        };
+    }
+}

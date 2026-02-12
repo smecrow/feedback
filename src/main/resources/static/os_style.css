@@ -1,0 +1,208 @@
+/* OS Page Specific Styles */
+
+/* Filter Bar */
+.filter-bar {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px; /* Fully rounded */
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.search-container {
+    position: relative;
+    flex-grow: 1;
+    max-width: 300px;
+}
+
+/* Ensure inputs in filter bar are rounded */
+.filter-bar input, .filter-bar .btn {
+    border-radius: 20px !important;
+}
+
+.search-results-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #1a1a1a;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    margin-top: 5px;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.search-result-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    color: var(--text-color);
+    transition: background 0.2s;
+}
+
+.search-result-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Reason Buttons (Badges) */
+.reason-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 20px !important; /* Force rounded */
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    color: white;
+    transition: transform 0.2s, opacity 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.reason-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+.reason-btn.active {
+    box-shadow: 0 0 0 2px white;
+}
+
+/* Specific Reason Colors */
+.reason-SEM_CONEXAO { background-color: #ef4444; } /* Red */
+.reason-LENTIDAO { background-color: #6b7280; } /* Gray */
+.reason-UPGRADE { background-color: #f97316; } /* Orange */
+.reason-TROCA_DE_LUGAR { background-color: #a855f7; } /* Purple */
+.reason-SEGUNDO_PONTO { background-color: #22c55e; } /* Green */
+.reason-N2 { background-color: #3b82f6; } /* Blue */
+.reason-OUTROS { background-color: #eab308; } /* Yellow/Gold */
+
+/* Table Styles - Replacing Grid */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 1rem;
+}
+
+.os-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--text-color);
+}
+
+.os-table th {
+    text-align: left;
+    padding: 1rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--glass-border);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.os-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    vertical-align: middle;
+}
+
+.os-table tr:last-child td {
+    border-bottom: none;
+}
+
+.os-table tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.table-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Checkbox Styling */
+.custom-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--text-muted);
+    border-radius: 6px; /* Slightly rounded checkbox */
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+}
+
+.custom-checkbox:checked {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.custom-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 14px;
+    left: 3px;
+    top: -1px;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-content {
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Delete Button */
+.btn-delete {
+    background: transparent;
+    color: #ef4444;
+    border: 1px solid #ef4444;
+    padding: 0.5rem;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50% !important; /* Fully rounded circle */
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.btn-delete:hover {
+    background: #ef4444;
+    color: white;
+}
+
+/* General Button Override for Roundness */
+.btn {
+    border-radius: 20px !important;
+}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Feedback Antigravity</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page">
+
+    <button id="theme-toggle" class="theme-switch" aria-label="Toggle Theme"></button>
+
+    <div class="glass-card fade-in">
+        <div class="auth-header">
+            <h1>Bem-vindo</h1>
+            <p>Entre na sua conta para continuar</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="error-msg" id="errorMessage"></div>
+
+            <div class="form-group">
+                <label for="login" class="form-label">Email ou Usuário</label>
+                <input type="text" id="login" class="form-input" placeholder="seu@email.com ou usuario" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Senha</label>
+                <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="submitBtn">Entrar</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Não tem uma conta? <a href="register.html">Registre-se</a></p>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Check if already logged in
+        Auth.redirectIfAuthenticated();
+
+        const loginForm = document.getElementById('loginForm');
+        const errorDiv = document.getElementById('errorMessage');
+        const submitBtn = document.getElementById('submitBtn');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const login = document.getElementById('login').value;
+            const password = document.getElementById('password').value;
+
+            // Reset error
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Entrando...';
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ login, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    Auth.saveToken(data.token, data.username);
+                    window.location.href = '/home.html';
+                } else {
+                    throw new Error(data.message || 'Falha no login');
+                }
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Entrar';
+            }
+        });
+    </script>
+</body>
+</html>

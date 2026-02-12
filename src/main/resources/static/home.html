@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | Feedback Antigravity</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="os_style.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav style="padding: 1rem 2rem; display: flex; align-items: center; border-bottom: 1px solid var(--glass-border); background: var(--glass-bg); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; gap: 2rem;">
+        
+        <!-- Left Group -->
+        <div style="display: flex; align-items: center; gap: 2rem;">
+            <div style="font-weight: 700; font-size: 1.2rem; color: var(--accent-color);">Ordens de serviço</div>
+            <div style="display: flex; gap: 1.5rem; align-items: center;">
+                <a href="home.html" style="color: var(--accent-color); text-decoration: none; font-weight: 600; font-size: 0.95rem;">Home</a>
+                <a href="os.html" style="color: var(--text-color); text-decoration: none; opacity: 0.7; transition: opacity 0.2s; font-size: 0.95rem;">OS</a>
+            </div>
+        </div>
+
+        <!-- Right Group -->
+        <div style="margin-left: auto; display: flex; gap: 1rem; align-items: center;">
+            <button onclick="Auth.logout()" class="btn btn-primary" style="width: auto; padding: 0.5rem 1rem; font-size: 0.9rem;">Sair</button>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content V8 -->
+    <div class="dashboard-container">
+        
+        <!-- Header & Search -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <h2 style="font-size: 1.5rem; font-weight: 700;">Visão Geral</h2>
+            
+            <div style="display: flex; align-items: center; gap: 1rem; background: var(--input-bg); padding: 0.5rem 1rem; border-radius: 12px; border: 1px solid var(--input-border);">
+                <span style="font-size: 1.2rem;">🔍</span>
+                <input type="text" id="clientSearchInput" class="form-input" style="border: none; background: transparent; padding: 0; width: 250px;" placeholder="Buscar cliente...">
+                <button onclick="Dashboard.searchClient()" class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.9rem; width: auto;">Ir</button>
+            </div>
+        </div>
+        <div id="clientSearchResult" style="color: var(--accent-color); font-weight: 500; min-height: 20px;"></div>
+
+        <!-- Filters Bar -->
+        <div class="glass-card fade-in" style="padding: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+            <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
+                <label class="form-label" style="font-size: 0.8rem;">Período</label>
+                <select id="filterPeriod" class="form-input" onchange="Dashboard.updateFilters()">
+                    <option value="ALL">Todo o Período</option>
+                    <option value="7_DAYS">Últimos 7 Dias</option>
+                    <option value="30_DAYS">Últimos 30 Dias</option>
+                    <option value="3_MONTHS">Últimos 3 Meses</option>
+                    <option value="THIS_YEAR">Este Ano</option>
+                </select>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 0; min-width: 150px;">
+                <label class="form-label" style="font-size: 0.8rem;">Status</label>
+                <select id="filterStatus" class="form-input" onchange="Dashboard.updateFilters()">
+                    <option value="">Todos</option>
+                    <option value="true">Concluídos</option>
+                    <option value="false">Pendentes</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
+                <label class="form-label" style="font-size: 0.8rem;">Motivo</label>
+                <select id="filterReason" class="form-input" onchange="Dashboard.updateFilters()">
+                    <option value="">Todos</option>
+                    <option value="SEM_CONEXAO">Sem Conexão</option>
+                    <option value="LENTIDAO">Lentidão</option>
+                    <option value="UPGRADE">Upgrade</option>
+                    <option value="TROCA_DE_LUGAR">Troca de Lugar</option>
+                    <option value="SEGUNDO_PONTO">Segundo Ponto</option>
+                    <option value="N2">Suporte N2</option>
+                    <option value="OUTROS">Outros</option>
+                </select>
+            </div>
+            
+            <button onclick="Dashboard.updateFilters()" class="btn btn-primary" style="width: auto; height: 42px; align-self: flex-end;">Filtrar</button>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid" id="kpiContainer">
+            <!-- Rendered via JS -->
+        </div>
+
+        <!-- Charts Grid Row 1 -->
+        <div class="charts-grid-v8">
+            <div class="chart-card fade-in">
+                <h3 style="margin-bottom: 1rem; color: var(--accent-color);">Volume Anual</h3>
+                <div style="height: 350px; position: relative;">
+                    <canvas id="chartMonth"></canvas>
+                </div>
+            </div>
+            <div class="chart-card fade-in">
+                <h3 style="margin-bottom: 1rem; color: var(--accent-color);">Status Geral</h3>
+                <div style="height: 350px; position: relative;">
+                    <canvas id="chartDone"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Grid Row 2 -->
+        <div class="charts-grid-v8">
+            <div class="chart-card fade-in">
+                <h3 style="margin-bottom: 1rem; color: var(--accent-color);">Top 5 Clientes</h3>
+                <div style="height: 350px; position: relative;">
+                    <canvas id="chartTopClients"></canvas>
+                </div>
+            </div>
+            <div class="chart-card fade-in">
+                <h3 style="margin-bottom: 1rem; color: var(--accent-color);">Motivos</h3>
+                <div style="height: 350px; position: relative;">
+                    <canvas id="chartReason"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent OS Table -->
+        <div class="recent-table-card fade-in">
+            <h3 style="margin-bottom: 1rem; color: var(--accent-color);">Últimas Atualizações</h3>
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Motivo</th>
+                        <th>Status</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody id="recentOsTableBody">
+                    <!-- Rendered via JS -->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="auth.js"></script>
+    <script src="dashboard.js"></script>
+    <script>
+        Auth.checkAuth();
+        Dashboard.init();
+    </script>
+</body>
+</html>
