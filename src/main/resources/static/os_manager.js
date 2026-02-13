@@ -64,8 +64,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const monthStr = date.toISOString().slice(0, 7); // YYYY-MM
     document.getElementById('monthPicker').value = monthStr;
     
-    // Load ALL OS by default as requested
-    loadAllOs();
+    // Check for URL params (Client Search or Highlight)
+    const urlParams = new URLSearchParams(window.location.search);
+    const clientParam = urlParams.get('client');
+
+    if (clientParam) {
+        document.getElementById('clientSearch').value = clientParam;
+        loadOsByClient(clientParam);
+        // Clean URL after loading to avoid sticking in search mode on refresh if desired, 
+        // or keep it to allow sharing. Keeping it is usually better for "Search" semantics.
+    } else {
+        loadAllOs();
+    }
 
     setupEventListeners();
 });
@@ -262,6 +272,10 @@ async function searchClients(query) {
 function renderOsList(osList) {
     const listContainer = document.getElementById('osList');
     listContainer.innerHTML = '';
+    
+    // Check for highlight param
+    const urlParams = new URLSearchParams(window.location.search);
+    const highlightId = urlParams.get('highlight');
 
     if (!osList || osList.length === 0) {
         listContainer.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Nenhuma OS encontrada.</td></tr>';
@@ -270,6 +284,15 @@ function renderOsList(osList) {
 
     osList.forEach(os => {
         const tr = document.createElement('tr');
+        tr.id = `os-row-${os.id}`; // Add ID for scrolling
+        
+        // Check highlight
+        if (highlightId && os.id == highlightId) {
+            tr.classList.add('highlight-row');
+            setTimeout(() => {
+                tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 500); // Small delay to ensure render
+        }
         
         // Status Text Color
         const statusClass = os.done ? 'text-muted' : '';
@@ -300,6 +323,13 @@ function renderOsList(osList) {
         `;
         listContainer.appendChild(tr);
     });
+    
+    // Remove query param to clean URL after highlight
+    if (highlightId) {
+        const url = new URL(window.location);
+        url.searchParams.delete('highlight');
+        window.history.replaceState({}, '', url);
+    }
 }
 
 // --- Actions ---

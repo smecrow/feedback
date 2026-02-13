@@ -108,6 +108,69 @@ body.auth-page {
     color: var(--text-muted);
 }
 
+.btn-sm {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-sm:hover {
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+    background: rgba(59, 130, 246, 0.1);
+}
+
+/* Loading & Empty States */
+/* .chart-container-relative moved to bottom with Flex properties */ 
+
+.loading-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(26, 26, 46, 0.7);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    border-radius: 16px;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-left-color: var(--accent-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    text-align: center;
+    height: 100%;
+    width: 100%;
+}
+
+.empty-state i, .empty-state svg {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+    fill: currentColor;
+}
+
 .form-group {
     margin-bottom: 1.5rem;
 }
@@ -204,11 +267,21 @@ body.auth-page {
 /* Animations */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-blue {
+    0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+}
+
+.pulse-animation {
+    animation: pulse-blue 2s infinite;
 }
 
 .fade-in {
-    animation: fadeIn 0.4s ease-out forwards;
+    animation: fadeIn 0.5s ease-out forwards;
 }
 
 /* Error Message */
@@ -235,6 +308,18 @@ body.auth-page {
     gap: 10px;
 }
 
+@keyframes slideIn {
+    0% { opacity: 0; transform: translateX(100%); }
+    60% { transform: translateX(-10%); }
+    80% { transform: translateX(5%); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideOut {
+    0% { opacity: 1; transform: translateX(0); }
+    100% { opacity: 0; transform: translateX(100%); }
+}
+
 .toast {
     background: var(--glass-bg);
     backdrop-filter: blur(10px);
@@ -247,16 +332,14 @@ body.auth-page {
     display: flex;
     align-items: center;
     gap: 10px;
-    animation: slideIn 0.3s ease forwards;
+    animation: slideIn 0.5s ease-out forwards;
     opacity: 0;
     transform: translateX(100%);
 }
 
-.toast.success { border-left: 4px solid var(--accent-color); }
-.toast.error { border-left: 4px solid #ef4444; }
-
-@keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
-@keyframes slideOut { to { opacity: 0; transform: translateX(100%); } }
+.toast.hide {
+    animation: slideOut 0.5s ease-in forwards;
+}
 
 /* Icon Buttons */
 .btn-icon {
@@ -350,7 +433,8 @@ body.auth-page {
 .charts-grid-v8 {
     display: grid;
     grid-template-columns: 2fr 1fr; /* Asymmetric grid */
-    gap: 1.5rem;
+    gap: 2rem; /* Increased gap */
+    align-items: stretch; /* Ensure cards stretch to same height */
 }
 
 .chart-card {
@@ -358,9 +442,84 @@ body.auth-page {
     backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
     border-radius: 16px;
-    padding: 1.5rem;
+    padding: 2.5rem; /* Increased padding */
     box-shadow: var(--card-shadow);
-    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Fill grid cell */
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem; /* More spacing below header */
+    width: 100%;
+}
+
+.chart-header h3 {
+    margin: 0;
+    color: var(--accent-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Loading & Empty States */
+.chart-container-relative {
+    position: relative;
+    flex: 1; /* Grow to fill remaining space */
+    width: 100%;
+    min-height: 250px; /* Reduced min-height to share space with legend */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-legend {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.8rem;
+    margin-top: 1rem;
+    width: 100%;
+    max-height: 120px;
+    overflow-y: auto;
+    padding-right: 0.5rem; /* Space for scrollbar */
+}
+
+/* Custom Scrollbar for legend */
+.chart-legend::-webkit-scrollbar {
+    width: 4px;
+}
+.chart-legend::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+.chart-legend::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 4px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--text-color);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.4rem 0.6rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s;
+}
+
+.legend-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+    flex-shrink: 0;
 }
 
 /* Modern Table */
@@ -396,7 +555,18 @@ body.auth-page {
 }
 
 .modern-table tr:hover {
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(255, 255, 255, 0.05); /* Slightly lighter for visibility */
+    cursor: pointer;
+}
+
+@keyframes highlightFade {
+    0% { background: rgba(59, 130, 246, 0.4); }
+    100% { background: transparent; }
+}
+
+.highlight-row {
+    animation: highlightFade 3s ease-out forwards;
+    border-left: 4px solid var(--accent-color);
 }
 
 .badge {

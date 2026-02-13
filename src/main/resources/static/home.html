@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="os_style.css">
 </head>
 <body>
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
 
     <!-- Navbar -->
     <nav style="padding: 1rem 2rem; display: flex; align-items: center; border-bottom: 1px solid var(--glass-border); background: var(--glass-bg); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; gap: 2rem;">
@@ -46,13 +48,13 @@
         <div id="clientSearchResult" style="color: var(--accent-color); font-weight: 500; min-height: 20px;"></div>
 
         <!-- Filters Bar -->
-        <div class="glass-card fade-in" style="padding: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+        <div class="glass-card fade-in" style="padding: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; justify-content: center;">
             <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
                 <label class="form-label" style="font-size: 0.8rem;">Período</label>
-                <select id="filterPeriod" class="form-input" onchange="Dashboard.updateFilters()">
+                <select id="filterPeriod" class="form-input" onchange="Dashboard.checkPendingFilters()">
                     <option value="ALL">Todo o Período</option>
                     <option value="7_DAYS">Últimos 7 Dias</option>
-                    <option value="30_DAYS">Últimos 30 Dias</option>
+                    <option value="30_DAYS" selected>Últimos 30 Dias</option>
                     <option value="3_MONTHS">Últimos 3 Meses</option>
                     <option value="THIS_YEAR">Este Ano</option>
                 </select>
@@ -60,7 +62,7 @@
             
             <div class="form-group" style="margin-bottom: 0; min-width: 150px;">
                 <label class="form-label" style="font-size: 0.8rem;">Status</label>
-                <select id="filterStatus" class="form-input" onchange="Dashboard.updateFilters()">
+                <select id="filterStatus" class="form-input" onchange="Dashboard.checkPendingFilters()">
                     <option value="">Todos</option>
                     <option value="true">Concluídos</option>
                     <option value="false">Pendentes</option>
@@ -69,7 +71,7 @@
 
             <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
                 <label class="form-label" style="font-size: 0.8rem;">Motivo</label>
-                <select id="filterReason" class="form-input" onchange="Dashboard.updateFilters()">
+                <select id="filterReason" class="form-input" onchange="Dashboard.checkPendingFilters()">
                     <option value="">Todos</option>
                     <option value="SEM_CONEXAO">Sem Conexão</option>
                     <option value="LENTIDAO">Lentidão</option>
@@ -81,7 +83,10 @@
                 </select>
             </div>
             
-            <button onclick="Dashboard.updateFilters()" class="btn btn-primary" style="width: auto; height: 42px; align-self: flex-end;">Filtrar</button>
+            <div style="display: flex; gap: 0.5rem; align-items: flex-end; height: 100%; padding-top: 1.4rem;">
+                <button id="btnFilter" onclick="Dashboard.updateFilters()" class="btn btn-primary" style="width: auto; height: 42px;">Filtrar</button>
+                <button onclick="Dashboard.resetFilters()" class="btn" style="width: auto; height: 42px; background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted);" title="Limpar Filtros">✖</button>
+            </div>
         </div>
 
         <!-- KPI Cards -->
@@ -92,32 +97,46 @@
         <!-- Charts Grid Row 1 -->
         <div class="charts-grid-v8">
             <div class="chart-card fade-in">
-                <h3 style="margin-bottom: 1rem; color: var(--accent-color);">Volume Anual</h3>
-                <div style="height: 350px; position: relative;">
+                <div class="chart-header">
+                    <h3>Volume Anual</h3>
+                    <button onclick="Dashboard.exportData('months')" class="btn-sm" title="Exportar CSV">⬇ CSV</button>
+                </div>
+                <div class="chart-container-relative">
                     <canvas id="chartMonth"></canvas>
                 </div>
             </div>
             <div class="chart-card fade-in">
-                <h3 style="margin-bottom: 1rem; color: var(--accent-color);">Status Geral</h3>
-                <div style="height: 350px; position: relative;">
+                <div class="chart-header">
+                    <h3>Status Geral</h3>
+                    <button onclick="Dashboard.exportData('status')" class="btn-sm" title="Exportar CSV">⬇ CSV</button>
+                </div>
+                <div class="chart-container-relative">
                     <canvas id="chartDone"></canvas>
                 </div>
+                <div id="legendDone" class="chart-legend"></div>
             </div>
         </div>
 
         <!-- Charts Grid Row 2 -->
         <div class="charts-grid-v8">
             <div class="chart-card fade-in">
-                <h3 style="margin-bottom: 1rem; color: var(--accent-color);">Top 5 Clientes</h3>
-                <div style="height: 350px; position: relative;">
+                <div class="chart-header">
+                    <h3>Top 5 Clientes</h3>
+                    <button onclick="Dashboard.exportData('clients')" class="btn-sm" title="Exportar CSV">⬇ CSV</button>
+                </div>
+                <div class="chart-container-relative">
                     <canvas id="chartTopClients"></canvas>
                 </div>
             </div>
             <div class="chart-card fade-in">
-                <h3 style="margin-bottom: 1rem; color: var(--accent-color);">Motivos</h3>
-                <div style="height: 350px; position: relative;">
+                <div class="chart-header">
+                    <h3>Motivos</h3>
+                    <button onclick="Dashboard.exportData('reasons')" class="btn-sm" title="Exportar CSV">⬇ CSV</button>
+                </div>
+                <div class="chart-container-relative">
                     <canvas id="chartReason"></canvas>
                 </div>
+                <div id="legendReason" class="chart-legend"></div>
             </div>
         </div>
 
