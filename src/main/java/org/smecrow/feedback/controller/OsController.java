@@ -62,4 +62,9 @@ public class OsController {
         osService.deleteOs(id, authentication);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<OsResponse> updateOs(@PathVariable Long id, @RequestBody @Valid OsRequest request, Authentication authentication) {
+        return ResponseEntity.ok(osService.updateOs(id, request, authentication));
+    }
 }

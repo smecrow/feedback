@@ -376,8 +376,14 @@ body.auth-page {
 /* KPI Cards */
 .kpi-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns fixed */
+    gap: 20px; /* 20px gap */
+}
+
+@media (max-width: 768px) {
+    .kpi-grid {
+        grid-template-columns: 1fr; /* Stack vertically on small screens */
+    }
 }
 
 .kpi-card {

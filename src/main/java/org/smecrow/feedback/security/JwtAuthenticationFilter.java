@@ -30,15 +30,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String jwt = getJwtFromRequest(request);
+            logger.info("JWT Filter: Token extracted: " + (jwt != null ? "Yes" : "No"));
 
-            if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)){
-                String email = jwtTokenProvider.getEmailFromToken(jwt);
+            if (StringUtils.hasText(jwt)) {
+                boolean isValid = jwtTokenProvider.validateToken(jwt);
+                logger.info("JWT Filter: Token valid? " + isValid);
+                
+                if (isValid) {
+                    String email = jwtTokenProvider.getEmailFromToken(jwt);
+                    logger.info("JWT Filter: Email from token: " + email);
 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+                    logger.info("JWT Filter: User loaded: " + (userDetails != null ? userDetails.getUsername() : "null"));
+                    
+                    if (userDetails != null) {
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        logger.info("JWT Filter: Authentication set in context");
+                    }
+                }
             }
         }
         catch (Exception e) {

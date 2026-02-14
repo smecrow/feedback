@@ -146,6 +146,25 @@ public class OsService {
         osRepository.deleteById(id);
     }
 
+    public OsResponse updateOs(Long id, OsRequest request, Authentication authentication) {
+        if (!authenticated(id, authentication)) {
+            log.error("Permissão negada para editar OS: {}", id);
+            throw new NotAllowedException("Você não tem permissão para editar esta OS.");
+        }
+
+        Os os = osRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("OS não encontrada com ID: " + id));
+
+        log.info("Atualizando OS {}: Cliente '{}' -> '{}', Motivo '{}' -> '{}'.",
+                id, os.getClient(), request.client(), os.getReason(), request.reason());
+
+        String formattedClient = formatClientName(request.client());
+        os.setClient(formattedClient);
+        os.setReason(request.reason());
+
+        return OsResponse.fromEntity(osRepository.save(os));
+    }
+
     public boolean authenticated(Long id, Authentication authentication) {
         Optional<Os> os = osRepository.findById(id);
 

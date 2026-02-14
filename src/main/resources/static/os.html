@@ -40,38 +40,48 @@
         
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
             <h1>Ordens de serviço</h1>
-            <button onclick="openCreateModal()" class="btn btn-primary" style="width: auto;">+ Nova OS</button>
+            <div style="display: flex; gap: 1rem;">
+                <button onclick="exportCsv()" class="btn" style="width: auto; background: transparent; border: 1px solid var(--glass-border); color: var(--text-color);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: text-bottom;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Exportar CSV
+                </button>
+                <button onclick="openCreateModal()" class="btn btn-primary" style="width: auto;">+ Nova OS</button>
+            </div>
         </div>
 
-        <!-- Filter Bar -->
-        <div class="filter-bar">
-            <!-- Search Client -->
-            <div class="search-container">
-                <input type="text" id="clientSearch" class="form-input" placeholder="Pesquisar cliente..." autocomplete="off">
-                <div id="searchResults" class="search-results-dropdown"></div>
+        <!-- Filter Bar Row 1: Search & Month + Actions -->
+        <div class="filter-bar" style="margin-bottom: 3rem; justify-content: space-between; flex-wrap: wrap;">
+            <!-- Left Group: Search & Month -->
+            <div style="display: flex; gap: 1rem; align-items: center; flex: 1; min-width: 300px;">
+                <!-- Search Client -->
+                <div class="search-container" style="flex: 1; max-width: 400px;">
+                    <input type="text" id="clientSearch" class="form-input" placeholder="Pesquisar cliente..." autocomplete="off">
+                    <div id="searchResults" class="search-results-dropdown"></div>
+                </div>
+
+                <!-- Month Filter -->
+                <input type="text" id="monthPicker" class="form-input" placeholder="Selecione o Mês" style="width: auto; min-width: 160px; cursor: pointer; background: var(--input-bg);">
             </div>
 
-            <!-- Month Filter (Flatpickr) -->
-            <input type="text" id="monthPicker" class="form-input" placeholder="Selecione o Mês" style="width: auto; cursor: pointer; background: var(--input-bg);">
-
-            <!-- Right Aligned Group -->
-            <div style="display: flex; gap: 1rem; margin-left: auto; align-items: center;">
-                <!-- Done Filter Toggle -->
+            <!-- Right Group: Actions -->
+            <div style="display: flex; gap: 1rem; align-items: center; margin-left: 1rem;">
                 <button id="toggleDoneBtn" class="btn" style="width: auto; background: var(--glass-border); color: var(--text-color);">Mostrar Feitas</button>
                 <button id="resetFiltersBtn" class="btn" style="width: auto; background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted);">Limpar Filtros</button>
             </div>
         </div>
 
-        <!-- Reason filters -->
-        <div style="margin-bottom: 2rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <span style="display: flex; align-items: center; margin-right: 0.5rem; color: var(--text-muted); font-size: 0.9rem;">Filtrar por motivo:</span>
-            <button class="reason-btn reason-SEM_CONEXAO" onclick="filterByReason('SEM_CONEXAO')">Sem Conexão</button>
-            <button class="reason-btn reason-LENTIDAO" onclick="filterByReason('LENTIDAO')">Lentidão</button>
-            <button class="reason-btn reason-UPGRADE" onclick="filterByReason('UPGRADE')">Upgrade</button>
-            <button class="reason-btn reason-TROCA_DE_LUGAR" onclick="filterByReason('TROCA_DE_LUGAR')">Troca de Lugar</button>
-            <button class="reason-btn reason-SEGUNDO_PONTO" onclick="filterByReason('SEGUNDO_PONTO')">Segundo Ponto</button>
-            <button class="reason-btn reason-N2" onclick="filterByReason('N2')">Nível 2</button>
-            <button class="reason-btn reason-OUTROS" onclick="filterByReason('OUTROS')">Outros</button>
+        <!-- Filter Bar Row 2: Reasons -->
+        <div style="margin-bottom: 3rem; display: flex; flex-direction: column; gap: 1rem;">
+            <span style="color: var(--text-muted); font-size: 0.95rem; font-weight: 600; margin-left: 0.5rem;">Filtrar por motivo:</span>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; padding-left: 0.5rem;">
+                <button class="reason-btn reason-SEM_CONEXAO" onclick="filterByReason('SEM_CONEXAO')">Sem Conexão</button>
+                <button class="reason-btn reason-LENTIDAO" onclick="filterByReason('LENTIDAO')">Lentidão</button>
+                <button class="reason-btn reason-UPGRADE" onclick="filterByReason('UPGRADE')">Upgrade</button>
+                <button class="reason-btn reason-TROCA_DE_LUGAR" onclick="filterByReason('TROCA_DE_LUGAR')">Troca de Lugar</button>
+                <button class="reason-btn reason-SEGUNDO_PONTO" onclick="filterByReason('SEGUNDO_PONTO')">Segundo Ponto</button>
+                <button class="reason-btn reason-N2" onclick="filterByReason('N2')">Nível 2</button>
+                <button class="reason-btn reason-OUTROS" onclick="filterByReason('OUTROS')">Outros</button>
+            </div>
         </div>
 
         <!-- Content Table -->
@@ -79,10 +89,10 @@
             <table class="os-table">
                 <thead>
                     <tr>
-                        <th style="cursor: pointer;" onclick="handleSort('client')">Cliente ↕</th>
-                        <th style="cursor: pointer;" onclick="handleSort('reason')">Motivo ↕</th>
-                        <th style="cursor: pointer;" onclick="handleSort('createdAt')">Data Criação ↕</th>
-                        <th style="width: 150px; cursor: pointer;" onclick="handleSort('done')">Status ↕</th>
+                        <th class="sortable" onclick="handleSort('client')">Cliente <span class="sort-icon" id="sort-client">↕</span></th>
+                        <th class="sortable" onclick="handleSort('reason')">Motivo <span class="sort-icon" id="sort-reason">↕</span></th>
+                        <th class="sortable" onclick="handleSort('createdAt')">Data Criação <span class="sort-icon" id="sort-createdAt">↕</span></th>
+                        <th class="sortable" style="width: 150px;" onclick="handleSort('done')">Status <span class="sort-icon" id="sort-done">↕</span></th>
                         <th style="width: 100px;">Ações</th>
                     </tr>
                 </thead>
@@ -93,27 +103,57 @@
             </table>
         </div>
         
-        <!-- Pagination controls if needed (simple ver) -->
-        <div id="paginationControls" style="display: flex; justify-content: center; gap: 1rem; margin-top: 2rem;"></div>
+        <!-- Pagination Controls -->
+        <div id="paginationContainer" class="pagination-bar">
+            <!-- Left: Rows per page -->
+            <div class="pagination-left">
+                <select id="rowsPerPage" onchange="changePageSize(this.value)">
+                    <option value="10">10 por página</option>
+                    <option value="20">20 por página</option>
+                    <option value="50">50 por página</option>
+                </select>
+            </div>
+
+            <!-- Center: Numbers -->
+            <div id="paginationControls" class="pagination-center">
+                <!-- JS will inject buttons here -->
+            </div>
+
+            <!-- Right: Info -->
+            <div id="paginationInfo" class="pagination-right">
+                Mostrando 0-0 de 0 registros
+            </div>
+        </div>
     </div>
 
     <!-- Create OS Modal -->
     <div id="createModal" class="modal-overlay">
         <div class="glass-card modal-content fade-in">
+            <button onclick="closeCreateModal()" class="btn-close-modal" title="Fechar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
             <div class="auth-header">
-                <h2>Nova Ordem de Serviço</h2>
+                <h2 id="modalTitle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                    Nova Ordem de Serviço
+                </h2>
                 <p>Preencha os dados do cliente</p>
             </div>
             
-            <form id="createOsForm">
+            <form id="createOsForm" onsubmit="handleCreateOs(event)">
+                <input type="hidden" id="osId"> <!-- Hidden ID for Edit Mode -->
                 <div class="form-group">
                     <label class="form-label">Cliente</label>
-                    <input type="text" id="newClientName" class="form-input" placeholder="Nome do cliente" required>
+                    <div class="input-icon-wrapper">
+                        <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <input type="text" id="newClientName" class="form-input" placeholder="Nome do cliente" required autocomplete="off">
+                    </div>
+                    <div class="error-msg" id="clientError">Campo obrigatório</div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Motivo</label>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                    <div class="reason-grid">
                          <button type="button" class="reason-btn reason-SEM_CONEXAO" onclick="selectReason(this, 'SEM_CONEXAO')">Sem Conexão</button>
                         <button type="button" class="reason-btn reason-LENTIDAO" onclick="selectReason(this, 'LENTIDAO')">Lentidão</button>
                         <button type="button" class="reason-btn reason-UPGRADE" onclick="selectReason(this, 'UPGRADE')">Upgrade</button>
@@ -123,12 +163,18 @@
                         <button type="button" class="reason-btn reason-OUTROS" onclick="selectReason(this, 'OUTROS')">Outros</button>
                     </div>
                     <input type="hidden" id="selectedReason" required>
-                    <div class="error-msg" id="reasonError">Selecione um motivo</div>
                 </div>
 
-                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-                    <button type="button" onclick="closeCreateModal()" class="btn" style="background: transparent; border: 1px solid var(--glass-border); color: var(--text-color);">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Criar OS</button>
+                <div class="error-msg" id="reasonError" style="margin-bottom: 8px; text-align: center;">Selecione um motivo</div>
+
+                <div class="form-actions">
+                    <button type="button" onclick="closeCreateModal()" class="btn btn-lg btn-cancel" style="flex: 1;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        Cancelar
+                    </button>
+                    <button type="submit" id="btnSubmit" class="btn btn-primary btn-lg" style="flex: 1;">
+                        Criar OS
+                    </button>
                 </div>
             </form>
         </div>

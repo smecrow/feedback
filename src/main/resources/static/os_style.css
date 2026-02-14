@@ -71,7 +71,34 @@
 }
 
 .reason-btn.active {
-    box-shadow: 0 0 0 2px white;
+    box-shadow: 0 0 0 3px white, 0 4px 12px rgba(0,0,0,0.3);
+    transform: scale(1.02);
+    z-index: 10;
+}
+
+/* Modal Reason Grid */
+.reason-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px; /* Uniform 16px spacing */
+    margin-top: 16px; /* 16px from label */
+}
+
+.reason-grid .reason-btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    height: 48px; /* Fixed height 48px */
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+/* Center the 'OUTROS' button on the last line */
+.reason-grid .reason-OUTROS {
+    grid-column: 1 / -1; /* Span full width of grid */
+    width: calc(50% - 8px); /* Exact width of one column (50% minus half gap) */
+    justify-self: center; /* Center horizontally */
 }
 
 /* Specific Reason Colors */
@@ -109,8 +136,8 @@
 }
 
 .os-table td {
-    padding: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1.25rem 1rem; /* Increased vertical padding to ~20px visually or 16px min */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* More visible border */
     vertical-align: middle;
 }
 
@@ -119,7 +146,7 @@
 }
 
 .os-table tr:hover {
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(255, 255, 255, 0.06); /* Lighter gray hover */
 }
 
 .table-status {
@@ -128,31 +155,65 @@
     gap: 0.5rem;
 }
 
-/* Checkbox Styling */
-.custom-checkbox {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--text-muted);
-    border-radius: 6px; /* Slightly rounded checkbox */
+/* CSS Cleanup & Badge Refinement */
+
+/* Status Badges */
+.badge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 9999px; /* Fully rounded pill */
+    min-width: 140px; /* Slightly wider */
+    justify-content: center; /* Center align content */
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     cursor: pointer;
-    position: relative;
     transition: all 0.2s;
+    user-select: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
 }
 
-.custom-checkbox:checked {
-    background-color: var(--accent-color);
-    border-color: var(--accent-color);
+.badge-status span {
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
 }
 
-.custom-checkbox:checked::after {
-    content: '✓';
-    position: absolute;
-    color: white;
-    font-size: 14px;
-    left: 3px;
-    top: -1px;
+.os-table th, .os-table td {
+    text-align: center; /* Center everything */
+}
+.os-table th:first-child, .os-table td:first-child {
+    text-align: left; /* Keep Client name (first col) left aligned for readability, usually best practice */
+}
+
+.badge-status.done {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.badge-status.pending {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.badge-status:hover {
+    filter: brightness(1.2);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.table-icon {
+    margin-right: 8px;
+    opacity: 0.5;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    display: inline-block;
 }
 
 /* Modal Overlay */
@@ -162,33 +223,211 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.6); /* Darker overlay */
     backdrop-filter: blur(5px);
     display: none;
     align-items: center;
     justify-content: center;
     z-index: 2000;
+    opacity: 0; /* Init hidden for animation */
 }
 
 .modal-overlay.active {
     display: flex;
+    animation: fadeInOverlay 0.2s forwards;
+}
+
+.modal-overlay.closing {
+    animation: fadeOutOverlay 0.2s forwards;
 }
 
 .modal-content {
-    width: 100%;
-    max-width: 500px;
+    width: 520px;
+    max-width: 95vw;
+    padding: 32px;
     max-height: 90vh;
     overflow-y: auto;
+    /* Scale Animation Base */
+    transform: scale(0.9);
+    opacity: 0;
+}
+
+.modal-overlay.active .modal-content {
+    animation: scaleInModal 0.3s ease-out forwards;
+}
+
+.modal-overlay.closing .modal-content {
+    animation: scaleOutModal 0.2s ease-in forwards;
+}
+
+/* Animations */
+@keyframes fadeInOverlay {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOutOverlay {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes scaleInModal {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes scaleOutModal {
+    from { transform: scale(1); opacity: 1; }
+    to { transform: scale(0.9); opacity: 0; }
+}
+
+/* Modal Header & Close Button */
+.modal-content {
+    position: relative; /* For absolute close button */
+}
+
+.btn-close-modal {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-close-modal:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444; /* Red on hover */
+    transform: rotate(90deg);
+}
+
+#createModal .auth-header {
+    margin-bottom: 0; /* Clear default, managing internal spacing */
+}
+
+#createModal .auth-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+#createModal .auth-header p {
+    color: var(--text-muted);
+    margin-bottom: 24px; /* Increased to 24px */
+}
+
+#createModal .form-group {
+    margin-bottom: 24px; /* Client Field to Reason Label */
+}
+
+#createModal .form-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 40px; /* Reason Buttons to Action Buttons (Increased) */
+    justify-content: center; /* Center buttons */
+}
+
+/* Specific Modal Button Overrides */
+#createModal .form-actions .btn {
+    height: 48px;
+    width: 140px;
+    border-radius: 10px !important;
+    font-size: 1rem;
+    padding: 0; /* Clear padding to let flex center align */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: initial; /* precise width */
+}
+
+/* Cancel Button Styling */
+.btn-cancel {
+    background: transparent !important;
+    border: 2px solid #52525b !important; /* Zinc-600 */
+    color: #a1a1aa !important; /* Zinc-400 */
+    font-weight: 600;
+}
+
+.btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: #71717a !important; /* Zinc-500 */
+    color: #e4e4e7 !important; /* Zinc-200 */
+    transform: none !important; /* Reset generic transform if needed, or keep for effect */
+}
+
+/* Create Button Refinement */
+#createModal .btn-primary {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+#createModal .btn-primary:hover {
+    filter: brightness(0.9); /* Darker on hover */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+}
+
+/* Client Input Styling */
+.input-icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 16px;
+    color: var(--text-muted);
+    pointer-events: none;
+    transition: color 0.2s;
+}
+
+#createModal .form-input {
+    width: 100%;
+    height: 48px;
+    padding-left: 48px; /* 16px left + 20px icon + 12px gap */
+    padding-right: 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05) !important; /* Ensure background is distinct */
+    color: var(--text-color);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+#createModal .form-input::placeholder {
+    color: #9ca3af; /* Medium gray */
+}
+
+#createModal .form-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 1px var(--accent-color);
+    outline: none;
+}
+
+#createModal .form-input:focus + .input-icon,
+.input-icon-wrapper:focus-within .input-icon {
+    color: var(--accent-color);
 }
 
 /* Delete Button */
 .btn-delete {
     background: transparent;
     color: #ef4444;
-    border: 1px solid #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
     padding: 0.5rem;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -200,9 +439,141 @@
 .btn-delete:hover {
     background: #ef4444;
     color: white;
+    transform: rotate(90deg);
 }
 
-/* General Button Override for Roundness */
-.btn {
-    border-radius: 20px !important;
+/* Pagination Styles */
+.pagination-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.pagination-left select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--text-color);
+    padding: 0.5rem;
+    border-radius: 12px;
+    outline: none;
+    cursor: pointer;
+}
+
+.pagination-center {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.page-btn {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--text-color);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.page-btn.active {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #111;
+    font-weight: 700;
+}
+
+.page-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.pagination-right {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Sorting Icons */
+th.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s;
+}
+
+th.sortable:hover {
+    color: var(--text-color);
+}
+
+.sort-icon {
+    display: inline-block;
+    margin-left: 5px;
+    font-size: 0.8rem;
+    opacity: 0.3;
+}
+
+th.sorted-asc .sort-icon {
+    opacity: 1;
+    color: var(--accent-color);
+}
+
+th.sorted-desc .sort-icon {
+    opacity: 1;
+    color: var(--accent-color);
+    transform: rotate(180deg);
+}
+/* Validation Styles */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+    20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+.shake {
+    animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+.error-msg {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-top: 6px;
+    display: none; /* Hidden by default */
+    font-weight: 500;
+}
+
+.form-input.error {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 1px #ef4444 !important;
+}
+
+.form-input.error + .input-icon,
+.input-icon-wrapper:focus-within .form-input.error + .input-icon {
+    color: #ef4444 !important;
+}
+
+/* Disabled Button Actions */
+.btn:disabled, .btn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #3f3f46; /* fallback or darker */
+    color: rgba(255, 255, 255, 0.4);
+}
+
+#createModal .btn-primary:disabled {
+    background: #3f3f46; /* force dark gray when disabled */
+    box-shadow: none;
+    transform: none;
+    filter: none;
 }
