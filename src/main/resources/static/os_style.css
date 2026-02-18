@@ -60,18 +60,21 @@
     border: none;
     cursor: pointer;
     color: white;
-    transition: transform 0.2s, opacity 0.2s;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); /* Add depth */
+    opacity: 1 !important; /* Force full opacity */
 }
 
 .reason-btn:hover {
     transform: translateY(-2px);
-    opacity: 0.9;
+    filter: brightness(1.15); /* Brighten instead of fade */
+    box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.3);
 }
 
 .reason-btn.active {
-    box-shadow: 0 0 0 3px white, 0 4px 12px rgba(0,0,0,0.3);
+    box-shadow: 0 0 0 3px white, 0 8px 16px rgba(0,0,0,0.4);
     transform: scale(1.02);
     z-index: 10;
 }
@@ -101,14 +104,14 @@
     justify-self: center; /* Center horizontally */
 }
 
-/* Specific Reason Colors */
-.reason-SEM_CONEXAO { background-color: #ef4444; } /* Red */
-.reason-LENTIDAO { background-color: #6b7280; } /* Gray */
-.reason-UPGRADE { background-color: #f97316; } /* Orange */
-.reason-TROCA_DE_LUGAR { background-color: #a855f7; } /* Purple */
-.reason-SEGUNDO_PONTO { background-color: #22c55e; } /* Green */
-.reason-N2 { background-color: #3b82f6; } /* Blue */
-.reason-OUTROS { background-color: #eab308; } /* Yellow/Gold */
+/* Specific Reason Colors - More Vibrant/Opaque Look */
+.reason-SEM_CONEXAO { background-color: #ef4444; } /* Red-500 */
+.reason-LENTIDAO { background-color: #64748b; } /* Slate-500 (Better than Gray-500) */
+.reason-UPGRADE { background-color: #f97316; } /* Orange-500 */
+.reason-TROCA_DE_LUGAR { background-color: #a855f7; } /* Purple-500 */
+.reason-SEGUNDO_PONTO { background-color: #22c55e; } /* Green-500 */
+.reason-N2 { background-color: #3b82f6; } /* Blue-500 */
+.reason-OUTROS { background-color: #eab308; } /* Yellow-500 */
 
 /* Table Styles - Replacing Grid */
 .table-container {
