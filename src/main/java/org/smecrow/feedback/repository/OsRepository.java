@@ -17,4 +17,6 @@ public interface OsRepository extends JpaRepository<Os, Long> {
     Page<Os> findByUserAndCreatedAtBetween(org.smecrow.feedback.model.User user, LocalDateTime dateAfter, LocalDateTime dateBefore, Pageable pageable);
 
     Page<Os> findByUserAndReason(org.smecrow.feedback.model.User user, org.smecrow.feedback.model.Reason reason, Pageable pageable);
+
+    void deleteByUser(org.smecrow.feedback.model.User user);
 }

@@ -1,6 +1,8 @@
 package org.smecrow.feedback.controller;
 
 import jakarta.validation.Valid;
+
+import org.smecrow.feedback.dto.OsImportRequest;
 import org.smecrow.feedback.dto.OsMarkDoneRequest;
 import org.smecrow.feedback.dto.OsRequest;
 import org.smecrow.feedback.dto.OsResponse;
@@ -27,6 +29,11 @@ public class OsController {
         return ResponseEntity.ok(osService.createOs(request, authentication));
     }
 
+    @PostMapping("/import")
+    public ResponseEntity<OsResponse> importOs(@RequestBody @Valid OsImportRequest request, Authentication authentication) {
+        return ResponseEntity.ok(osService.importOs(request, authentication));
+    }
+
     @GetMapping("/getAllOs")
     public ResponseEntity<Page<OsResponse>> getAllOs(@PageableDefault(size = 10, page = 0, sort = "done") Pageable pageable) {
         return ResponseEntity.ok(osService.getAllOs(pageable));
@@ -43,8 +50,8 @@ public class OsController {
     }
 
     @GetMapping("/getByDone")
-    public ResponseEntity<Page<OsResponse>> getByDone(@PageableDefault(size = 10, page = 0, sort = "client") Pageable pageable) {
-        return ResponseEntity.ok(osService.getByDone(pageable));
+    public ResponseEntity<Page<OsResponse>> getByDone(@PageableDefault(size = 10, page = 0, sort = "client") Pageable pageable, @RequestParam(defaultValue = "true") Boolean done) {
+        return ResponseEntity.ok(osService.getByDone(pageable, done));
     }
 
     @GetMapping("/getByMonth")
@@ -60,6 +67,12 @@ public class OsController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteOs(@PathVariable Long id, Authentication authentication) {
         osService.deleteOs(id, authentication);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<Void> deleteAllOs() {
+        osService.deleteAllOs();
         return ResponseEntity.noContent().build();
     }
 

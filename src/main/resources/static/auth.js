@@ -32,6 +32,32 @@ const Auth = {
         if (!Auth.isAuthenticated()) {
             window.location.href = '/login.html';
         }
+    },
+
+    fetch: async (url, options = {}) => {
+        const token = Auth.getToken();
+        
+        // Ensure headers object exists
+        options.headers = options.headers || {};
+        
+        // Add Auth Token automatically
+        if (token) {
+            options.headers['Authorization'] = `Bearer ${token}`;
+        }
+        
+        try {
+            const response = await fetch(url, options);
+            
+            if (response.status === 401 || response.status === 403) {
+                console.warn('Sessão expirada. Redirecionando...');
+                Auth.logout(); // Clears storage and redirects
+                throw new Error('Sessão expirada');
+            }
+            
+            return response;
+        } catch (error) {
+            throw error;
+        }
     }
 };
 
@@ -60,4 +86,105 @@ function updateToggleIcon(btn, theme) {
         '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
 }
 
-document.addEventListener('DOMContentLoaded', initTheme);
+
+// Password Toggle
+window.togglePassword = function(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+    input.setAttribute('type', type);
+    
+    // Toggle Icon
+    if (type === 'text') {
+        // Eye Off (Closed)
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+    } else {
+        // Eye On (Open)
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+    }
+};
+
+;
+
+// Validation Helpers
+window.validateField = function(input) {
+    const parent = input.closest('.form-group');
+    const wrapper = input.closest('.input-with-icon');
+    let errorMsg = parent.querySelector('.field-error-msg');
+    
+    // Create error msg container if not exists
+    if (!errorMsg) {
+        errorMsg = document.createElement('span');
+        errorMsg.className = 'field-error-msg';
+        parent.appendChild(errorMsg);
+    }
+    
+    const value = input.value.trim();
+    let isValid = true;
+    let message = '';
+
+    // Server-side Error Precedence
+    if (input.dataset.serverError) {
+        isValid = false;
+        message = input.dataset.serverErrorMessage || 'Inválido'; // Fallback
+        // Ensure error msg is displayed if not already
+        if(errorMsg.textContent !== message) errorMsg.textContent = message;
+    }
+    // Required Check
+    else if (input.hasAttribute('required') && !value) {
+        isValid = false;
+        message = 'Campo obrigatório';
+    } 
+    // Email Check
+    else if (input.type === 'email' && value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+            isValid = false;
+            message = 'Email inválido';
+        }
+    }
+    // Simple Length Check for Password
+    else if (input.id === 'password' && value && value.length < 8 && document.body.contains(document.getElementById('registerForm'))) {
+         isValid = false;
+         message = 'Mínimo 8 caracteres';
+    }
+
+    // Apply Styles
+    if (!isValid) {
+        input.classList.add('error');
+        input.classList.remove('success');
+        errorMsg.textContent = message;
+    } else {
+        input.classList.remove('error');
+        input.classList.add('success');
+        errorMsg.textContent = '';
+    }
+    
+    return isValid;
+};
+
+// Attach Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
+    
+
+
+    const inputs = document.querySelectorAll('.form-input[required]');
+    inputs.forEach(input => {
+        input.addEventListener('blur', () => validateField(input));
+        input.addEventListener('input', () => {
+            // Clear server error if exists
+            if (input.dataset.serverError) {
+                delete input.dataset.serverError;
+                delete input.dataset.serverErrorMessage;
+            }
+
+            // Clear error on input
+            if(input.classList.contains('error')) {
+                input.classList.remove('error');
+                const parent = input.closest('.form-group');
+                const errorMsg = parent.querySelector('.field-error-msg');
+                if(errorMsg) errorMsg.textContent = '';
+            }
+        });
+    });
+});

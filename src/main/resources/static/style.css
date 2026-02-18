@@ -33,7 +33,6 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    transition: background-color 0.3s ease, color 0.3s ease;
     overflow-x: hidden;
 }
 
@@ -45,13 +44,13 @@ body.auth-page {
 }
 
 .glass-card {
-    background: var(--glass-bg);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--card-shadow);
-    border-radius: 16px;
-    padding: 3rem; /* Increased padding */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    border-radius: 24px;
+    padding: 3rem;
 }
 .auth-container {
     padding: 3rem; /* Explicit padding ensuring inheritance or override */
@@ -98,6 +97,13 @@ body.auth-page {
 
 .trend-up {
     color: #10B981; /* Green */
+}
+
+/* Disable logo animations */
+nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
 }
 
 .trend-down {
@@ -201,6 +207,44 @@ body.auth-page {
     box-shadow: 0 0 0 3px rgba(31, 125, 83, 0.2);
 }
 
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-icon .input-icon {
+    position: absolute;
+    left: 12px;
+    color: #6B7280;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+}
+
+.input-with-icon .form-input {
+    padding-left: 40px;
+    padding-right: 40px; /* Space for toggle */
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    cursor: pointer;
+    color: #6B7280;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    z-index: 2;
+}
+
+.password-toggle:hover {
+    color: var(--accent-color);
+}
+
 .btn {
     width: 100%;
     padding: 0.75rem;
@@ -213,14 +257,22 @@ body.auth-page {
 }
 
 .btn-primary {
-    background-color: var(--accent-color);
+    background: linear-gradient(135deg, #4A9EFF, #3B82F6, #4A9EFF);
+    background-size: 200% 100%;
     color: white;
+    box-shadow: 0 4px 14px rgba(74, 158, 255, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden; /* For ripple */
 }
 
 .btn-primary:hover {
-    background-color: var(--accent-hover);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(31, 125, 83, 0.3);
+    background-position: 100% 0; /* Keep Shine effect if desired, or remove? User said "animation". Let's keep color shift but remove movement if possible. Let's just remove transform. */
+    box-shadow: 0 6px 20px rgba(74, 158, 255, 0.5);
+}
+
+.btn-primary:active {
+    box-shadow: 0 2px 10px rgba(74, 158, 255, 0.3);
 }
 
 .auth-footer {
@@ -295,6 +347,7 @@ body.auth-page {
     padding: 0.5rem;
     border-radius: 6px;
     border: 1px solid rgba(239, 68, 68, 0.2);
+    white-space: pre-line; /* Allow newlines */
 }
 
 /* Toast Notifications */
@@ -384,6 +437,60 @@ body.auth-page {
     .kpi-grid {
         grid-template-columns: 1fr; /* Stack vertically on small screens */
     }
+}
+
+/* --- Import Modal Styles --- */
+.drop-zone {
+    border: 2px dashed var(--glass-border);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.02);
+    margin-bottom: 1.5rem;
+}
+
+.drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--accent-color);
+    background: rgba(30, 58, 138, 0.1); /* Subtle blue tint */
+}
+
+.file-info {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.import-preview {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--glass-border);
+}
+
+.table-sm th, .table-sm td {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--accent-color);
+    width: 0%;
+    transition: width 0.3s ease;
 }
 
 .kpi-card {
@@ -586,4 +693,118 @@ body.auth-page {
 
 @media (max-width: 1024px) {
     .charts-grid-v8 { grid-template-columns: 1fr; }
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 30px; /* Spacing above title */
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent-color);
+    letter-spacing: -0.5px;
+}
+
+/* Validation Styles */
+.form-input.error,
+.form-input.error:focus {
+    border-color: #EF4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-input.success {
+    border-color: #10B981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); /* Subtle green glow */
+}
+
+.field-error-msg {
+    color: #EF4444;
+    font-size: 0.8rem;
+    margin-top: 6px;
+    margin-left: 2px;
+    display: flex; /* Changed to flex for icon alignment */
+    align-items: center;
+    gap: 6px;
+    min-height: 1.2em;
+    animation: slideDownError 0.3s ease-out forwards;
+}
+
+@keyframes slideDownError {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Password Requirements */
+.password-requirements {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.req-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+}
+
+/* Animations */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes floatCard {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.animate-entry .glass-card {
+    opacity: 0; /* meaningful start state */
+    animation: fadeInScale 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+               floatCard 4s ease-in-out infinite 0.6s; /* float after entry */
+}
+
+/* Stagger Children */
+.animate-entry .brand-logo { opacity: 0; animation: fadeInScale 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards; }
+.animate-entry .auth-header { opacity: 0; animation: fadeInScale 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards; }
+.animate-entry .form-group:nth-of-type(2) { opacity: 0; animation: fadeInScale 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards; }
+.animate-entry .form-group:nth-of-type(3) { opacity: 0; animation: fadeInScale 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards; }
+.animate-entry .form-group:nth-of-type(4) { opacity: 0; animation: fadeInScale 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.5s forwards; }
+.animate-entry button[type="submit"] { opacity: 0; animation: fadeInScale 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.6s forwards; }
+.animate-entry .auth-footer { opacity: 0; animation: fadeInScale 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.7s forwards; }
+/* Loading Overlay */
+.loading-overlay-global {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-left-color: var(--accent-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }

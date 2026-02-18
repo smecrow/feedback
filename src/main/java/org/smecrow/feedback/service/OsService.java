@@ -62,6 +62,19 @@ public class OsService {
         return OsResponse.fromEntity(savedOs);
     }
 
+    public OsResponse importOs(org.smecrow.feedback.dto.OsImportRequest request, Authentication authentication) {
+        log.info("Importando OS via CSV.");
+        String formattedClient = formatClientName(request.client());
+        Os osEntity = request.toEntity();
+        osEntity.setClient(formattedClient);
+
+        User managedUser = getLoggedUser(); // Reuse existing helper
+        osEntity.setUser(managedUser);
+
+        Os savedOs = osRepository.save(osEntity);
+        return OsResponse.fromEntity(savedOs);
+    }
+
     public Page<OsResponse> getAllOs(Pageable pageable) {
         log.info("Buscando todas as OS do usuário logado.");
         User user = getLoggedUser();
@@ -78,12 +91,11 @@ public class OsService {
         return osPage.map(OsResponse::fromEntity);
     }
 
-    public Page<OsResponse> getByDone(Pageable pageable) {
-        Boolean done = true;
-        log.info("Procurando OS marcadas como feitas.");
+    public Page<OsResponse> getByDone(Pageable pageable, Boolean done) {
+        log.info("Procurando OS com status done={}.", done);
         User user = getLoggedUser();
         Page<Os> osPage = osRepository.findByUserAndDone(user, done, pageable);
-        log.info("Foram encontradas {} OS marcadas como feitas.", osPage.getTotalElements());
+        log.info("Foram encontradas {} OS com status done={}.", osPage.getTotalElements(), done);
         return osPage.map(OsResponse::fromEntity);
     }
 
@@ -208,5 +220,12 @@ public class OsService {
         }
 
         return userRepository.findByEmail(userEmail).orElseThrow(() -> new NotFoundException("Usuário logado não encontrado no banco."));
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void deleteAllOs() {
+        User user = getLoggedUser();
+        log.info("Deletando todas as OS do usuário: {}", user.getEmail());
+        osRepository.deleteByUser(user);
     }
 }

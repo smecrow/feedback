@@ -33,7 +33,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException e) {
-        ErrorResponse error = new ErrorResponse("Invalid credentials", HttpStatus.UNAUTHORIZED.value());
+        String message = (e.getMessage() != null) ? e.getMessage() : "Credenciais inválidas";
+        ErrorResponse error = new ErrorResponse(message, HttpStatus.UNAUTHORIZED.value());
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 

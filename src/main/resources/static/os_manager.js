@@ -81,7 +81,7 @@ function loadCurrentView() {
     }
     else if(currentFilter.type === 'REASON') filterByReason(currentFilter.value, false);
     else if(currentFilter.type === 'CLIENT') loadOsByClient(currentFilter.value, false);
-    else if(currentFilter.type === 'DONE') loadOsByDone(false);
+    else if(currentFilter.type === 'DONE') loadOsByDone(false, currentFilter.value);
 }
 
 
@@ -177,12 +177,13 @@ function setupEventListeners() {
     // Month Picker Change Event (Removed native listener)
 
     // Toggle Done
+    // Toggle Done
     document.getElementById('toggleDoneBtn').addEventListener('click', (e) => {
         const btn = e.target;
         if (currentFilter.type === 'DONE') {
             resetFilters(); // Toggle off
         } else {
-            loadOsByDone();
+            loadOsByDone(true, false); // false = Pending
             btn.style.borderColor = 'var(--accent-color)';
             btn.style.color = 'var(--accent-color)';
         }
@@ -221,11 +222,10 @@ function resetFilters() {
 async function fetchOs(url) {
     const listContainer = document.getElementById('osList');
     
+    showLoading(true); // Ensure loading state is visible
+
     try {
-        const token = Auth.getToken();
-        const response = await fetch(url, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const response = await Auth.fetch(url); // Auth.fetch handles token
 
         if (!response.ok) throw new Error('Falha ao buscar OS');
 
@@ -234,13 +234,18 @@ async function fetchOs(url) {
         // Update Pagination State
         pagination.totalElements = data.totalElements;
         pagination.totalPages = data.totalPages;
+        pagination.size = data.size; // Sync size from backend response
         
         renderOsList(data.content);
         renderPagination();
         
     } catch (error) {
-        listContainer.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444;">Erro ao carregar dados.</td></tr>`;
-        console.error(error);
+        if(error.message !== 'Sessão expirada') {
+            listContainer.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444;">Erro ao carregar dados.</td></tr>`;
+            console.error(error);
+        }
+    } finally {
+        showLoading(false);
     }
 }
 
@@ -280,18 +285,17 @@ function filterByReason(reason, resetPage = true) {
     fetchOs(`/api/os/getByReason?reason=${reason}${getSortParam()}`);
 }
 
-function loadOsByDone(resetPage = true) {
+function loadOsByDone(resetPage = true, done = true) {
     if(resetPage) pagination.page = 0;
-    currentFilter = { type: 'DONE', value: true };
-    fetchOs(`/api/os/getByDone?${getSortParam()}`);
+    // Ensure boolean
+    const isDone = done === 'true' || done === true;
+    currentFilter = { type: 'DONE', value: isDone };
+    fetchOs(`/api/os/getByDone?done=${isDone}${getSortParam()}`);
 }
 
 async function searchClients(query) {
-    const token = Auth.getToken();
     try {
-        const response = await fetch(`/api/os/getByClient?client=${query}&size=5`, {
-             headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const response = await Auth.fetch(`/api/os/getByClient?client=${query}&size=5`);
         const data = await response.json();
         
         const resultsDiv = document.getElementById('searchResults');
@@ -331,16 +335,6 @@ function renderOsList(osList) {
     }
 
     osList.forEach(os => {
-        const tr = document.createElement('tr');
-        tr.id = `os-row-${os.id}`;
-        
-        if (highlightId && os.id == highlightId) {
-            tr.classList.add('highlight-row');
-            setTimeout(() => {
-                tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 500);
-        }
-        
         // Status Badge Logic
         const statusClass = os.done ? 'badge-status done' : 'badge-status pending';
         const reason = REASONS[os.reason] || os.reason.replace(/_/g, ' ');
@@ -348,7 +342,16 @@ function renderOsList(osList) {
         const statusBadge = `<div class="${statusClass}" onclick="window.toggleDone(${os.id}, ${!os.done})"><span>${os.done ? '✓' : '🕒'}</span> ${os.done ? 'Feito' : 'Pendente'}</div>`;
 
         const row = document.createElement('tr');
+        row.id = `os-row-${os.id}`;
         if (os.done) row.classList.add('done-row');
+        
+        // Highlight logic
+        if (highlightId && os.id == highlightId) {
+            row.classList.add('highlight-row');
+            setTimeout(() => {
+                row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 500);
+        }
         
         // Format ID for display (optional, can be removed)
         const displayId = os.id; // or existing logic
@@ -388,12 +391,10 @@ function renderOsList(osList) {
 // --- Actions ---
 
 async function toggleDone(id, newStatus) {
-    const token = Auth.getToken();
     try {
-        await fetch(`/api/os/done/${id}`, {
+        await Auth.fetch(`/api/os/done/${id}`, {
             method: 'PUT',
             headers: {
-                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ done: newStatus })
@@ -446,11 +447,9 @@ function confirmDeleteAction() {
 }
 
 async function deleteOs(id) {
-    const token = Auth.getToken();
     try {
-        const response = await fetch(`/api/os/delete/${id}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` }
+        const response = await Auth.fetch(`/api/os/delete/${id}`, {
+            method: 'DELETE'
         });
 
         if (response.ok) {
@@ -494,6 +493,7 @@ function openCreateModal() {
     document.getElementById('reasonError').style.display = 'none';
     document.getElementById('btnSubmit').style.opacity = '1';
     document.getElementById('btnSubmit').style.cursor = 'pointer';
+    document.getElementById('btnSubmit').disabled = false;
 
     document.getElementById('createModal').classList.add('active');
     setTimeout(() => document.getElementById('newClientName').focus(), 100);
@@ -514,6 +514,7 @@ function openEditModal(id, client, reason) {
     document.getElementById('reasonError').style.display = 'none';
     document.getElementById('btnSubmit').style.opacity = '1';
     document.getElementById('btnSubmit').style.cursor = 'pointer';
+    document.getElementById('btnSubmit').disabled = false;
 
     document.getElementById('createModal').classList.add('active');
 }
@@ -588,16 +589,14 @@ async function handleCreateOs(e) {
         reason: reason
     };
 
-    const token = Auth.getToken();
     const url = isEdit ? `/api/os/update/${osId}` : '/api/os/createOs';
     const method = isEdit ? 'PUT' : 'POST';
 
     try {
-        const response = await fetch(url, {
+        const response = await Auth.fetch(url, {
             method: method,
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(osData)
         });
@@ -605,16 +604,7 @@ async function handleCreateOs(e) {
         if (response.ok) {
             showToast(isEdit ? 'OS atualizada com sucesso!' : 'OS criada com sucesso!', 'success');
             closeCreateModal();
-            loadAllOs(false); // Reload list keeping current page/filter if possible, or just reset. loadAllOs(false) resets page to 0? No, checking loadAllOs implementation.
-            // loadAllOs implementation: function loadAllOs(resetPage = true) { if(resetPage) pagination.page = 0; ... }
-            // So loadAllOs(false) keeps page? No, loadAllOs HARDCODES currentFilter to ALL.
-            // Better to have a reload function that respects current filter.
-            // For now, let's just call the global reload logic if it exists, or replicate what pagination does.
-            // Actually, let's just call loadAllOs() for now to be safe, or even better:
-            // trigger the current filter load again.
-            // We have `applyFilters()` or similar?
-            // Checking structure... lines 247+ show load functions.
-            // Let's just use loadAllOs() for simplicity as user just wants it to work.
+            loadCurrentView();
         } else {
             const errorText = await response.text();
             showToast('Erro: ' + errorText, 'error');
@@ -644,6 +634,240 @@ document.getElementById('confirmModal').addEventListener('click', (e) => {
         closeConfirmModal();
     }
 });
+document.getElementById('importModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('importModal')) {
+        closeImportModal();
+    }
+});
+
+// --- CSV Import Features ---
+
+let importedData = [];
+
+function openImportModal() {
+    document.getElementById('importModal').classList.add('active');
+    // Reset UI
+    document.getElementById('fileInput').value = '';
+    document.getElementById('fileInfo').textContent = 'Nenhum arquivo selecionado';
+    document.getElementById('importPreview').style.display = 'none';
+    document.getElementById('importProgress').style.display = 'none';
+    document.getElementById('btnConfirmImport').disabled = true;
+    document.getElementById('btnConfirmImport').textContent = 'Importar Dados';
+    document.getElementById('dropZone').classList.remove('drag-over');
+    importedData = [];
+    
+    setupDragAndDrop();
+}
+
+function closeImportModal() {
+    document.getElementById('importModal').classList.remove('active');
+}
+window.openImportModal = openImportModal;
+window.closeImportModal = closeImportModal;
+
+function setupDragAndDrop() {
+    const dropZone = document.getElementById('dropZone');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
+    });
+
+    dropZone.addEventListener('drop', handleDrop, false);
+}
+
+function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    handleFileSelect(files[0]);
+}
+
+window.handleFileSelect = function(file) {
+    if (!file || !file.name.endsWith('.csv')) {
+        showToast('Por favor, selecione um arquivo CSV válido.', 'error');
+        return;
+    }
+
+    document.getElementById('fileInfo').textContent = file.name;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const text = e.target.result;
+        parseCSV(text);
+    };
+    reader.readAsText(file, 'UTF-8'); // Force UTF-8
+};
+
+function parseCSV(text) {
+    const lines = text.split(/\r\n|\n/);
+    if (lines.length < 2) {
+        showToast('Arquivo vazio ou sem cabeçalho.', 'error');
+        return;
+    }
+
+    // Detect delimiter (semicolon or comma)
+    const firstLine = lines[0];
+    const delimiter = firstLine.includes(';') ? ';' : ',';
+    
+    const headers = firstLine.split(delimiter).map(h => h.trim().toLowerCase().replace(/"/g, ''));
+    
+    // Validate Headers (Cliente, Motivo are mandatory)
+    // We expect: Cliente, Motivo, Data (optional), Status (optional)
+    const clientIdx = headers.indexOf('cliente');
+    const reasonIdx = headers.indexOf('motivo');
+    const dateIdx = headers.findIndex(h => h.includes('data')); // loose match
+    const statusIdx = headers.indexOf('status');
+
+    if (clientIdx === -1 || reasonIdx === -1) {
+        showToast('CSV inválido. Colunas obrigatórias: Cliente, Motivo.', 'error');
+        return;
+    }
+
+    importedData = [];
+    const previewBody = document.getElementById('previewBody');
+    previewBody.innerHTML = '';
+    
+    let validCount = 0;
+
+    // Parse Rows (Limit preview to 50, but store all)
+    for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        
+        const cols = line.split(delimiter).map(c => c.trim().replace(/"/g, ''));
+        
+        if (cols.length < 2) continue;
+
+        const client = cols[clientIdx];
+        const reasonRaw = cols[reasonIdx];
+        // Parse Date: Expecting DD/MM/YYYY or YYYY-MM-DD
+        const dateRaw = dateIdx !== -1 ? cols[dateIdx] : null;
+        const statusRaw = statusIdx !== -1 ? cols[statusIdx] : 'Pendente';
+
+        // Normalize Reason
+        let reason = 'OUTROS';
+        const reasonUpper = reasonRaw.toUpperCase().replace(/\s/g, '_');
+        if (REASONS[reasonUpper]) reason = reasonUpper;
+        else {
+             // Try to find approximate match or default
+             const match = Object.keys(REASONS).find(k => k.includes(reasonUpper) || reasonUpper.includes(k));
+             if(match) reason = match;
+        }
+
+        // Normalize Status
+        const done = statusRaw.toLowerCase().includes('feito') || statusRaw.toLowerCase().includes('conclu') || statusRaw === 'true' || statusRaw === '1';
+
+        // Parse Date Object (ISO or BR)
+        let createdAt = null;
+        if (dateRaw) {
+             if (dateRaw.includes('/')) {
+                 const [d, m, y] = dateRaw.split('/');
+                 if(d && m && y) createdAt = `${y}-${m}-${d}T12:00:00`; // ISO format for LocalTime
+             } else {
+                 createdAt = dateRaw; // Assume ISO
+             }
+        }
+
+        importedData.push({ client, reason, done, createdAt });
+        validCount++;
+
+        // Render Preview (Max 10 rows)
+        if (validCount <= 10) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${client}</td>
+                <td><span class="badge" style="background: ${REASON_COLORS[reason] || '#ccc'}; color: #fff; font-size: 0.75rem;">${REASONS[reason] || reason}</span></td>
+                <td>${dateRaw || 'Hoje'}</td>
+                <td>${done ? '✅' : '🕒'}</td>
+            `;
+            previewBody.appendChild(tr);
+        }
+    }
+
+    if (importedData.length > 0) {
+        document.getElementById('importPreview').style.display = 'block';
+        document.getElementById('previewCount').textContent = importedData.length;
+        document.getElementById('btnConfirmImport').disabled = false;
+        
+        if (importedData.length > 10) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td colspan="4" style="text-align: center; color: var(--text-muted);">... e mais ${importedData.length - 10} registros</td>`;
+            previewBody.appendChild(tr);
+        }
+    } else {
+        showToast('Nenhum dado válido encontrado no arquivo.', 'error');
+    }
+}
+
+window.executeImport = async function() {
+    if (importedData.length === 0) return;
+
+    const btn = document.getElementById('btnConfirmImport');
+    const btnCancel = document.getElementById('btnCancelImport');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const progressArea = document.getElementById('importProgress');
+
+    btn.disabled = true;
+    btnCancel.disabled = true;
+    progressArea.style.display = 'block';
+    
+    let successCount = 0;
+    let errorCount = 0;
+    const total = importedData.length;
+    const token = Auth.getToken();
+
+    for (let i = 0; i < total; i++) {
+        const item = importedData[i];
+        
+        // Update Progress
+        const percent = Math.round(((i + 1) / total) * 100);
+        progressBar.style.width = `${percent}%`;
+        progressText.textContent = `Importando ${i + 1} de ${total}...`;
+
+        try {
+            const response = await Auth.fetch('/api/os/import', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(item)
+            });
+
+            if (response.ok) successCount++;
+            else errorCount++;
+        } catch (e) {
+            console.error(e);
+            errorCount++;
+        }
+        
+        // Small delay to let UI breathe and show animation
+        if(total < 100) await new Promise(r => setTimeout(r, 50)); 
+    }
+
+    // Finalize
+    progressBar.style.width = '100%';
+    progressText.textContent = 'Concluído!';
+    
+    showToast(`Importação finalizada! Sucesso: ${successCount}, Erros: ${errorCount}`, successCount > 0 ? 'success' : 'error');
+    
+    setTimeout(() => {
+        closeImportModal();
+        loadAllOs(false); // Reload List
+    }, 1500);
+};
 
 function showToast(message, type = 'success') {
     const container = document.getElementById('toast-container');
@@ -748,12 +972,10 @@ async function generateTestOs(count = 20) {
         const isDone = Math.random() > 0.8; 
 
         try {
-            const token = Auth.getToken();
-            await fetch('/api/os/createOs', {
+            await Auth.fetch('/api/os/createOs', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ 
                     client: randomName, 
@@ -772,6 +994,24 @@ async function generateTestOs(count = 20) {
     showToast(`${successes} OS de teste criadas! Atualize a lista.`, 'success');
     loadAllOs();
 }
+
+// --- Loading Helper ---
+function showLoading(isLoading) {
+    const tableBody = document.getElementById('osList');
+    if (!tableBody) return;
+
+    if (isLoading) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 4rem;">
+                    <div class="spinner" style="margin: 0 auto; border-color: rgba(255,255,255,0.1); border-left-color: var(--accent-color);"></div>
+                    <p style="margin-top: 1rem; color: var(--text-muted);">Carregando dados...</p>
+                </td>
+            </tr>
+        `;
+    }
+}
+window.showLoading = showLoading;
 
 // --- Export CSV ---
 async function exportCsv() {
@@ -797,14 +1037,11 @@ async function exportCsv() {
     } else if(currentFilter.type === 'CLIENT') {
         url = `/api/os/getByClient?client=${encodeURIComponent(currentFilter.value)}${sizeParam}`;
     } else if(currentFilter.type === 'DONE') {
-        url = `/api/os/getByDone?${sizeParam}`;
+        url = `/api/os/getByDone?done=${currentFilter.value}${sizeParam}`;
     }
 
     try {
-        const token = Auth.getToken();
-        const response = await fetch(url, {
-             headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const response = await Auth.fetch(url);
         
         if(!response.ok) throw new Error('Erro ao buscar dados para exportação');
         
@@ -860,3 +1097,28 @@ window.exportCsv = exportCsv;
 
 // Expose to window for console usage
 window.generateTestOs = generateTestOs;
+
+// Console Command for Bulk Delete
+window.deleteAllOs = async function() {
+    if (!confirm('ATENÇÃO: Isso apagará todas as suas Ordens de Serviço permanentemente. Tem certeza?')) return;
+    
+    const token = Auth.getToken();
+    try {
+        const response = await fetch('/api/os/deleteAll', {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (response.ok) {
+            showToast('Todas as OS foram excluídas.', 'success');
+            loadAllOs(true);
+            console.log('Todas as OS foram excluídas com sucesso.');
+        } else {
+            console.error('Erro ao excluir todas as OS:', response.statusText);
+            showToast('Erro ao excluir dados.', 'error');
+        }
+    } catch (e) {
+        console.error(e);
+        showToast('Erro de conexão.', 'error');
+    }
+};

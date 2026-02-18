@@ -28,12 +28,13 @@ public class AuthService {
     private JwtTokenProvider jwtTokenProvider;
 
     public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByEmailOrUsername(request.login(), request.login()).orElseThrow(() -> new BadCredentialsException("Email ou senha inválidos."));
+        User user = userRepository.findByEmailOrUsername(request.login(), request.login())
+                .orElseThrow(() -> new BadCredentialsException("Usuário não encontrado"));
 
         log.info("Usuário: {} encontrado.", user.getUsername());
 
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
-            throw new BadCredentialsException("Email ou senha inválidos");
+            throw new BadCredentialsException("Senha incorreta");
         }
 
         log.info("Senha correta. Gerando token JWT.");
@@ -45,12 +46,18 @@ public class AuthService {
     }
 
     public AuthResponse register(RegisterRequest request) {
+        java.util.List<String> errors = new java.util.ArrayList<>();
+
         if (userRepository.existsByEmail(request.email())) {
-            throw new AlreadyExistsException("Email já cadastrado");
+            errors.add("Email já cadastrado");
         }
 
         if (userRepository.existsByUsername(request.username())) {
-            throw new AlreadyExistsException("Nome de usuário já cadastrado");
+            errors.add("Nome de usuário já cadastrado");
+        }
+
+        if (!errors.isEmpty()) {
+            throw new AlreadyExistsException(String.join("\n", errors));
         }
 
         User user = new User();

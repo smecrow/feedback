@@ -90,13 +90,11 @@ const Dashboard = {
     },
 
     fetchStats: async function(queryString = '') {
-        const token = Auth.getToken();
+        // Token handled by Auth.fetch
         this.setLoading(true);
         try {
             const url = queryString ? `/api/dashboard/stats?${queryString}` : '/api/dashboard/stats';
-            const response = await fetch(url, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            const response = await Auth.fetch(url); // Auth.fetch
             const data = await response.json();
             this.data = data; 
             
@@ -459,6 +457,7 @@ const Dashboard = {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
+                // Tooltips enabled by default (or explicitly configured)
                 tooltip: {
                     callbacks: {
                         label: function(context) {
@@ -470,20 +469,13 @@ const Dashboard = {
                     }
                 },
                 legend: {
-                    display: (type !== 'pie' && type !== 'doughnut'), // Hide default legend for pies
+                    display: (type !== 'pie' && type !== 'doughnut'),
                     position: 'bottom',
-                    labels: { color: '#EEEEEE' }
+                    labels: { color: '#EEEEEE' },
+                    onClick: null // Disable legend click (toggling visibility)
                 }
             },
-            onClick: (evt, activeElements, chart) => {
-                if (activeElements.length > 0 && (type === 'doughnut' || type === 'pie')) {
-                    const index = activeElements[0].index;
-                    const meta = chart.getDatasetMeta(0);
-                    meta.data.forEach(d => d.outerRadius = chart.outerRadius);
-                    meta.data[index].outerRadius = chart.outerRadius + 10;
-                    chart.update();
-                }
-            },
+            onClick: null, // Disable canvas click (custom or default)
             scales: (type === 'bar') ? {
                 y: {
                     beginAtZero: true,
@@ -515,11 +507,9 @@ const Dashboard = {
             return;
         }
 
-        const token = Auth.getToken();
+        // Token handled by Auth.fetch
         try {
-            const response = await fetch(`/api/dashboard/stats?client=${encodeURIComponent(clientName)}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            const response = await Auth.fetch(`/api/dashboard/stats?client=${encodeURIComponent(clientName)}`);
             const data = await response.json();
             
             const clientsMap = data.totalByClients || {};
