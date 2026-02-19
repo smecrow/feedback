@@ -838,7 +838,7 @@ window.executeImport = async function() {
         progressText.textContent = `Importando ${i + 1} de ${total}...`;
 
         try {
-            const response = await Auth.fetch('/api/os/import', {
+            const response = await Auth.fetch(`${API_URL}/api/os/import`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
