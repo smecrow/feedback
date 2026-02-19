@@ -80,19 +80,14 @@ public class AuthService {
 
     public Map<String, String> validateToken(String authHeader) {
         try {
-            // Remover o "Bearer" do token
             String token = authHeader.substring(7);
 
-            // Validar o token
             if (jwtTokenProvider.validateToken(token)) {
-                // Extrai informações do token
                 String email = jwtTokenProvider.getEmailFromToken(token);
 
-                // Busca o usuário no banco
                 User user = userRepository.findByEmail(email)
                         .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-                // Retorna as informações
                 Map<String, String> response = Map.of("username", user.getUsername(), "email", user.getEmail());
 
                 return response;

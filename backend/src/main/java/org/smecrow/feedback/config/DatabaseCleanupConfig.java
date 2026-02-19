@@ -12,7 +12,6 @@ public class DatabaseCleanupConfig {
     public CommandLineRunner dropConstraints(JdbcTemplate jdbcTemplate) {
         return args -> {
             try {
-                // Drop the restrictive check constraint on the reason column to allow new Enum values
                 jdbcTemplate.execute("ALTER TABLE os DROP CONSTRAINT IF EXISTS os_reason_check");
                 System.out.println("Database Cleanup: Removed os_reason_check constraint successfully.");
             } catch (Exception e) {

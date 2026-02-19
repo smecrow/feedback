@@ -6,7 +6,7 @@
     <title>Login - Feedbacks</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" href="app-icon.png?v=1">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -55,7 +55,7 @@
 
     <script src="auth.js"></script>
     <script>
-        // Check if already logged in
+
         Auth.redirectIfAuthenticated();
 
         const loginForm = document.getElementById('loginForm');
@@ -70,7 +70,7 @@
             const submitBtn = document.getElementById('submitBtn');
             const errorDiv = document.getElementById('errorMessage');
 
-            // Clear previous errors
+
             errorDiv.style.display = 'none';
             document.querySelectorAll('.field-error-msg').forEach(el => el.textContent = '');
             document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error'));
@@ -107,7 +107,7 @@
                     passwordInput.dataset.serverError = 'true';
                     passwordInput.dataset.serverErrorMessage = 'Senha incorreta';
                 } else {
-                    // Fallback to top error
+
                     errorDiv.innerHTML = iconHtml + ' ' + msg;
                     errorDiv.style.display = 'block';
                     errorDiv.classList.add('fade-in');
@@ -126,7 +126,7 @@
             let errorMsg = parent.querySelector('.field-error-msg');
             
             if (!errorMsg) {
-                errorMsg = document.createElement('div'); // Changed to div for flex
+                errorMsg = document.createElement('div');
                 errorMsg.className = 'field-error-msg';
                 parent.appendChild(errorMsg);
             }

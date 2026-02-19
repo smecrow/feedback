@@ -1,13 +1,13 @@
-/* OS Page Specific Styles */
 
-/* Filter Bar */
+
+
 .filter-bar {
     display: flex;
     gap: 1rem;
     padding: 1rem;
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
-    border-radius: 20px; /* Fully rounded */
+    border-radius: 20px;
     margin-bottom: 2rem;
     flex-wrap: wrap;
     align-items: center;
@@ -19,7 +19,7 @@
     max-width: 300px;
 }
 
-/* Ensure inputs in filter bar are rounded */
+
 .filter-bar input, .filter-bar .btn {
     border-radius: 20px !important;
 }
@@ -51,7 +51,7 @@
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* Reason Buttons (Badges) */
+
 .reason-btn {
     padding: 0.5rem 1rem;
     border-radius: 20px !important; /* Force rounded */
@@ -64,7 +64,7 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); /* Add depth */
-    opacity: 1 !important; /* Force full opacity */
+    opacity: 1 !important;
 }
 
 .reason-btn:hover {
@@ -79,7 +79,7 @@
     z-index: 10;
 }
 
-/* Modal Reason Grid */
+
 .reason-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -104,16 +104,16 @@
     justify-self: center; /* Center horizontally */
 }
 
-/* Specific Reason Colors - More Vibrant/Opaque Look */
-.reason-SEM_CONEXAO { background-color: #ef4444; } /* Red-500 */
-.reason-LENTIDAO { background-color: #64748b; } /* Slate-500 (Better than Gray-500) */
-.reason-UPGRADE { background-color: #f97316; } /* Orange-500 */
-.reason-TROCA_DE_LUGAR { background-color: #a855f7; } /* Purple-500 */
-.reason-SEGUNDO_PONTO { background-color: #22c55e; } /* Green-500 */
-.reason-N2 { background-color: #3b82f6; } /* Blue-500 */
-.reason-OUTROS { background-color: #eab308; } /* Yellow-500 */
 
-/* Table Styles - Replacing Grid */
+.reason-SEM_CONEXAO { background-color: #ef4444; }
+.reason-LENTIDAO { background-color: #64748b; } /* Slate-500 (Better than Gray-500) */
+.reason-UPGRADE { background-color: #f97316; }
+.reason-TROCA_DE_LUGAR { background-color: #a855f7; }
+.reason-SEGUNDO_PONTO { background-color: #22c55e; }
+.reason-N2 { background-color: #3b82f6; }
+.reason-OUTROS { background-color: #eab308; }
+
+
 .table-container {
     width: 100%;
     overflow-x: auto;
@@ -158,15 +158,15 @@
     gap: 0.5rem;
 }
 
-/* CSS Cleanup & Badge Refinement */
 
-/* Status Badges */
+
+
 .badge-status {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     padding: 6px 12px;
-    border-radius: 9999px; /* Fully rounded pill */
+    border-radius: 9999px;
     min-width: 140px; /* Slightly wider */
     justify-content: center; /* Center align content */
     font-size: 0.75rem;
@@ -186,7 +186,7 @@
 }
 
 .os-table th, .os-table td {
-    text-align: center; /* Center everything */
+    text-align: center;
 }
 .os-table th:first-child, .os-table td:first-child {
     text-align: left; /* Keep Client name (first col) left aligned for readability, usually best practice */
@@ -199,9 +199,9 @@
 }
 
 .badge-status.pending {
-    background: rgba(245, 158, 11, 0.15);
-    color: #f59e0b;
-    border: 1px solid rgba(245, 158, 11, 0.4);
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.4);
 }
 
 .badge-status:hover {
@@ -219,7 +219,7 @@
     display: inline-block;
 }
 
-/* Modal Overlay */
+
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -232,7 +232,7 @@
     align-items: center;
     justify-content: center;
     z-index: 2000;
-    opacity: 0; /* Init hidden for animation */
+    opacity: 0;
 }
 
 .modal-overlay.active {
@@ -263,7 +263,7 @@
     animation: scaleOutModal 0.2s ease-in forwards;
 }
 
-/* Animations */
+
 @keyframes fadeInOverlay {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -284,9 +284,9 @@
     to { transform: scale(0.9); opacity: 0; }
 }
 
-/* Modal Header & Close Button */
+
 .modal-content {
-    position: relative; /* For absolute close button */
+    position: relative;
 }
 
 .btn-close-modal {
@@ -312,7 +312,7 @@
 }
 
 #createModal .auth-header {
-    margin-bottom: 0; /* Clear default, managing internal spacing */
+    margin-bottom: 0;
 }
 
 #createModal .auth-header h2 {
@@ -338,10 +338,10 @@
     display: flex;
     gap: 16px;
     margin-top: 40px; /* Reason Buttons to Action Buttons (Increased) */
-    justify-content: center; /* Center buttons */
+    justify-content: center;
 }
 
-/* Specific Modal Button Overrides */
+
 #createModal .form-actions .btn {
     height: 48px;
     width: 140px;
@@ -351,10 +351,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    flex: initial; /* precise width */
+    flex: initial;
 }
 
-/* Cancel Button Styling */
+
 .btn-cancel {
     background: transparent !important;
     border: 2px solid #52525b !important; /* Zinc-600 */
@@ -369,7 +369,7 @@
     transform: none !important; /* Reset generic transform if needed, or keep for effect */
 }
 
-/* Create Button Refinement */
+
 #createModal .btn-primary {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
@@ -380,7 +380,7 @@
     transform: translateY(-1px);
 }
 
-/* Client Input Styling */
+
 .input-icon-wrapper {
     position: relative;
     display: flex;
@@ -409,7 +409,7 @@
 }
 
 #createModal .form-input::placeholder {
-    color: #9ca3af; /* Medium gray */
+    color: #9ca3af;
 }
 
 #createModal .form-input:focus {
@@ -423,7 +423,7 @@
     color: var(--accent-color);
 }
 
-/* Delete Button */
+
 .btn-delete {
     background: transparent;
     color: #ef4444;
@@ -434,7 +434,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50% !important; /* Fully rounded circle */
+    border-radius: 50% !important;
     font-size: 1rem;
     transition: all 0.3s;
 }
@@ -445,7 +445,7 @@
     transform: rotate(90deg);
 }
 
-/* Pagination Styles */
+
 .pagination-bar {
     display: flex;
     justify-content: space-between;
@@ -509,7 +509,7 @@
     font-size: 0.9rem;
 }
 
-/* Sorting Icons */
+
 th.sortable {
     cursor: pointer;
     user-select: none;
@@ -537,7 +537,7 @@ th.sorted-desc .sort-icon {
     color: var(--accent-color);
     transform: rotate(180deg);
 }
-/* Validation Styles */
+
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
     10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
@@ -566,7 +566,7 @@ th.sorted-desc .sort-icon {
     color: #ef4444 !important;
 }
 
-/* Disabled Button Actions */
+
 .btn:disabled, .btn[disabled] {
     opacity: 0.5;
     cursor: not-allowed;

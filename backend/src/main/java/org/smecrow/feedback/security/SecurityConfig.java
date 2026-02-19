@@ -50,6 +50,8 @@ public class SecurityConfig {
                                 "/home.html",
                                 "/*.css",
                                 "/*.js",
+                                "/app-icon.png",
+                                "/assets/**",
                                 "/os.html"
                         ).permitAll()
                         .anyRequest().authenticated()
@@ -57,6 +59,16 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers(
+                "/app-icon.png",
+                "/assets/**",
+                "/*.css",
+                "/*.js"
+        );
     }
 
     @Bean

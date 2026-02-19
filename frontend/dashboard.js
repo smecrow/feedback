@@ -1,7 +1,7 @@
 const Dashboard = {
     charts: {},
 
-    activeFilters: {}, // Store currently applied filters
+    activeFilters: {},
 
     init: function() {
         this.activeFilters = {
@@ -9,7 +9,16 @@ const Dashboard = {
             status: document.getElementById('filterStatus').value,
             reason: document.getElementById('filterReason').value
         };
-        this.updateFilters(); 
+        this.updateFilters();
+
+        const searchInput = document.getElementById('clientSearchInput');
+        if (searchInput) {
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.searchClient();
+                }
+            });
+        }
     },
 
     updateFilters: function() {
@@ -17,9 +26,8 @@ const Dashboard = {
         const status = document.getElementById('filterStatus').value;
         const reason = document.getElementById('filterReason').value;
 
-        // Update active state
         this.activeFilters = { period, status, reason };
-        this.checkPendingFilters(); // Turn off pulse
+        this.checkPendingFilters();
 
         const dateRange = this.calculateDateRange(period);
         
@@ -61,12 +69,6 @@ const Dashboard = {
     },
 
     calculateDateRange: function(period) {
-        // ... (Keep existing logic - omitted for brevity if unchanged, but need to be careful with replace)
-        // Since I'm replacing a block, I must include content or it will be lost.
-        // Actually, let's keep it safe and just replace init/update/reset block if possible.
-        // But the user tool call has EndLine 230 which covers calculateDateRange.
-        // I should have requested strict blocks. 
-        // Re-implementing calculateDateRange here to be safe.
         const end = new Date();
         let start = null;
 
@@ -90,18 +92,16 @@ const Dashboard = {
     },
 
     fetchStats: async function(queryString = '') {
-        // Token handled by Auth.fetch
         this.setLoading(true);
         try {
             const url = queryString ? `/api/dashboard/stats?${queryString}` : '/api/dashboard/stats';
-            const response = await Auth.fetch(url); // Auth.fetch
+            const response = await Auth.fetch(url);
             const data = await response.json();
             this.data = data; 
             
-            // Add fade animation to all cards
             document.querySelectorAll('.kpi-card, .chart-card').forEach(el => {
                 el.classList.remove('fade-in');
-                void el.offsetWidth; // trigger reflow
+                void el.offsetWidth;
                 el.classList.add('fade-in');
             });
 
@@ -109,7 +109,6 @@ const Dashboard = {
             this.renderCharts(data);
             this.renderLatestTable(data.latestOs || []);
 
-            // Toast Logic
             if (data.totalOs === 0) {
                 this.showToast('Nenhum resultado encontrado para os filtros selecionados', 'warning');
             } else {
@@ -138,7 +137,6 @@ const Dashboard = {
         toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
         container.appendChild(toast);
 
-        // Remove after 2 seconds
         setTimeout(() => {
             toast.classList.add('hide');
             toast.addEventListener('animationend', () => {
@@ -148,7 +146,6 @@ const Dashboard = {
     },
     
     setLoading: function(isLoading) {
-        // ... (Keep existing)
         const containers = ['chartMonth', 'chartDone', 'chartTopClients', 'chartReason'];
         containers.forEach(id => {
             const canvas = document.getElementById(id);
@@ -173,9 +170,6 @@ const Dashboard = {
         }
     },
 
-    // ... renderEmptyState, resetChartContainer, exportData ...
-    // I will include them to ensure validity since I am replacing a huge chunk
-    
     renderEmptyState: function(canvasId, message) {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
@@ -204,7 +198,7 @@ const Dashboard = {
 
     exportData: function(metric) {
          if (!this.data) return;
-         // ... (Shortened for brevity in thought process, but will include in tool call)
+         
          let csvContent = "";
          let filename = `dashboard_${metric}_${new Date().toISOString().slice(0,10)}.csv`;
         if (metric === 'months') { const months = this.data.totalByMonths || {}; csvContent = "Mes,Quantidade\n"; Object.keys(months).forEach(m => { csvContent += `${m},${months[m]}\n`; }); }
@@ -234,7 +228,6 @@ const Dashboard = {
         const done = data.totalDone || 0;
         const pending = data.totalNotDone || 0;
         
-        // This Month Logic
         const date = new Date();
         const currentMonthName = date.toLocaleString('en-US', { month: 'long' }).toUpperCase();
         date.setMonth(date.getMonth() - 1);
@@ -259,7 +252,7 @@ const Dashboard = {
             <div class="kpi-card fade-in">
                 <div class="kpi-content">
                     <h4>${k.label}</h4>
-                    <div class="value" id="${k.id}">0</div> <!-- Start at 0 -->
+                    <div class="value" id="${k.id}">0</div>
                     ${trendHtml}
                 </div>
                 <div class="kpi-icon">${k.icon}</div>
@@ -267,7 +260,6 @@ const Dashboard = {
             `;
         }).join('');
 
-        // Trigger animations
         kpis.forEach(k => {
              const el = document.getElementById(k.id);
              if(el) this.animateValue(el, 0, k.value, 1500);
@@ -282,7 +274,7 @@ const Dashboard = {
         
         const isPositive = rounded > 0;
         const colorClass = isPositive ? 'trend-up' : 'trend-down';
-        const arrow = isPositive ? '▲' : '▼'; // Simple arrows, can be icons
+        const arrow = isPositive ? '▲' : '▼';
         const sign = isPositive ? '+' : '';
         
         return `<div class="trend-indicator ${colorClass}">${arrow} ${sign}${rounded}%</div>`;
@@ -298,8 +290,8 @@ const Dashboard = {
         tbody.innerHTML = list.map(item => {
             const date = new Date(item.createdAt).toLocaleDateString();
             const statusBadge = item.done ? 
-                '<span class="badge badge-done">✓ Concluído</span>' : 
-                '<span class="badge badge-pending">🕒 Pendente</span>';
+                '<div class="badge-status done"><span>✓</span> FEITO</div>' : 
+                '<div class="badge-status pending"><span>🕒</span> PENDENTE</div>';
             
             const formattedReason = this.formatReason(item.reason);
 
@@ -315,7 +307,6 @@ const Dashboard = {
     },
 
     renderCharts: function(data) {
-        // 1. Total By Done (Pie)
         const totalDone = data.totalDone || 0;
         const totalNotDone = data.totalNotDone || 0;
         const totalStatus = totalDone + totalNotDone;
@@ -324,13 +315,11 @@ const Dashboard = {
         if (totalStatus === 0) {
              this.renderEmptyState('chartDone', 'Nenhum status registrado');
         } else {
-            // Create data structure for sorting
             const statusItems = [
                 { label: 'Concluído', value: totalDone, color: '#10B981' },
                 { label: 'Pendente', value: totalNotDone, color: '#374151' }
             ];
 
-            // Sort by value descending
             statusItems.sort((a, b) => b.value - a.value);
 
             const getLabel = (name, val) => {
@@ -354,7 +343,6 @@ const Dashboard = {
             this.generateHtmlLegend('legendDone', labels, colors);
         }
 
-        // 2. Total By Reason (Pie)
         const reasons = data.totalByReasons || {};
         const reasonEntries = Object.entries(reasons);
         this.resetChartContainer('chartReason');
@@ -362,7 +350,6 @@ const Dashboard = {
         if (reasonEntries.length === 0) {
             this.renderEmptyState('chartReason', 'Nenhum motivo registrado');
         } else {
-            // Sort reasons by value descending
             reasonEntries.sort((a, b) => b[1] - a[1]);
 
             const reasonData = reasonEntries.map(entry => entry[1]);
@@ -391,7 +378,6 @@ const Dashboard = {
             this.generateHtmlLegend('legendReason', detailedLabels, reasonColors);
         }
 
-        // 3. Total By Month (Bar)
         const months = data.totalByMonths || {};
         const sortedMonths = Object.keys(months); 
         this.resetChartContainer('chartMonth');
@@ -413,7 +399,6 @@ const Dashboard = {
             });
         }
 
-        // 4. Top Clients (Horizontal Bar)
         const topClients = data.topClients || {};
         const clientNames = Object.keys(topClients);
         this.resetChartContainer('chartTopClients');
@@ -457,7 +442,6 @@ const Dashboard = {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                // Tooltips enabled by default (or explicitly configured)
                 tooltip: {
                     callbacks: {
                         label: function(context) {
@@ -472,10 +456,10 @@ const Dashboard = {
                     display: (type !== 'pie' && type !== 'doughnut'),
                     position: 'bottom',
                     labels: { color: '#EEEEEE' },
-                    onClick: null // Disable legend click (toggling visibility)
+                    onClick: null
                 }
             },
-            onClick: null, // Disable canvas click (custom or default)
+            onClick: null,
             scales: (type === 'bar') ? {
                 y: {
                     beginAtZero: true,
@@ -507,7 +491,6 @@ const Dashboard = {
             return;
         }
 
-        // Token handled by Auth.fetch
         try {
             const response = await Auth.fetch(`/api/dashboard/stats?client=${encodeURIComponent(clientName)}`);
             const data = await response.json();

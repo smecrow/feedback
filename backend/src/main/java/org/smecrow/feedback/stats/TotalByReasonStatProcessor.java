@@ -24,11 +24,7 @@ public class TotalByReasonStatProcessor implements StatProcessor {
 
     @Override
     public void process(Map<String, Object> stats, DashboardFilter filter, User user) {
-        // We only group by reason if reason filter is NOT set (otherwise it's just 1 slice)
-        // But for dashboard "By Reason" chart, usually we want to see distribution even if filtered by done/date.
-        // If specific reason is selected, the chart will show only that reason.
-        
-        List<Object[]> results = repository.countByReasonWithFilter(user, filter.startDate(), filter.endDate(), filter.done());
+       List<Object[]> results = repository.countByReasonWithFilter(user, filter.startDate(), filter.endDate(), filter.done());
         
         Map<String, Long> reasonsMap = new HashMap<>();
         for (Object[] result : results) {

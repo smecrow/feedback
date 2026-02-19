@@ -1,13 +1,13 @@
 :root {
-    --bg-color: #181b21; /* Darker Graphite base */
-    --text-color: #EEEEEE; /* Soft White */
-    --text-muted: #B0B3B8; /* Grey text */
-    --accent-color: #3B82F6; /* Blue 500 */
-    --accent-hover: #2563EB; /* Blue 600 */
-    --glass-bg: rgba(30, 34, 40, 0.6); /* Darker, more transparent surface */
-    --glass-border: rgba(255, 255, 255, 0.08); /* Subtle crisp border */
+    --bg-color: #181b21;
+    --text-color: #EEEEEE;
+    --text-muted: #B0B3B8;
+    --accent-color: #3B82F6;
+    --accent-hover: #2563EB;
+    --glass-bg: rgba(30, 34, 40, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.08);
     --input-bg: rgba(20, 23, 28, 0.6);
-    --input-border: rgba(59, 130, 246, 0.3); /* Blue tint */
+    --input-border: rgba(59, 130, 246, 0.3);
     --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
 }
 
@@ -21,7 +21,7 @@
 }
 
 nav {
-    background-color: rgba(30, 30, 40, 0.4) !important; /* Transparent dark */
+    background-color: rgba(30, 30, 40, 0.4) !important;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
@@ -36,7 +36,7 @@ body {
     overflow-x: hidden;
 }
 
-/* Auth Pages Layout (Center Content) */
+
 body.auth-page {
     justify-content: center;
     align-items: center;
@@ -55,7 +55,7 @@ body.auth-page {
 .auth-container {
     padding: 3rem; /* Explicit padding ensuring inheritance or override */
     width: 90%;
-    max-width: 520px; /* Wider card */
+    max-width: 520px;
     box-shadow: var(--card-shadow);
     transition: transform 0.2s ease;
 }
@@ -72,9 +72,9 @@ body.auth-page {
     background: linear-gradient(to right, var(--text-color), var(--accent-color));
     -webkit-background-clip: text;
     background-clip: text;
-    color: transparent; /* Fallback handled by some browsers, usually works with clip */
+    color: transparent;
 }
-/* Fallback for non-supporting browsers if needed, but modern web allows this */
+
 @supports not (background-clip: text) {
     .auth-header h1 {
         background: none;
@@ -96,10 +96,10 @@ body.auth-page {
 }
 
 .trend-up {
-    color: #10B981; /* Green */
+    color: #10B981;
 }
 
-/* Disable logo animations */
+
 nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
     animation: none !important;
     transition: none !important;
@@ -107,7 +107,7 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
 }
 
 .trend-down {
-    color: #EF4444; /* Red */
+    color: #EF4444;
 }
 
 .trend-neutral {
@@ -131,8 +131,7 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
     background: rgba(59, 130, 246, 0.1);
 }
 
-/* Loading & Empty States */
-/* .chart-container-relative moved to bottom with Flex properties */ 
+
 
 .loading-overlay {
     position: absolute;
@@ -224,7 +223,7 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
 
 .input-with-icon .form-input {
     padding-left: 40px;
-    padding-right: 40px; /* Space for toggle */
+    padding-right: 40px;
 }
 
 .password-toggle {
@@ -263,7 +262,7 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
     box-shadow: 0 4px 14px rgba(74, 158, 255, 0.3);
     transition: all 0.3s ease;
     position: relative;
-    overflow: hidden; /* For ripple */
+    overflow: hidden;
 }
 
 .btn-primary:hover {
@@ -293,30 +292,9 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
     text-decoration: underline;
 }
 
-/* Theme Switcher */
-.theme-switch {
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: var(--text-color);
-    backdrop-filter: blur(4px);
-    transition: all 0.2s;
-}
 
-.theme-switch:hover {
-    background: var(--glass-border);
-}
 
-/* Animations */
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     100% { opacity: 1; transform: translateY(0); }
@@ -336,7 +314,7 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
     animation: fadeIn 0.5s ease-out forwards;
 }
 
-/* Error Message */
+
 .error-msg {
     color: #ef4444;
     font-size: 0.85rem;
@@ -347,10 +325,10 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
     padding: 0.5rem;
     border-radius: 6px;
     border: 1px solid rgba(239, 68, 68, 0.2);
-    white-space: pre-line; /* Allow newlines */
+    white-space: pre-line;
 }
 
-/* Toast Notifications */
+
 #toast-container {
     position: fixed;
     bottom: 20px;
@@ -394,7 +372,7 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
     animation: slideOut 0.5s ease-in forwards;
 }
 
-/* Icon Buttons */
+
 .btn-icon {
     background: transparent;
     border: none;
@@ -416,7 +394,7 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
     color: #ef4444;
 }
 
-/* Dashboard Redesign V8 */
+
 .dashboard-container {
     padding: 2rem;
     max-width: 95%;
@@ -426,7 +404,7 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
     gap: 2rem;
 }
 
-/* KPI Cards */
+
 .kpi-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr); /* 2 columns fixed */
@@ -542,7 +520,7 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
 .trend-down { color: #ef4444; }
 .trend-neutral { color: var(--text-muted); }
 
-/* Charts Layout V8 */
+
 .charts-grid-v8 {
     display: grid;
     grid-template-columns: 2fr 1fr; /* Asymmetric grid */
@@ -635,7 +613,7 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
     flex-shrink: 0;
 }
 
-/* Modern Table */
+
 .recent-table-card {
     background: var(--glass-bg);
     backdrop-filter: blur(20px);
@@ -707,7 +685,7 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
     letter-spacing: -0.5px;
 }
 
-/* Validation Styles */
+
 .form-input.error,
 .form-input.error:focus {
     border-color: #EF4444;
@@ -736,7 +714,7 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Password Requirements */
+
 .password-requirements {
     margin-top: 0.5rem;
     font-size: 0.8rem;
@@ -750,7 +728,7 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
     margin-bottom: 2px;
 }
 
-/* Animations */
+
 @keyframes fadeInScale {
     from {
         opacity: 0;
@@ -773,7 +751,7 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
                floatCard 4s ease-in-out infinite 0.6s; /* float after entry */
 }
 
-/* Stagger Children */
+
 .animate-entry .brand-logo { opacity: 0; animation: fadeInScale 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards; }
 .animate-entry .auth-header { opacity: 0; animation: fadeInScale 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards; }
 .animate-entry .form-group:nth-of-type(2) { opacity: 0; animation: fadeInScale 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards; }
@@ -781,7 +759,7 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
 .animate-entry .form-group:nth-of-type(4) { opacity: 0; animation: fadeInScale 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.5s forwards; }
 .animate-entry button[type="submit"] { opacity: 0; animation: fadeInScale 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.6s forwards; }
 .animate-entry .auth-footer { opacity: 0; animation: fadeInScale 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.7s forwards; }
-/* Loading Overlay */
+
 .loading-overlay-global {
     position: fixed;
     top: 0;

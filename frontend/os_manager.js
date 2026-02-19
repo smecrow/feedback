@@ -1,4 +1,4 @@
-// State Management
+
 const REASON_COLORS = {
     'SEM_CONEXAO': '#ef4444',
     'LENTIDAO': '#6b7280',
@@ -20,9 +20,9 @@ const REASONS = {
 };
 
 let currentFilter = {
-    type: 'ALL', // ALL, MONTH, REASON, CLIENT, DONE
+    type: 'ALL',
     value: null,
-    doneFilter: null // true, false, or null (both)
+    doneFilter: null
 };
 
 let currentSort = {
@@ -41,25 +41,25 @@ function handleSort(field) {
         currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
     } else {
         currentSort.field = field;
-        currentSort.direction = 'asc'; // Default new sort to asc
+        currentSort.direction = 'asc';
     }
     
-    // Update Icons
+
     updateSortIcons();
 
-    // Reload
+
     loadCurrentView();
 }
 
 function updateSortIcons() {
-    // Reset all
+
     document.querySelectorAll('th.sortable').forEach(th => {
         th.classList.remove('sorted-asc', 'sorted-desc');
         const icon = th.querySelector('.sort-icon');
         if(icon) icon.textContent = '↕';
     });
 
-    // Set active
+
     const activeTh = document.querySelector(`th[onclick="handleSort('${currentSort.field}')"]`);
     if (activeTh) {
         activeTh.classList.add(currentSort.direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
@@ -88,17 +88,17 @@ function loadCurrentView() {
 document.addEventListener('DOMContentLoaded', () => {
     Auth.checkAuth();
     
-    // Set Navbar Username
+
     const username = localStorage.getItem('username') || 'Usuário';
     const navUser = document.getElementById('nav-username');
     if(navUser) navUser.textContent = username;
     
     // Set Default Month (Current Month) for the input, but don't filter by it yet
     const date = new Date();
-    const monthStr = date.toISOString().slice(0, 7); // YYYY-MM
+    const monthStr = date.toISOString().slice(0, 7);
     document.getElementById('monthPicker').value = monthStr;
     
-    // Check for URL params (Client Search or Highlight)
+
     const urlParams = new URLSearchParams(window.location.search);
     const clientParam = urlParams.get('client');
 
@@ -145,10 +145,10 @@ function setupEventListeners() {
     flatpickr("#monthPicker", {
         plugins: [
             new monthSelectPlugin({
-                shorthand: true, //defaults to false
+                shorthand: true,
                 dateFormat: "F Y", //defaults to "F Y"
                 altFormat: "F Y", //defaults to "F Y"
-                theme: "dark" // defaults to "light"
+                theme: "dark"
             })
         ],
         defaultDate: new Date(),
@@ -181,18 +181,18 @@ function setupEventListeners() {
     document.getElementById('toggleDoneBtn').addEventListener('click', (e) => {
         const btn = e.target;
         if (currentFilter.type === 'DONE') {
-            resetFilters(); // Toggle off
+            resetFilters();
         } else {
-            loadOsByDone(true, false); // false = Pending
+            loadOsByDone(true, false);
             btn.style.borderColor = 'var(--accent-color)';
             btn.style.color = 'var(--accent-color)';
         }
     });
 
-     // Reset Filters
+
      document.getElementById('resetFiltersBtn').addEventListener('click', resetFilters);
 
-    // Real-time Validation Listeners
+
     document.getElementById('newClientName').addEventListener('input', (e) => {
         const input = e.target;
         if(input.value.trim()) {
@@ -206,35 +206,35 @@ function resetFilters() {
     document.getElementById('clientSearch').value = '';
     document.getElementById('searchResults').style.display = 'none';
     
-    // Reset buttons visual state
+
     document.querySelectorAll('.reason-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('toggleDoneBtn').style.borderColor = 'var(--glass-border)';
     document.getElementById('toggleDoneBtn').style.color = 'var(--text-color)';
 
-    // Load defaults
+
     loadAllOs();
 }
 
-// --- API Calls ---
+
 
 
 
 async function fetchOs(url) {
     const listContainer = document.getElementById('osList');
     
-    showLoading(true); // Ensure loading state is visible
+
 
     try {
-        const response = await Auth.fetch(url); // Auth.fetch handles token
+        const response = await Auth.fetch(url);
 
         if (!response.ok) throw new Error('Falha ao buscar OS');
 
         const data = await response.json();
         
-        // Update Pagination State
+
         pagination.totalElements = data.totalElements;
         pagination.totalPages = data.totalPages;
-        pagination.size = data.size; // Sync size from backend response
+        pagination.size = data.size;
         
         renderOsList(data.content);
         renderPagination();
@@ -252,7 +252,7 @@ async function fetchOs(url) {
 function loadAllOs(resetPage = true) {
     if(resetPage) pagination.page = 0;
     currentFilter = { type: 'ALL', value: null };
-    fetchOs(`/api/os/getAllOs?${getSortParam()}`); // getSortParam now includes page/size
+    fetchOs(`/api/os/getAllOs?${getSortParam()}`);
 }
 
 function loadOsByMonth(month, year, resetPage = true) {
@@ -319,13 +319,13 @@ async function searchClients(query) {
 }
 
 
-// --- Rendering ---
+
 
 function renderOsList(osList) {
     const listContainer = document.getElementById('osList');
     listContainer.innerHTML = '';
     
-    // Check for highlight param
+
     const urlParams = new URLSearchParams(window.location.search);
     const highlightId = urlParams.get('highlight');
 
@@ -335,7 +335,7 @@ function renderOsList(osList) {
     }
 
     osList.forEach(os => {
-        // Status Badge Logic
+
         const statusClass = os.done ? 'badge-status done' : 'badge-status pending';
         const reason = REASONS[os.reason] || os.reason.replace(/_/g, ' ');
         const date = new Date(os.createdAt).toLocaleDateString();
@@ -345,7 +345,7 @@ function renderOsList(osList) {
         row.id = `os-row-${os.id}`;
         if (os.done) row.classList.add('done-row');
         
-        // Highlight logic
+
         if (highlightId && os.id == highlightId) {
             row.classList.add('highlight-row');
             setTimeout(() => {
@@ -353,7 +353,7 @@ function renderOsList(osList) {
             }, 500);
         }
         
-        // Format ID for display (optional, can be removed)
+
         const displayId = os.id; // or existing logic
 
         row.innerHTML = `
@@ -388,7 +388,7 @@ function renderOsList(osList) {
     }
 }
 
-// --- Actions ---
+
 
 async function toggleDone(id, newStatus) {
     try {
@@ -400,12 +400,12 @@ async function toggleDone(id, newStatus) {
             body: JSON.stringify({ done: newStatus })
         });
         
-        // Refresh specific row UI without reload to keep context
+
         const row = document.getElementById(`os-row-${id}`);
         if(row) {
              const badge = row.querySelector('.badge-status');
              if(badge) {
-                 badge.onclick = () => toggleDone(id, !newStatus); // Update click handler to toggle back
+                 badge.onclick = () => toggleDone(id, !newStatus);
                  
                  if(newStatus) {
                      badge.className = 'badge-status done';
@@ -424,7 +424,7 @@ async function toggleDone(id, newStatus) {
         showToast('Erro ao atualizar status', 'error');
     }
 }
-window.toggleDone = toggleDone; // Expose globally
+
 
 let osIdToDelete = null;
 
@@ -432,7 +432,7 @@ function handleDelete(id) {
     osIdToDelete = id;
     document.getElementById('confirmModal').classList.add('active');
 }
-window.handleDelete = handleDelete; // Expose globally
+
 
 function closeConfirmModal() {
     document.getElementById('confirmModal').classList.remove('active');
@@ -471,11 +471,11 @@ async function deleteOs(id) {
     }
 }
 
-// --- Modal Logic ---
 
-// --- Modal Functions ---
+
+
 function openCreateModal() {
-    document.getElementById('osId').value = ''; // Clear ID
+    document.getElementById('osId').value = '';
     document.getElementById('createOsForm').reset();
     document.getElementById('modalTitle').textContent = 'Nova Ordem de Serviço';
     document.getElementById('btnSubmit').textContent = 'Criar OS';
@@ -487,7 +487,7 @@ function openCreateModal() {
         btn.style.border = 'none';
     });
     
-    // Reset validations
+
     document.getElementById('newClientName').classList.remove('input-error', 'shake');
     document.getElementById('clientError').style.display = 'none';
     document.getElementById('reasonError').style.display = 'none';
@@ -505,10 +505,10 @@ function openEditModal(id, client, reason) {
     document.getElementById('modalTitle').textContent = 'Editar Ordem de Serviço';
     document.getElementById('btnSubmit').textContent = 'Salvar Alterações';
 
-    // Select Reason
-    selectReason(document.querySelector(`.reason-btn.reason-${reason}`), reason); // Pass the button element and reason value
+
+    selectReason(document.querySelector(`.reason-btn.reason-${reason}`), reason);
     
-    // Reset validations
+
     document.getElementById('newClientName').classList.remove('input-error', 'shake');
     document.getElementById('clientError').style.display = 'none';
     document.getElementById('reasonError').style.display = 'none';
@@ -518,7 +518,7 @@ function openEditModal(id, client, reason) {
 
     document.getElementById('createModal').classList.add('active');
 }
-window.openEditModal = openEditModal; // Expose globally
+
 
 function closeCreateModal() {
     const modal = document.getElementById('createModal');
@@ -536,7 +536,7 @@ function selectReason(btn, value) {
     btn.classList.add('active');
     document.getElementById('selectedReason').value = value;
     
-    // Remove error if exists
+
     document.getElementById('reasonError').style.display = 'none';
     document.querySelector('.reason-grid').classList.remove('shake');
 }
@@ -554,32 +554,32 @@ async function handleCreateOs(e) {
 
     let isValid = true;
 
-    // Reset Animations
+
     inputWrapper.classList.remove('shake');
     reasonGrid.classList.remove('shake');
 
-    // Validation
+
     if (!client) {
         clientError.style.display = 'block';
         clientInput.classList.add('error');
-        void inputWrapper.offsetWidth; // trigger reflow
+        void inputWrapper.offsetWidth;
         inputWrapper.classList.add('shake');
         isValid = false;
     }
 
     if (!reason) {
         reasonError.style.display = 'block';
-        void reasonGrid.offsetWidth; // trigger reflow
+        void reasonGrid.offsetWidth;
         reasonGrid.classList.add('shake');
         isValid = false;
     }
 
     if (!isValid) return;
 
-    const btnSubmit = document.getElementById('btnSubmit'); // Changed from btnCreate
+    const btnSubmit = document.getElementById('btnSubmit');
     const originalContent = btnSubmit.innerHTML;
     
-    // Loading State
+
     btnSubmit.disabled = true;
     const osId = document.getElementById('osId').value;
     const isEdit = !!osId;
@@ -609,7 +609,7 @@ async function handleCreateOs(e) {
             const errorText = await response.text();
             showToast('Erro: ' + errorText, 'error');
             
-            // Reset Button
+
             btnSubmit.disabled = false;
             btnSubmit.innerHTML = originalContent;
         }
@@ -617,13 +617,13 @@ async function handleCreateOs(e) {
         console.error('Erro:', error);
         showToast('Erro de conexão ao salvar OS', 'error');
         
-        // Reset Button
+
         btnSubmit.disabled = false;
         btnSubmit.innerHTML = originalContent;
     }
 }
 
-/* Close modal on outside click */
+
 document.getElementById('createModal').addEventListener('click', (e) => {
     if (e.target === document.getElementById('createModal')) {
         closeCreateModal();
@@ -640,13 +640,13 @@ document.getElementById('importModal').addEventListener('click', (e) => {
     }
 });
 
-// --- CSV Import Features ---
+
 
 let importedData = [];
 
 function openImportModal() {
     document.getElementById('importModal').classList.add('active');
-    // Reset UI
+
     document.getElementById('fileInput').value = '';
     document.getElementById('fileInfo').textContent = 'Nenhum arquivo selecionado';
     document.getElementById('importPreview').style.display = 'none';
@@ -741,7 +741,7 @@ function parseCSV(text) {
     
     let validCount = 0;
 
-    // Parse Rows (Limit preview to 50, but store all)
+
     for (let i = 1; i < lines.length; i++) {
         const line = lines[i].trim();
         if (!line) continue;
@@ -769,7 +769,7 @@ function parseCSV(text) {
         // Normalize Status
         const done = statusRaw.toLowerCase().includes('feito') || statusRaw.toLowerCase().includes('conclu') || statusRaw === 'true' || statusRaw === '1';
 
-        // Parse Date Object (ISO or BR)
+
         let createdAt = null;
         if (dateRaw) {
              if (dateRaw.includes('/')) {
@@ -783,7 +783,7 @@ function parseCSV(text) {
         importedData.push({ client, reason, done, createdAt });
         validCount++;
 
-        // Render Preview (Max 10 rows)
+
         if (validCount <= 10) {
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -832,7 +832,7 @@ window.executeImport = async function() {
     for (let i = 0; i < total; i++) {
         const item = importedData[i];
         
-        // Update Progress
+
         const percent = Math.round(((i + 1) / total) * 100);
         progressBar.style.width = `${percent}%`;
         progressText.textContent = `Importando ${i + 1} de ${total}...`;
@@ -857,7 +857,7 @@ window.executeImport = async function() {
         if(total < 100) await new Promise(r => setTimeout(r, 50)); 
     }
 
-    // Finalize
+
     progressBar.style.width = '100%';
     progressText.textContent = 'Concluído!';
     
@@ -873,7 +873,7 @@ function showToast(message, type = 'success') {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    // Simple icon based on type
+
     const icon = type === 'success' ? '✔' : '⚠';
     toast.innerHTML = `
         <span style="font-size: 1.2rem; margin-right: 0.5rem;">${icon}</span>
@@ -886,7 +886,7 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
-// --- Pagination Logic ---
+
 
 function changePage(newPage) {
     if (newPage >= 0 && newPage < pagination.totalPages) {
@@ -909,7 +909,7 @@ function renderPagination() {
     
     controls.innerHTML = '';
     
-    // Info Text
+
     const start = pagination.page * pagination.size + 1;
     const end = Math.min((pagination.page + 1) * pagination.size, pagination.totalElements);
     const total = pagination.totalElements;
@@ -930,7 +930,7 @@ function renderPagination() {
     prevBtn.onclick = () => changePage(pagination.page - 1);
     controls.appendChild(prevBtn);
 
-    // Page Numbers logic
+
     let startPage = Math.max(0, pagination.page - 2);
     let endPage = Math.min(pagination.totalPages - 1, startPage + 4);
     
@@ -955,7 +955,7 @@ function renderPagination() {
     controls.appendChild(nextBtn);
 }
 
-// --- Test Data Generator ---
+
 async function generateTestOs(count = 20) {
     const names = ["Silva", "Santos", "Oliveira", "Souza", "Rodrigues", "Ferreira", "Alves", "Pereira", "Lima", "Gomes", "Costa", "Ribeiro", "Martins", "Carvalho", "Almeida", "Lopes", "Soares", "Fernandes", "Vieira", "Barbosa", "Rocha", "Dias", "Nascimento", "Andrade", "Moreira", "Nunes", "Marques", "Machado", "Mendes", "Freitas", "Cardoso", "Ramos", "Gonçalves", "Santana", "Teixeira"];
     const firstNames = ["João", "Maria", "José", "Ana", "Pedro", "Lucas", "Mariana", "Gabriel", "Juliana", "Carlos", "Fernanda", "Paulo", "Aline", "Marcos", "Beatriz", "Luiz", "Camila", "Rafael", "Bruna", "Gustavo", "Larissa", "Mateus", "Leticia", "Felipe", "Amanda", "Thiago", "Patricia", "Bruno", "Debora", "Leonardo"];
@@ -995,7 +995,7 @@ async function generateTestOs(count = 20) {
     loadAllOs();
 }
 
-// --- Loading Helper ---
+
 function showLoading(isLoading) {
     const tableBody = document.getElementById('osList');
     if (!tableBody) return;
@@ -1013,7 +1013,7 @@ function showLoading(isLoading) {
 }
 window.showLoading = showLoading;
 
-// --- Export CSV ---
+
 async function exportCsv() {
     const total = pagination.totalElements;
     if (total === 0) {
@@ -1052,10 +1052,10 @@ async function exportCsv() {
         const delimiter = ';';
         const bom = '\uFEFF';
         
-        // Header Row
+
         let csvContent = headers.join(delimiter) + '\n';
         
-        // Data Rows
+
         fullList.forEach(os => {
             const date = new Date(os.createdAt).toLocaleDateString('pt-BR');
             const status = os.done ? 'Concluído' : 'Pendente';
@@ -1070,11 +1070,11 @@ async function exportCsv() {
             csvContent += row.join(delimiter) + '\n';
         });
 
-        // Create Blob
+
         const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
         const urlObj = URL.createObjectURL(blob);
         
-        // Download Link
+
         const link = document.createElement('a');
         link.href = urlObj;
         
@@ -1095,10 +1095,10 @@ async function exportCsv() {
 }
 window.exportCsv = exportCsv;
 
-// Expose to window for console usage
+
 window.generateTestOs = generateTestOs;
 
-// Console Command for Bulk Delete
+
 window.deleteAllOs = async function() {
     if (!confirm('ATENÇÃO: Isso apagará todas as suas Ordens de Serviço permanentemente. Tem certeza?')) return;
     

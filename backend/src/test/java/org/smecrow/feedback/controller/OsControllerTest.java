@@ -48,7 +48,6 @@ class OsControllerTest {
     @MockitoBean
     private OsService osService;
 
-    // Mocks de segurança
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
 

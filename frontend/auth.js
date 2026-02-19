@@ -3,7 +3,6 @@ const API_URL = '/api/auth';
 const Auth = {
     isAuthenticated: () => {
         const token = localStorage.getItem('token');
-        // Basic check, in a real app you might validate expiry
         return !!token;
     },
 
@@ -37,10 +36,8 @@ const Auth = {
     fetch: async (url, options = {}) => {
         const token = Auth.getToken();
         
-        // Ensure headers object exists
         options.headers = options.headers || {};
         
-        // Add Auth Token automatically
         if (token) {
             options.headers['Authorization'] = `Bearer ${token}`;
         }
@@ -50,7 +47,7 @@ const Auth = {
             
             if (response.status === 401 || response.status === 403) {
                 console.warn('Sessão expirada. Redirecionando...');
-                Auth.logout(); // Clears storage and redirects
+                Auth.logout();
                 throw new Error('Sessão expirada');
             }
             
@@ -61,57 +58,32 @@ const Auth = {
     }
 };
 
-// Theme Toggler
-function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-
-    const toggleBtn = document.getElementById('theme-toggle');
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateToggleIcon(toggleBtn, newTheme);
-        });
-        updateToggleIcon(toggleBtn, savedTheme);
-    }
-}
-
-function updateToggleIcon(btn, theme) {
-    // Simple ASCII icons or SVG replacement
-    btn.innerHTML = theme === 'dark' ? 
-        '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>' : 
-        '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
-}
 
 
-// Password Toggle
 window.togglePassword = function(inputId, btn) {
     const input = document.getElementById(inputId);
     const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
     input.setAttribute('type', type);
     
-    // Toggle Icon
+
     if (type === 'text') {
-        // Eye Off (Closed)
+
         btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
     } else {
-        // Eye On (Open)
+
         btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
     }
 };
 
 ;
 
-// Validation Helpers
+
 window.validateField = function(input) {
     const parent = input.closest('.form-group');
     const wrapper = input.closest('.input-with-icon');
     let errorMsg = parent.querySelector('.field-error-msg');
     
-    // Create error msg container if not exists
+
     if (!errorMsg) {
         errorMsg = document.createElement('span');
         errorMsg.className = 'field-error-msg';
@@ -122,19 +94,19 @@ window.validateField = function(input) {
     let isValid = true;
     let message = '';
 
-    // Server-side Error Precedence
+
     if (input.dataset.serverError) {
         isValid = false;
-        message = input.dataset.serverErrorMessage || 'Inválido'; // Fallback
-        // Ensure error msg is displayed if not already
+        message = input.dataset.serverErrorMessage || 'Inválido';
+
         if(errorMsg.textContent !== message) errorMsg.textContent = message;
     }
-    // Required Check
+
     else if (input.hasAttribute('required') && !value) {
         isValid = false;
         message = 'Campo obrigatório';
     } 
-    // Email Check
+
     else if (input.type === 'email' && value) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(value)) {
@@ -142,13 +114,13 @@ window.validateField = function(input) {
             message = 'Email inválido';
         }
     }
-    // Simple Length Check for Password
+
     else if (input.id === 'password' && value && value.length < 8 && document.body.contains(document.getElementById('registerForm'))) {
          isValid = false;
          message = 'Mínimo 8 caracteres';
     }
 
-    // Apply Styles
+
     if (!isValid) {
         input.classList.add('error');
         input.classList.remove('success');
@@ -162,9 +134,9 @@ window.validateField = function(input) {
     return isValid;
 };
 
-// Attach Listeners
+
 document.addEventListener('DOMContentLoaded', () => {
-    initTheme();
+
     
 
 
@@ -172,13 +144,13 @@ document.addEventListener('DOMContentLoaded', () => {
     inputs.forEach(input => {
         input.addEventListener('blur', () => validateField(input));
         input.addEventListener('input', () => {
-            // Clear server error if exists
+
             if (input.dataset.serverError) {
                 delete input.dataset.serverError;
                 delete input.dataset.serverErrorMessage;
             }
 
-            // Clear error on input
+
             if(input.classList.contains('error')) {
                 input.classList.remove('error');
                 const parent = input.closest('.form-group');

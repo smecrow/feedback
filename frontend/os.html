@@ -4,25 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciamento de OS - Feedbacks</title>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
+    <link rel="icon" type="image/png" href="app-icon.png?v=1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="os_style.css">
-    <!-- Flatpickr CSS (Dark Theme) -->
+
     <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
-    <!-- Flatpickr JS -->
+
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/plugins/monthSelect/index.js"></script>
     <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/plugins/monthSelect/style.css">
 </head>
 <body>
 
-    <!-- Navbar -->
+
     <nav style="padding: 1rem 2rem; display: flex; align-items: center; border-bottom: 1px solid var(--glass-border); background: var(--glass-bg); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; gap: 2rem;">
         
-        <!-- Left Group: Title + Nav Links -->
+
         <div style="display: flex; align-items: center; gap: 2rem;">
             <div class="brand-text" style="font-weight: 700; font-size: 1.2rem; color: var(--accent-color); display: flex; align-items: center; gap: 8px;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9l1 1-9 9-1 1-2-2 1-1 9-9 1 1z"></path><path d="M18 6l2-2"></path><path d="M16 8l-2-2"></path><path d="M22 2l-5 5"></path><path d="M19 5l-2 2"></path></svg>
@@ -34,7 +34,7 @@
             </div>
         </div>
 
-        <!-- Right Group: Actions -->
+
         <div style="margin-left: auto; display: flex; gap: 1rem; align-items: center;">
             <button onclick="Auth.logout()" class="btn btn-primary" style="width: auto; padding: 0.5rem 1rem; font-size: 0.9rem;">Sair</button>
         </div>
@@ -57,28 +57,28 @@
             </div>
         </div>
 
-        <!-- Filter Bar Row 1: Search & Month + Actions -->
+
         <div class="filter-bar" style="margin-bottom: 3rem; justify-content: space-between; flex-wrap: wrap;">
-            <!-- Left Group: Search & Month -->
+
             <div style="display: flex; gap: 1rem; align-items: center; flex: 1; min-width: 300px;">
-                <!-- Search Client -->
+
                 <div class="search-container" style="flex: 1; max-width: 400px;">
                     <input type="text" id="clientSearch" class="form-input" placeholder="Pesquisar cliente..." autocomplete="off">
                     <div id="searchResults" class="search-results-dropdown"></div>
                 </div>
 
-                <!-- Month Filter -->
+
                 <input type="text" id="monthPicker" class="form-input" placeholder="Selecione o Mês" style="width: auto; min-width: 160px; cursor: pointer; background: var(--input-bg);">
             </div>
 
-            <!-- Right Group: Actions -->
+
             <div style="display: flex; gap: 1rem; align-items: center; margin-left: 1rem;">
                 <button id="toggleDoneBtn" class="btn" style="width: auto; background: var(--glass-border); color: var(--text-color);">Mostrar Pendentes</button>
                 <button id="resetFiltersBtn" class="btn" style="width: auto; background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted);">Limpar Filtros</button>
             </div>
         </div>
 
-        <!-- Filter Bar Row 2: Reasons -->
+
         <div style="margin-bottom: 3rem; display: flex; flex-direction: column; gap: 1rem;">
             <span style="color: var(--text-muted); font-size: 0.95rem; font-weight: 600; margin-left: 0.5rem;">Filtrar por motivo:</span>
             <div style="display: flex; gap: 1rem; flex-wrap: wrap; padding-left: 0.5rem;">
@@ -92,7 +92,7 @@
             </div>
         </div>
 
-        <!-- Content Table -->
+
         <div class="table-container fade-in">
             <table class="os-table">
                 <thead>
@@ -105,15 +105,15 @@
                     </tr>
                 </thead>
                 <tbody id="osList">
-                    <!-- Items inserted via JS -->
+
                     <tr><td colspan="6" style="text-align: center; padding: 2rem;">Carregando OS...</td></tr>
                 </tbody>
             </table>
         </div>
         
-        <!-- Pagination Controls -->
+
         <div id="paginationContainer" class="pagination-bar">
-            <!-- Left: Rows per page -->
+
             <div class="pagination-left">
                 <select id="rowsPerPage" onchange="changePageSize(this.value)">
                     <option value="10">10 por página</option>
@@ -122,19 +122,19 @@
                 </select>
             </div>
 
-            <!-- Center: Numbers -->
+
             <div id="paginationControls" class="pagination-center">
-                <!-- JS will inject buttons here -->
+
             </div>
 
-            <!-- Right: Info -->
+
             <div id="paginationInfo" class="pagination-right">
                 Mostrando 0-0 de 0 registros
             </div>
         </div>
     </div>
 
-    <!-- Create OS Modal -->
+
     <div id="createModal" class="modal-overlay">
         <div class="glass-card modal-content fade-in">
             <button onclick="closeCreateModal()" class="btn-close-modal" title="Fechar">
@@ -149,7 +149,8 @@
             </div>
             
             <form id="createOsForm" onsubmit="handleCreateOs(event)">
-                <input type="hidden" id="osId"> <!-- Hidden ID for Edit Mode -->
+                <input type="hidden" id="osId">
+
                 <div class="form-group">
                     <label class="form-label">Cliente</label>
                     <div class="input-icon-wrapper">
@@ -188,7 +189,7 @@
         </div>
     </div>
 
-    <!-- Import CSV Modal -->
+
     <div id="importModal" class="modal-overlay">
         <div class="glass-card modal-content fade-in" style="max-width: 600px;">
             <button onclick="closeImportModal()" class="btn-close-modal" title="Fechar">
@@ -206,7 +207,7 @@
                 <input type="file" id="fileInput" accept=".csv" hidden onchange="handleFileSelect(this.files[0])">
             </div>
 
-            <!-- Preview Area -->
+
             <div id="importPreview" class="import-preview" style="display: none;">
                 <h4>Pré-visualização (<span id="previewCount">0</span> registros)</h4>
                 <div class="table-container-preview">
@@ -224,7 +225,7 @@
                 </div>
             </div>
             
-            <!-- Progress Area -->
+
              <div id="importProgress" class="import-progress" style="display: none;">
                 <div class="progress-bar-container">
                     <div class="progress-bar" id="progressBar" style="width: 0%"></div>
@@ -239,7 +240,7 @@
         </div>
     </div>
 
-    <!-- Confirmation Modal -->
+
     <div id="confirmModal" class="modal-overlay">
         <div class="glass-card modal-content fade-in" style="max-width: 400px; text-align: center;">
             <div style="margin-bottom: 1.5rem;">

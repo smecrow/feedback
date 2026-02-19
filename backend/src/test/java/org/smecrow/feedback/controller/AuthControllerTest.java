@@ -40,7 +40,6 @@ class AuthControllerTest {
     @MockitoBean
     private AuthService authService;
 
-    // Mocks necessários para o contexto de segurança (JwtAuthenticationFilter)
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
 

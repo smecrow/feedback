@@ -35,7 +35,6 @@ public class OsService {
     public OsResponse createOs(@Valid OsRequest request, Authentication authentication) {
         log.info("Criando nova OS.");
         log.info("Criando nova OS.");
-        // Format client name to Title Case
         String formattedClient = formatClientName(request.client());
         Os osEntity = request.toEntity();
         osEntity.setClient(formattedClient);
@@ -68,7 +67,7 @@ public class OsService {
         Os osEntity = request.toEntity();
         osEntity.setClient(formattedClient);
 
-        User managedUser = getLoggedUser(); // Reuse existing helper
+        User managedUser = getLoggedUser();
         osEntity.setUser(managedUser);
 
         Os savedOs = osRepository.save(osEntity);
