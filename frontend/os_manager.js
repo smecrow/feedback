@@ -252,19 +252,19 @@ async function fetchOs(url) {
 function loadAllOs(resetPage = true) {
     if(resetPage) pagination.page = 0;
     currentFilter = { type: 'ALL', value: null };
-    fetchOs(`/api/os/getAllOs?${getSortParam()}`);
+    fetchOs(`${API_URL}/api/os/getAllOs?${getSortParam()}`);
 }
 
 function loadOsByMonth(month, year, resetPage = true) {
     if(resetPage) pagination.page = 0;
     currentFilter = { type: 'MONTH', value: {month, year} };
-    fetchOs(`/api/os/getByMonth?month=${month}&year=${year}${getSortParam()}`);
+    fetchOs(`${API_URL}/api/os/getByMonth?month=${month}&year=${year}${getSortParam()}`);
 }
 
 function loadOsByClient(clientName, resetPage = true) {
     if(resetPage) pagination.page = 0;
     currentFilter = { type: 'CLIENT', value: clientName };
-    fetchOs(`/api/os/getByClient?client=${encodeURIComponent(clientName)}${getSortParam()}`);
+    fetchOs(`${API_URL}/api/os/getByClient?client=${encodeURIComponent(clientName)}${getSortParam()}`);
     
     const resultsDiv = document.getElementById('searchResults');
     if(resultsDiv) resultsDiv.style.display = 'none';
@@ -282,7 +282,7 @@ function filterByReason(reason, resetPage = true) {
     document.querySelectorAll('.reason-btn').forEach(b => b.classList.remove('active'));
     document.querySelector(`.reason-btn.reason-${reason}`).classList.add('active');
 
-    fetchOs(`/api/os/getByReason?reason=${reason}${getSortParam()}`);
+    fetchOs(`${API_URL}/api/os/getByReason?reason=${reason}${getSortParam()}`);
 }
 
 function loadOsByDone(resetPage = true, done = true) {
@@ -290,12 +290,12 @@ function loadOsByDone(resetPage = true, done = true) {
     // Ensure boolean
     const isDone = done === 'true' || done === true;
     currentFilter = { type: 'DONE', value: isDone };
-    fetchOs(`/api/os/getByDone?done=${isDone}${getSortParam()}`);
+    fetchOs(`${API_URL}/api/os/getByDone?done=${isDone}${getSortParam()}`);
 }
 
 async function searchClients(query) {
     try {
-        const response = await Auth.fetch(`/api/os/getByClient?client=${query}&size=5`);
+        const response = await Auth.fetch(`${API_URL}/api/os/getByClient?client=${query}&size=5`);
         const data = await response.json();
         
         const resultsDiv = document.getElementById('searchResults');
@@ -392,7 +392,7 @@ function renderOsList(osList) {
 
 async function toggleDone(id, newStatus) {
     try {
-        await Auth.fetch(`/api/os/done/${id}`, {
+        await Auth.fetch(`${API_URL}/api/os/done/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -448,7 +448,7 @@ function confirmDeleteAction() {
 
 async function deleteOs(id) {
     try {
-        const response = await Auth.fetch(`/api/os/delete/${id}`, {
+        const response = await Auth.fetch(`${API_URL}/api/os/delete/${id}`, {
             method: 'DELETE'
         });
 
@@ -589,7 +589,7 @@ async function handleCreateOs(e) {
         reason: reason
     };
 
-    const url = isEdit ? `/api/os/update/${osId}` : '/api/os/createOs';
+    const url = isEdit ? `${API_URL}/api/os/update/${osId}` : `${API_URL}/api/os/createOs`;
     const method = isEdit ? 'PUT' : 'POST';
 
     try {

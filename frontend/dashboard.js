@@ -94,7 +94,7 @@ const Dashboard = {
     fetchStats: async function(queryString = '') {
         this.setLoading(true);
         try {
-            const url = queryString ? `/api/dashboard/stats?${queryString}` : '/api/dashboard/stats';
+            const url = queryString ? `${API_URL}/api/dashboard/stats?${queryString}` : `${API_URL}/api/dashboard/stats`;
             const response = await Auth.fetch(url);
             const data = await response.json();
             this.data = data; 
@@ -492,7 +492,7 @@ const Dashboard = {
         }
 
         try {
-            const response = await Auth.fetch(`/api/dashboard/stats?client=${encodeURIComponent(clientName)}`);
+            const response = await Auth.fetch(`${API_URL}/api/dashboard/stats?client=${encodeURIComponent(clientName)}`);
             const data = await response.json();
             
             const clientsMap = data.totalByClients || {};

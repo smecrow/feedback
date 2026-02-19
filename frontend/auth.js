@@ -1,4 +1,4 @@
-const API_URL = '/api/auth';
+const API_URL = 'https://feedback-api-gj5t.onrender.com';
 
 const Auth = {
     isAuthenticated: () => {
