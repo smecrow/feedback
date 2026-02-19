@@ -1028,16 +1028,16 @@ async function exportCsv() {
     const sizeParam = `&page=0&size=${total}&sort=${currentSort.field},${currentSort.direction}`;
     
     if(currentFilter.type === 'ALL') {
-        url = `/api/os/getAllOs?${sizeParam}`;
+        url = `${API_URL}/api/os/getAllOs?${sizeParam}`;
     } else if(currentFilter.type === 'MONTH') {
          const {month, year} = currentFilter.value;
-         url = `/api/os/getByMonth?month=${month}&year=${year}${sizeParam}`;
+         url = `${API_URL}/api/os/getByMonth?month=${month}&year=${year}${sizeParam}`;
     } else if(currentFilter.type === 'REASON') {
-        url = `/api/os/getByReason?reason=${currentFilter.value}${sizeParam}`;
+        url = `${API_URL}/api/os/getByReason?reason=${currentFilter.value}${sizeParam}`;
     } else if(currentFilter.type === 'CLIENT') {
-        url = `/api/os/getByClient?client=${encodeURIComponent(currentFilter.value)}${sizeParam}`;
+        url = `${API_URL}/api/os/getByClient?client=${encodeURIComponent(currentFilter.value)}${sizeParam}`;
     } else if(currentFilter.type === 'DONE') {
-        url = `/api/os/getByDone?done=${currentFilter.value}${sizeParam}`;
+        url = `${API_URL}/api/os/getByDone?done=${currentFilter.value}${sizeParam}`;
     }
 
     try {
@@ -1104,7 +1104,7 @@ window.deleteAllOs = async function() {
     
     const token = Auth.getToken();
     try {
-        const response = await fetch('/api/os/deleteAll', {
+        const response = await fetch(`${API_URL}/api/os/deleteAll`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
