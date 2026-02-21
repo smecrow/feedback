@@ -3,7 +3,7 @@ package org.smecrow.feedback.controller;
 import jakarta.validation.Valid;
 
 import org.smecrow.feedback.dto.OsImportRequest;
-import org.smecrow.feedback.dto.OsMarkDoneRequest;
+import org.smecrow.feedback.dto.OsUpdateStatusRequest;
 import org.smecrow.feedback.dto.OsRequest;
 import org.smecrow.feedback.dto.OsResponse;
 import org.smecrow.feedback.service.OsService;
@@ -60,7 +60,7 @@ public class OsController {
     }
 
     @PutMapping("/status/{id}")
-    public ResponseEntity<OsResponse> updateStatus(@PathVariable Long id, @RequestBody OsMarkDoneRequest req) {
+    public ResponseEntity<OsResponse> updateStatus(@PathVariable Long id, @RequestBody OsUpdateStatusRequest req) {
         return ResponseEntity.ok(osService.updateStatus(id, req));
     }
 

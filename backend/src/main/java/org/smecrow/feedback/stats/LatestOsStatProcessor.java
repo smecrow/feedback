@@ -44,7 +44,6 @@ public class LatestOsStatProcessor implements StatProcessor {
             item.put("reason", os.getReason().name());
             item.put("createdAt", os.getCreatedAt());
             item.put("status", os.getStatus());
-            item.put("done", os.getStatus() != org.smecrow.feedback.model.OsStatus.PENDENTE);
             simpleList.add(item);
         }
         

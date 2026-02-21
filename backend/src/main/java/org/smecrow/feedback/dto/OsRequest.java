@@ -18,7 +18,7 @@ public record OsRequest(
         os.setReason(reason);
 
         os.setCreatedAt(LocalDateTime.now());
-        os.setDone(false);
+        os.setStatus(org.smecrow.feedback.model.OsStatus.PENDENTE);
 
         return os;
     }

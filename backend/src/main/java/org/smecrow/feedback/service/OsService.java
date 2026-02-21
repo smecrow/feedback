@@ -3,7 +3,7 @@ package org.smecrow.feedback.service;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.smecrow.feedback.dto.OsMarkDoneRequest;
+import org.smecrow.feedback.dto.OsUpdateStatusRequest;
 import org.smecrow.feedback.dto.OsRequest;
 import org.smecrow.feedback.dto.OsResponse;
 import org.smecrow.feedback.exceptions.NotAllowedException;
@@ -129,7 +129,7 @@ public class OsService {
         return osPage.map(OsResponse::fromEntity);
     }
 
-    public OsResponse updateStatus(Long id, OsMarkDoneRequest req) {
+    public OsResponse updateStatus(Long id, OsUpdateStatusRequest req) {
         Os os = osRepository.findById(id).orElseThrow(() -> new NotFoundException("OS com o ID: " + id + " não encontrada"));
 
         org.smecrow.feedback.model.OsStatus newState = req.status();

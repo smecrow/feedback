@@ -12,11 +12,11 @@ import java.util.Map;
 import org.smecrow.feedback.model.User;
 
 @Component
-public class TotalByDoneStatProcessor implements StatProcessor {
+public class TotalByStatusStatProcessor implements StatProcessor {
 
     private final DashboardRepository repository;
 
-    public TotalByDoneStatProcessor(DashboardRepository repository) {
+    public TotalByStatusStatProcessor(DashboardRepository repository) {
         this.repository = repository;
     }
 
