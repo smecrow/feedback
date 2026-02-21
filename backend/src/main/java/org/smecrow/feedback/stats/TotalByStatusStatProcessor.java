@@ -35,14 +35,21 @@ public class TotalByStatusStatProcessor implements StatProcessor {
         List<Object[]> results = repository.countByStatusWithFilter(user, filter.startDate(), filter.endDate(), reasonEnum);
         long doneCount = 0;
         long notDoneCount = 0;
+        
+        Map<String, Long> statusMap = new java.util.HashMap<>();
+        
         for (Object[] result : results) {
             org.smecrow.feedback.model.OsStatus status = (org.smecrow.feedback.model.OsStatus) result[0];
             Long count = (Long) result[1];
+            
+            statusMap.put(status.name(), count);
+            
             if (status != org.smecrow.feedback.model.OsStatus.PENDENTE) doneCount += count;
             else notDoneCount += count;
         }
         stats.put("totalDone", doneCount);
         stats.put("totalNotDone", notDoneCount);
+        stats.put("totalByStatus", statusMap);
 
         // Previous Period Trend
         if (filter.startDate() != null && filter.endDate() != null) {

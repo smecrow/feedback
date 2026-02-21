@@ -287,8 +287,10 @@ const Dashboard = {
             return;
         }
 
-        tbody.innerHTML = list.map(item => {
-            const date = new Date(item.createdAt).toLocaleDateString();
+        const limited = list.slice(0, 5);
+
+        tbody.innerHTML = limited.map(item => {
+            const date = new Date(item.createdAt).toLocaleDateString('pt-BR');
             let statusLabel = 'PENDENTE';
             let badgeClass = 'pendente';
             
@@ -309,43 +311,51 @@ const Dashboard = {
                 </tr>
             `;
         }).join('');
+
+        if (list.length > 5) {
+            const footer = document.createElement('tr');
+            footer.innerHTML = `
+                <td colspan="4" style="text-align: center; padding: 0.75rem;">
+                    <a href="os.html" style="color: var(--accent-color); font-size: 0.85rem; text-decoration: none; font-weight: 500;">
+                        Ver todas as OS →
+                    </a>
+                </td>
+            `;
+            tbody.appendChild(footer);
+        }
     },
 
     renderCharts: function(data) {
-        const totalDone = data.totalDone || 0;
-        const totalNotDone = data.totalNotDone || 0;
-        const totalStatus = totalDone + totalNotDone;
+        const statusMap = data.totalByStatus || {};
+        const statusItems = [
+            { key: 'PENDENTE',          label: 'Pendente',          color: '#ef4444' },
+            { key: 'OS_REALIZADA',      label: 'OS Realizada',      color: '#3b82f6' },
+            { key: 'FEEDBACK_ENVIADO',  label: 'Feedback Enviado',  color: '#f97316' },
+            { key: 'FEEDBACK_CONCLUIDO',label: 'Feedback Concluído',color: '#10B981' }
+        ].map(s => ({ ...s, value: statusMap[s.key] || 0 }))
+         .filter(s => s.value > 0);
+
+        const totalStatus = statusItems.reduce((acc, s) => acc + s.value, 0);
         this.resetChartContainer('chartDone');
-        
+
         if (totalStatus === 0) {
-             this.renderEmptyState('chartDone', 'Nenhum status registrado');
+            this.renderEmptyState('chartDone', 'Nenhum status registrado');
         } else {
-            const statusItems = [
-                { label: 'Concluído', value: totalDone, color: '#10B981' },
-                { label: 'Pendente', value: totalNotDone, color: '#374151' }
-            ];
-
-            statusItems.sort((a, b) => b.value - a.value);
-
-            const getLabel = (name, val) => {
-                const pct = totalStatus > 0 ? Math.round((val / totalStatus) * 100) : 0;
-                return `${name}: ${val} (${pct}%)`;
-            };
-            
-            const labels = statusItems.map(item => getLabel(item.label, item.value));
-            const dataValues = statusItems.map(item => item.value);
-            const colors = statusItems.map(item => item.color);
+            const labels = statusItems.map(s => {
+                const pct = Math.round((s.value / totalStatus) * 100);
+                return `${s.label}: ${s.value} (${pct}%)`;
+            });
 
             this.createChart('chartDone', 'doughnut', {
-                labels: labels,
+                labels,
                 datasets: [{
-                    data: dataValues,
-                    backgroundColor: colors, 
+                    data: statusItems.map(s => s.value),
+                    backgroundColor: statusItems.map(s => s.color),
                     borderWidth: 0
                 }]
             });
-            
-            this.generateHtmlLegend('legendDone', labels, colors);
+
+            this.generateHtmlLegend('legendDone', labels, statusItems.map(s => s.color));
         }
 
         const reasons = data.totalByReasons || {};
