@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "Os", indexes = {
         @Index(name = "idx_os_client", columnList = "client"),
-        @Index(name = "idx_os_done", columnList = "done"),
+        @Index(name = "idx_os_status", columnList = "status"),
         @Index(name = "idx_os_created_at", columnList = "createdAt"),
         @Index(name = "idx_os_reason", columnList = "reason"),
         @Index(name = "idx_os_user_id", columnList = "user_id")
@@ -26,7 +26,10 @@ public class Os {
     @Enumerated(EnumType.STRING)
     private Reason reason;
     private LocalDateTime createdAt;
-    private Boolean done;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(255) default 'PENDENTE'")
+    private OsStatus status = OsStatus.PENDENTE;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

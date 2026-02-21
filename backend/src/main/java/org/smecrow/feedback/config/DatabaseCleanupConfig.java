@@ -13,9 +13,10 @@ public class DatabaseCleanupConfig {
         return args -> {
             try {
                 jdbcTemplate.execute("ALTER TABLE os DROP CONSTRAINT IF EXISTS os_reason_check");
-                System.out.println("Database Cleanup: Removed os_reason_check constraint successfully.");
+                jdbcTemplate.execute("ALTER TABLE os DROP COLUMN IF EXISTS done");
+                System.out.println("Database Cleanup: Removed os_reason_check constraint and done column successfully.");
             } catch (Exception e) {
-                System.out.println("Database Cleanup: Constraint removal skipped or failed: " + e.getMessage());
+                System.out.println("Database Cleanup: Cleanup skipped or failed: " + e.getMessage());
             }
         };
     }

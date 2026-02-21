@@ -12,7 +12,7 @@ public interface OsRepository extends JpaRepository<Os, Long> {
     
     Page<Os> findByUserAndClientContainingIgnoreCase(org.smecrow.feedback.model.User user, String client, Pageable pageable);
 
-    Page<Os> findByUserAndDone(org.smecrow.feedback.model.User user, Boolean done, Pageable pageable);
+    Page<Os> findByUserAndStatus(org.smecrow.feedback.model.User user, org.smecrow.feedback.model.OsStatus status, Pageable pageable);
 
     Page<Os> findByUserAndCreatedAtBetween(org.smecrow.feedback.model.User user, LocalDateTime dateAfter, LocalDateTime dateBefore, Pageable pageable);
 

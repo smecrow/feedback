@@ -2,6 +2,7 @@ package org.smecrow.feedback.dto;
 
 import org.smecrow.feedback.model.Os;
 import org.smecrow.feedback.model.Reason;
+import org.smecrow.feedback.model.OsStatus;
 
 import java.time.LocalDateTime;
 
@@ -10,7 +11,7 @@ public record OsResponse(Long id,
                          String client,
                          Reason reason,
                          LocalDateTime createdAt,
-                         Boolean done,
+                         OsStatus status,
                          String username) {
 
     public OsResponse{
@@ -22,7 +23,7 @@ public record OsResponse(Long id,
                 os.getClient(),
                 os.getReason(),
                 os.getCreatedAt(),
-                os.getDone(),
+                os.getStatus(),
                 os.getUser().getUsername());
     }
 }

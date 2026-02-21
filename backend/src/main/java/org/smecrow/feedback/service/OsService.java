@@ -90,11 +90,11 @@ public class OsService {
         return osPage.map(OsResponse::fromEntity);
     }
 
-    public Page<OsResponse> getByDone(Pageable pageable, Boolean done) {
-        log.info("Procurando OS com status done={}.", done);
+    public Page<OsResponse> getByStatus(Pageable pageable, org.smecrow.feedback.model.OsStatus status) {
+        log.info("Procurando OS com status={}.", status);
         User user = getLoggedUser();
-        Page<Os> osPage = osRepository.findByUserAndDone(user, done, pageable);
-        log.info("Foram encontradas {} OS com status done={}.", osPage.getTotalElements(), done);
+        Page<Os> osPage = osRepository.findByUserAndStatus(user, status, pageable);
+        log.info("Foram encontradas {} OS com status={}.", osPage.getTotalElements(), status);
         return osPage.map(OsResponse::fromEntity);
     }
 
@@ -129,14 +129,14 @@ public class OsService {
         return osPage.map(OsResponse::fromEntity);
     }
 
-    public OsResponse markDone(Long id, OsMarkDoneRequest done) {
+    public OsResponse updateStatus(Long id, OsMarkDoneRequest req) {
         Os os = osRepository.findById(id).orElseThrow(() -> new NotFoundException("OS com o ID: " + id + " não encontrada"));
 
-        boolean newState = done.done();
+        org.smecrow.feedback.model.OsStatus newState = req.status();
 
-        if (newState != os.getDone()) {
-            log.info("Alterando o estado da OS de {} para: {}.", os.getDone(), newState);
-            os.setDone(newState);
+        if (newState != os.getStatus()) {
+            log.info("Alterando o estado da OS de {} para: {}.", os.getStatus(), newState);
+            os.setStatus(newState);
         }
         else {
             log.info("Estado da OS já é {}, nenhuma alteração necessária", newState);

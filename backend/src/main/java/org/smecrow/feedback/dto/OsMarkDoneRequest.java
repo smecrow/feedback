@@ -1,4 +1,6 @@
 package org.smecrow.feedback.dto;
 
-public record OsMarkDoneRequest(Boolean done) {
+import org.smecrow.feedback.model.OsStatus;
+
+public record OsMarkDoneRequest(OsStatus status) {
 }

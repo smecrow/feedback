@@ -35,12 +35,12 @@ public class OsController {
     }
 
     @GetMapping("/getAllOs")
-    public ResponseEntity<Page<OsResponse>> getAllOs(@PageableDefault(size = 10, page = 0, sort = "done") Pageable pageable) {
+    public ResponseEntity<Page<OsResponse>> getAllOs(@PageableDefault(size = 10, page = 0, sort = "status") Pageable pageable) {
         return ResponseEntity.ok(osService.getAllOs(pageable));
     }
 
     @GetMapping("/getByClient")
-    public ResponseEntity<Page<OsResponse>> getByClient(@PageableDefault(size = 10, page = 0, sort = "done") Pageable pageable, @RequestParam String client) {
+    public ResponseEntity<Page<OsResponse>> getByClient(@PageableDefault(size = 10, page = 0, sort = "status") Pageable pageable, @RequestParam String client) {
         return ResponseEntity.ok(osService.getByClient(pageable, client));
     }
 
@@ -49,9 +49,9 @@ public class OsController {
         return ResponseEntity.ok(osService.getByReason(pageable, reason));
     }
 
-    @GetMapping("/getByDone")
-    public ResponseEntity<Page<OsResponse>> getByDone(@PageableDefault(size = 10, page = 0, sort = "client") Pageable pageable, @RequestParam(defaultValue = "true") Boolean done) {
-        return ResponseEntity.ok(osService.getByDone(pageable, done));
+    @GetMapping("/getByStatus")
+    public ResponseEntity<Page<OsResponse>> getByStatus(@PageableDefault(size = 10, page = 0, sort = "client") Pageable pageable, @RequestParam(defaultValue = "PENDENTE") org.smecrow.feedback.model.OsStatus status) {
+        return ResponseEntity.ok(osService.getByStatus(pageable, status));
     }
 
     @GetMapping("/getByMonth")
@@ -59,9 +59,9 @@ public class OsController {
         return ResponseEntity.ok(osService.getPerMonth(month, year, pageable));
     }
 
-    @PutMapping("/done/{id}")
-    public ResponseEntity<OsResponse> markDone(@PathVariable Long id, @RequestBody OsMarkDoneRequest done) {
-        return ResponseEntity.ok(osService.markDone(id, done));
+    @PutMapping("/status/{id}")
+    public ResponseEntity<OsResponse> updateStatus(@PathVariable Long id, @RequestBody OsMarkDoneRequest req) {
+        return ResponseEntity.ok(osService.updateStatus(id, req));
     }
 
     @DeleteMapping("/delete/{id}")

@@ -29,7 +29,7 @@ public class TotalStatProcessor implements StatProcessor {
             }
         }
 
-        long currentCount = repository.countByFilter(user, filter.startDate(), filter.endDate(), filter.done(), reasonEnum);
+        long currentCount = repository.countByFilter(user, filter.startDate(), filter.endDate(), filter.status(), reasonEnum);
         stats.put("totalOs", currentCount);
 
         if (filter.startDate() != null && filter.endDate() != null) {
@@ -37,7 +37,7 @@ public class TotalStatProcessor implements StatProcessor {
             java.time.LocalDateTime prevStart = filter.startDate().minus(duration);
             java.time.LocalDateTime prevEnd = filter.startDate();
             
-            long prevCount = repository.countByFilter(user, prevStart, prevEnd, filter.done(), reasonEnum);
+            long prevCount = repository.countByFilter(user, prevStart, prevEnd, filter.status(), reasonEnum);
             
             double trend = 0.0;
             if (prevCount > 0) {

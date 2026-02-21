@@ -24,7 +24,7 @@ public class TotalByReasonStatProcessor implements StatProcessor {
 
     @Override
     public void process(Map<String, Object> stats, DashboardFilter filter, User user) {
-       List<Object[]> results = repository.countByReasonWithFilter(user, filter.startDate(), filter.endDate(), filter.done());
+       List<Object[]> results = repository.countByReasonWithFilter(user, filter.startDate(), filter.endDate(), filter.status());
         
         Map<String, Long> reasonsMap = new HashMap<>();
         for (Object[] result : results) {

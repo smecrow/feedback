@@ -35,7 +35,7 @@ public class TopClientsStatProcessor implements StatProcessor {
         }
 
         // Fetch top 5 clients using filters
-        List<Object[]> results = repository.findTopClientsWithFilter(user, filter.startDate(), filter.endDate(), filter.done(), reasonEnum, PageRequest.of(0, 5));
+        List<Object[]> results = repository.findTopClientsWithFilter(user, filter.startDate(), filter.endDate(), filter.status(), reasonEnum, PageRequest.of(0, 5));
         
         Map<String, Long> topClients = new LinkedHashMap<>(); // Maintain order
         for (Object[] result : results) {

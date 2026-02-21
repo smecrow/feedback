@@ -34,7 +34,7 @@ public class TotalByMonthStatProcessor implements StatProcessor {
             }
         }
 
-        List<Object[]> results = repository.countByMonthWithFilter(user, filter.startDate(), filter.endDate(), filter.done(), reasonEnum);
+        List<Object[]> results = repository.countByMonthWithFilter(user, filter.startDate(), filter.endDate(), filter.status(), reasonEnum);
         
         Map<String, Long> monthsMap = new LinkedHashMap<>();
         for (Object[] result : results) {

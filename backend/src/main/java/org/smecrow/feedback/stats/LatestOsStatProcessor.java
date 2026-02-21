@@ -34,7 +34,7 @@ public class LatestOsStatProcessor implements StatProcessor {
             } catch (IllegalArgumentException e) {}
         }
 
-        List<Os> latestOs = repository.findLatestWithFilter(user, filter.startDate(), filter.endDate(), filter.done(), reasonEnum, org.springframework.data.domain.PageRequest.of(0, 5));
+        List<Os> latestOs = repository.findLatestWithFilter(user, filter.startDate(), filter.endDate(), filter.status(), reasonEnum, org.springframework.data.domain.PageRequest.of(0, 5));
         
         List<Map<String, Object>> simpleList = new ArrayList<>();
         
@@ -43,7 +43,8 @@ public class LatestOsStatProcessor implements StatProcessor {
             item.put("client", os.getClient());
             item.put("reason", os.getReason().name());
             item.put("createdAt", os.getCreatedAt());
-            item.put("done", os.getDone());
+            item.put("status", os.getStatus());
+            item.put("done", os.getStatus() != org.smecrow.feedback.model.OsStatus.PENDENTE);
             simpleList.add(item);
         }
         

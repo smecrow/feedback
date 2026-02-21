@@ -32,14 +32,14 @@ public class TotalByDoneStatProcessor implements StatProcessor {
         }
 
         // Current Period
-        List<Object[]> results = repository.countByDoneWithFilter(user, filter.startDate(), filter.endDate(), reasonEnum);
+        List<Object[]> results = repository.countByStatusWithFilter(user, filter.startDate(), filter.endDate(), reasonEnum);
         long doneCount = 0;
         long notDoneCount = 0;
         for (Object[] result : results) {
-            Boolean isDone = (Boolean) result[0];
+            org.smecrow.feedback.model.OsStatus status = (org.smecrow.feedback.model.OsStatus) result[0];
             Long count = (Long) result[1];
-            if (Boolean.TRUE.equals(isDone)) doneCount = count;
-            else notDoneCount = count;
+            if (status != org.smecrow.feedback.model.OsStatus.PENDENTE) doneCount += count;
+            else notDoneCount += count;
         }
         stats.put("totalDone", doneCount);
         stats.put("totalNotDone", notDoneCount);
@@ -50,14 +50,14 @@ public class TotalByDoneStatProcessor implements StatProcessor {
             java.time.LocalDateTime prevStart = filter.startDate().minus(duration);
             java.time.LocalDateTime prevEnd = filter.startDate();
 
-            List<Object[]> prevResults = repository.countByDoneWithFilter(user, prevStart, prevEnd, reasonEnum);
+            List<Object[]> prevResults = repository.countByStatusWithFilter(user, prevStart, prevEnd, reasonEnum);
             long prevDone = 0;
             long prevNotDone = 0;
             for (Object[] result : prevResults) {
-                Boolean isDone = (Boolean) result[0];
+                org.smecrow.feedback.model.OsStatus status = (org.smecrow.feedback.model.OsStatus) result[0];
                 Long count = (Long) result[1];
-                if (Boolean.TRUE.equals(isDone)) prevDone = count;
-                else prevNotDone = count;
+                if (status != org.smecrow.feedback.model.OsStatus.PENDENTE) prevDone += count;
+                else prevNotDone += count;
             }
 
             stats.put("totalDone_trend", calculateTrend(doneCount, prevDone));

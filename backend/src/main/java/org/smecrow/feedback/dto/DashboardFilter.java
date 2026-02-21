@@ -6,7 +6,7 @@ public record DashboardFilter(Integer month,
                               Integer year,
                               String client,
                               String reason,
-                              Boolean done,
+                              org.smecrow.feedback.model.OsStatus status,
                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                               LocalDateTime startDate,
                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
