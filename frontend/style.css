@@ -533,11 +533,11 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
     backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border);
     border-radius: 16px;
-    padding: 1.5rem; /* Increased padding */
+    padding: 1.5rem;
     box-shadow: var(--card-shadow);
     display: flex;
     flex-direction: column;
-    height: 100%; /* Fill grid cell */
+    overflow: hidden;
 }
 
 .chart-header {
@@ -557,13 +557,9 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
 
 .chart-container-relative {
     position: relative;
-    flex: 1; /* Grow to fill remaining space */
     width: 100%;
-    min-height: 160px;
-    max-height: 180px; /* impede crescimento vertical infinito */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    height: 180px;
+    flex-shrink: 0;
 }
 
 .chart-legend {
@@ -640,9 +636,10 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
 }
 
 .modern-table td {
-    padding: 1rem;
+    padding: 0.75rem 1rem;
     color: var(--text-color);
     border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    vertical-align: middle;
 }
 
 .modern-table tr:hover {
