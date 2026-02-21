@@ -22,7 +22,7 @@ const REASONS = {
 let currentFilter = {
     type: 'ALL',
     value: null,
-    doneFilter: null
+    statusFilter: null
 };
 
 let currentSort = {
@@ -81,7 +81,7 @@ function loadCurrentView() {
     }
     else if(currentFilter.type === 'REASON') filterByReason(currentFilter.value, false);
     else if(currentFilter.type === 'CLIENT') loadOsByClient(currentFilter.value, false);
-    else if(currentFilter.type === 'DONE') loadOsByDone(false, currentFilter.value);
+    else if(currentFilter.type === 'STATUS') loadOsByStatus(false, currentFilter.value);
 }
 
 
@@ -176,16 +176,13 @@ function setupEventListeners() {
 
     // Month Picker Change Event (Removed native listener)
 
-    // Toggle Done
-    // Toggle Done
-    document.getElementById('toggleDoneBtn').addEventListener('click', (e) => {
-        const btn = e.target;
-        if (currentFilter.type === 'DONE') {
+    // Status Filter Change
+    document.getElementById('statusFilter').addEventListener('change', (e) => {
+        const val = e.target.value;
+        if (!val) {
             resetFilters();
         } else {
-            loadOsByDone(true, false);
-            btn.style.borderColor = 'var(--accent-color)';
-            btn.style.color = 'var(--accent-color)';
+            loadOsByStatus(true, val);
         }
     });
 
@@ -208,8 +205,7 @@ function resetFilters() {
     
 
     document.querySelectorAll('.reason-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('toggleDoneBtn').style.borderColor = 'var(--glass-border)';
-    document.getElementById('toggleDoneBtn').style.color = 'var(--text-color)';
+    document.getElementById('statusFilter').value = '';
 
 
     loadAllOs();
@@ -285,12 +281,10 @@ function filterByReason(reason, resetPage = true) {
     fetchOs(`${API_URL}/api/os/getByReason?reason=${reason}${getSortParam()}`);
 }
 
-function loadOsByDone(resetPage = true, done = true) {
+function loadOsByStatus(resetPage = true, status = 'PENDENTE') {
     if(resetPage) pagination.page = 0;
-    // Ensure boolean
-    const isDone = done === 'true' || done === true;
-    currentFilter = { type: 'DONE', value: isDone };
-    fetchOs(`${API_URL}/api/os/getByDone?done=${isDone}${getSortParam()}`);
+    currentFilter = { type: 'STATUS', value: status };
+    fetchOs(`${API_URL}/api/os/getByStatus?status=${status}${getSortParam()}`);
 }
 
 async function searchClients(query) {
@@ -336,14 +330,25 @@ function renderOsList(osList) {
 
     osList.forEach(os => {
 
-        const statusClass = os.done ? 'badge-status done' : 'badge-status pending';
-        const reason = REASONS[os.reason] || os.reason.replace(/_/g, ' ');
-        const date = new Date(os.createdAt).toLocaleDateString();
-        const statusBadge = `<div class="${statusClass}" onclick="window.toggleDone(${os.id}, ${!os.done})"><span>${os.done ? '✓' : '🕒'}</span> ${os.done ? 'Feito' : 'Pendente'}</div>`;
+        let statusLabel = 'PENDENTE';
+        let badgeClass = 'pendente';
+        
+        if (os.status === 'OS_REALIZADA') { statusLabel = 'OS REALIZADA'; badgeClass = 'os_realizada'; }
+        if (os.status === 'FEEDBACK_ENVIADO') { statusLabel = 'FEEDBACK ENVIADO'; badgeClass = 'feedback_enviado'; }
+        if (os.status === 'FEEDBACK_CONCLUIDO') { statusLabel = 'FEEDBACK CONCLUÍDO'; badgeClass = 'feedback_concluido'; }
+
+        const statusSelect = `
+            <select class="badge-status ${badgeClass}" onchange="window.updateStatus(${os.id}, this)">
+                <option value="PENDENTE" ${os.status === 'PENDENTE' ? 'selected' : ''}>Pendente</option>
+                <option value="OS_REALIZADA" ${os.status === 'OS_REALIZADA' ? 'selected' : ''}>OS Realizada</option>
+                <option value="FEEDBACK_ENVIADO" ${os.status === 'FEEDBACK_ENVIADO' ? 'selected' : ''}>Feedback Enviado</option>
+                <option value="FEEDBACK_CONCLUIDO" ${os.status === 'FEEDBACK_CONCLUIDO' ? 'selected' : ''}>Feedback Concluído</option>
+            </select>
+        `;
 
         const row = document.createElement('tr');
         row.id = `os-row-${os.id}`;
-        if (os.done) row.classList.add('done-row');
+        if (os.status !== 'PENDENTE') row.classList.add('done-row');
         
 
         if (highlightId && os.id == highlightId) {
@@ -366,7 +371,7 @@ function renderOsList(osList) {
                 <span class="badge" style="background: ${REASON_COLORS[os.reason] || '#ccc'}; color: #fff;">${reason}</span>
             </td>
             <td>${date}</td>
-            <td>${statusBadge}</td>
+            <td>${statusSelect}</td>
             <td>
                 <div style="display: flex; gap: 8px;">
                     <button onclick="openEditModal(${os.id}, '${os.client.replace(/'/g, "\\'")}', '${os.reason}')" class="btn-icon" title="Editar">
@@ -390,40 +395,31 @@ function renderOsList(osList) {
 
 
 
-async function toggleDone(id, newStatus) {
+async function updateStatus(id, selectElement) {
+    const newStatus = selectElement.value;
     try {
-        await Auth.fetch(`${API_URL}/api/os/done/${id}`, {
+        await Auth.fetch(`${API_URL}/api/os/status/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ done: newStatus })
+            body: JSON.stringify({ status: newStatus })
         });
         
-
-        const row = document.getElementById(`os-row-${id}`);
-        if(row) {
-             const badge = row.querySelector('.badge-status');
-             if(badge) {
-                 badge.onclick = () => toggleDone(id, !newStatus);
-                 
-                 if(newStatus) {
-                     badge.className = 'badge-status done';
-                     badge.innerHTML = '<span>✓</span> Feito';
-                 } else {
-                     badge.className = 'badge-status pending';
-                     badge.innerHTML = '<span>🕒</span> Pendente';
-                 }
-             }
-        }
+        let badgeClass = 'pendente';
+        if (newStatus === 'OS_REALIZADA') badgeClass = 'os_realizada';
+        if (newStatus === 'FEEDBACK_ENVIADO') badgeClass = 'feedback_enviado';
+        if (newStatus === 'FEEDBACK_CONCLUIDO') badgeClass = 'feedback_concluido';
         
-        // Also refresh if we are in a 'DONE' only filter, but let's just toast for now to avoid jumpiness
-        // showToast('Status atualizado!', 'success'); // Optional, maybe too noisy?
+        selectElement.className = `badge-status ${badgeClass}`;
+        
+        showToast('Status atualizado!', 'success');
 
     } catch (error) {
         showToast('Erro ao atualizar status', 'error');
     }
 }
+window.updateStatus = updateStatus;
 
 
 let osIdToDelete = null;
@@ -767,7 +763,11 @@ function parseCSV(text) {
         }
 
         // Normalize Status
-        const done = statusRaw.toLowerCase().includes('feito') || statusRaw.toLowerCase().includes('conclu') || statusRaw === 'true' || statusRaw === '1';
+        let status = 'PENDENTE';
+        const sL = statusRaw.toLowerCase();
+        if (sL.includes('realizada') || sL.includes('concluí') || sL === 'true' || sL === '1') status = 'OS_REALIZADA';
+        if (sL.includes('enviado')) status = 'FEEDBACK_ENVIADO';
+        if (sL.includes('concluido') || sL.includes('concluído')) status = 'FEEDBACK_CONCLUIDO';
 
 
         let createdAt = null;
@@ -780,7 +780,7 @@ function parseCSV(text) {
              }
         }
 
-        importedData.push({ client, reason, done, createdAt });
+        importedData.push({ client, reason, status, createdAt });
         validCount++;
 
 
@@ -790,7 +790,7 @@ function parseCSV(text) {
                 <td>${client}</td>
                 <td><span class="badge" style="background: ${REASON_COLORS[reason] || '#ccc'}; color: #fff; font-size: 0.75rem;">${REASONS[reason] || reason}</span></td>
                 <td>${dateRaw || 'Hoje'}</td>
-                <td>${done ? '✅' : '🕒'}</td>
+                <td>${status === 'PENDENTE' ? '🕒' : '✅'}</td>
             `;
             previewBody.appendChild(tr);
         }
@@ -968,7 +968,7 @@ async function generateTestOs(count = 20) {
     for (let i = 0; i < count; i++) {
         const randomName = `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${names[Math.floor(Math.random() * names.length)]}`;
         const randomReason = reasonKeys[Math.floor(Math.random() * reasonKeys.length)];
-        // Random done status mostly pending (80%)
+        // Random status mostly pending (80%)
         const isDone = Math.random() > 0.8; 
 
         try {
@@ -980,7 +980,7 @@ async function generateTestOs(count = 20) {
                 body: JSON.stringify({ 
                     client: randomName, 
                     reason: randomReason,
-                    done: isDone 
+                    status: Math.random() > 0.8 ? 'OS_REALIZADA' : 'PENDENTE'
                 })
             });
             successes++;
@@ -1036,8 +1036,8 @@ async function exportCsv() {
         url = `${API_URL}/api/os/getByReason?reason=${currentFilter.value}${sizeParam}`;
     } else if(currentFilter.type === 'CLIENT') {
         url = `${API_URL}/api/os/getByClient?client=${encodeURIComponent(currentFilter.value)}${sizeParam}`;
-    } else if(currentFilter.type === 'DONE') {
-        url = `${API_URL}/api/os/getByDone?done=${currentFilter.value}${sizeParam}`;
+    } else if(currentFilter.type === 'STATUS') {
+        url = `${API_URL}/api/os/getByStatus?status=${currentFilter.value}${sizeParam}`;
     }
 
     try {
@@ -1058,14 +1058,18 @@ async function exportCsv() {
 
         fullList.forEach(os => {
             const date = new Date(os.createdAt).toLocaleDateString('pt-BR');
-            const status = os.done ? 'Concluído' : 'Pendente';
+            let statusLabel = 'Pendente';
+            if (os.status === 'OS_REALIZADA') statusLabel = 'OS Realizada';
+            if (os.status === 'FEEDBACK_ENVIADO') statusLabel = 'Feedback Enviado';
+            if (os.status === 'FEEDBACK_CONCLUIDO') statusLabel = 'Feedback Concluído';
+            
             const reason = REASONS[os.reason] || os.reason;
             
             const row = [
                 `"${os.client}"`, 
                 `"${reason}"`,
                 date,
-                status
+                statusLabel
             ];
             csvContent += row.join(delimiter) + '\n';
         });

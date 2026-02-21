@@ -34,7 +34,7 @@ const Dashboard = {
         let queryParams = new URLSearchParams();
         if (dateRange.start) queryParams.append('startDate', dateRange.start);
         if (dateRange.end) queryParams.append('endDate', dateRange.end);
-        if (status) queryParams.append('done', status);
+        if (status) queryParams.append('status', status);
         if (reason) queryParams.append('reason', reason);
 
         this.fetchStats(queryParams.toString());
@@ -289,9 +289,14 @@ const Dashboard = {
 
         tbody.innerHTML = list.map(item => {
             const date = new Date(item.createdAt).toLocaleDateString();
-            const statusBadge = item.done ? 
-                '<div class="badge-status done"><span>✓</span> FEITO</div>' : 
-                '<div class="badge-status pending"><span>🕒</span> PENDENTE</div>';
+            let statusLabel = 'PENDENTE';
+            let badgeClass = 'pendente';
+            
+            if (item.status === 'OS_REALIZADA') { statusLabel = 'OS REALIZADA'; badgeClass = 'os_realizada'; }
+            if (item.status === 'FEEDBACK_ENVIADO') { statusLabel = 'FEEDBACK ENVIADO'; badgeClass = 'feedback_enviado'; }
+            if (item.status === 'FEEDBACK_CONCLUIDO') { statusLabel = 'FEEDBACK CONCLUÍDO'; badgeClass = 'feedback_concluido'; }
+            
+            const statusBadge = `<div class="badge-status ${badgeClass}"><span>•</span> ${statusLabel}</div>`;
             
             const formattedReason = this.formatReason(item.reason);
 

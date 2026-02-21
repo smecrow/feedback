@@ -73,7 +73,13 @@
 
 
             <div style="display: flex; gap: 1rem; align-items: center; margin-left: 1rem;">
-                <button id="toggleDoneBtn" class="btn" style="width: auto; background: var(--glass-border); color: var(--text-color);">Mostrar Pendentes</button>
+                <select id="statusFilter" class="form-input" style="width: auto; background: var(--glass-border); color: var(--text-color); border: none; padding: 0.5rem 1rem; border-radius: 20px;">
+                    <option value="">Todos Status</option>
+                    <option value="PENDENTE">Pendentes</option>
+                    <option value="OS_REALIZADA">OS Realizadas</option>
+                    <option value="FEEDBACK_ENVIADO">Feedbacks Enviados</option>
+                    <option value="FEEDBACK_CONCLUIDO">Feedbacks Concluídos</option>
+                </select>
                 <button id="resetFiltersBtn" class="btn" style="width: auto; background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted);">Limpar Filtros</button>
             </div>
         </div>
@@ -100,7 +106,7 @@
                         <th class="sortable" onclick="handleSort('client')">Cliente <span class="sort-icon" id="sort-client">↕</span></th>
                         <th class="sortable" onclick="handleSort('reason')">Motivo <span class="sort-icon" id="sort-reason">↕</span></th>
                         <th class="sortable" onclick="handleSort('createdAt')">Data Criação <span class="sort-icon" id="sort-createdAt">↕</span></th>
-                        <th class="sortable" style="width: 150px;" onclick="handleSort('done')">Status <span class="sort-icon" id="sort-done">↕</span></th>
+                        <th class="sortable" style="width: 150px;" onclick="handleSort('status')">Status <span class="sort-icon" id="sort-status">↕</span></th>
                         <th style="width: 100px;">Ações</th>
                     </tr>
                 </thead>
