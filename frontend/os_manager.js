@@ -337,6 +337,9 @@ function renderOsList(osList) {
         if (os.status === 'FEEDBACK_ENVIADO') { statusLabel = 'FEEDBACK ENVIADO'; badgeClass = 'feedback_enviado'; }
         if (os.status === 'FEEDBACK_CONCLUIDO') { statusLabel = 'FEEDBACK CONCLUÍDO'; badgeClass = 'feedback_concluido'; }
 
+        const reason = REASONS[os.reason] || os.reason;
+        const date = new Date(os.createdAt).toLocaleDateString('pt-BR');
+
         const statusSelect = `
             <select class="badge-status ${badgeClass}" onchange="window.updateStatus(${os.id}, this)">
                 <option value="PENDENTE" ${os.status === 'PENDENTE' ? 'selected' : ''}>Pendente</option>
@@ -457,7 +460,7 @@ async function deleteOs(id) {
             }
             else if(currentFilter.type === 'REASON') filterByReason(currentFilter.value);
             else if(currentFilter.type === 'CLIENT') loadOsByClient(currentFilter.value);
-            else if(currentFilter.type === 'DONE') loadOsByDone();
+            else if(currentFilter.type === 'STATUS') loadOsByStatus(true, currentFilter.value);
         } else {
             const data = await response.json();
             showToast('Erro ao deletar: ' + (data.message || 'Permissão negada'), 'error');
