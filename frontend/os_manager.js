@@ -27,7 +27,7 @@ let currentFilter = {
 
 let currentSort = {
     field: 'id',
-    direction: 'desc'
+    direction: 'asc'
 };
 
 let pagination = {
@@ -101,12 +101,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const urlParams = new URLSearchParams(window.location.search);
     const clientParam = urlParams.get('client');
+    const reasonParam = urlParams.get('reason');
+    const statusParam = urlParams.get('status');
+    const monthParam = urlParams.get('month');
+    const yearParam = urlParams.get('year');
 
     if (clientParam) {
         document.getElementById('clientSearch').value = clientParam;
         loadOsByClient(clientParam);
-        // Clean URL after loading to avoid sticking in search mode on refresh if desired, 
-        // or keep it to allow sharing. Keeping it is usually better for "Search" semantics.
+    } else if (reasonParam) {
+        filterByReason(reasonParam);
+    } else if (statusParam) {
+        document.getElementById('statusFilter').value = statusParam;
+        loadOsByStatus(true, statusParam);
+    } else if (monthParam && yearParam) {
+        document.getElementById('monthPicker').value = `${monthParam} ${yearParam}`;
+        loadOsByMonth(parseInt(monthParam), parseInt(yearParam));
     } else {
         loadAllOs();
     }

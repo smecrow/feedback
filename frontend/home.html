@@ -43,42 +43,38 @@
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
             <h2 style="font-size: 1.5rem; font-weight: 700;">Visão Geral</h2>
             
-            <div style="display: flex; align-items: center; gap: 1rem; background: var(--input-bg); padding: 0.5rem 1rem; border-radius: 12px; border: 1px solid var(--input-border);">
-                <span style="font-size: 1.2rem;">🔍</span>
-                <input type="text" id="clientSearchInput" class="form-input" style="border: none; background: transparent; padding: 0; width: 250px;" placeholder="Buscar cliente...">
-                <button onclick="Dashboard.searchClient()" class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.9rem; width: auto;">Ir</button>
+            <div style="display: flex; align-items: center; gap: 0.75rem; background: var(--input-bg); padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid var(--glass-border); transition: all 0.2s;">
+                <span style="font-size: 1rem; color: var(--text-muted); opacity: 0.7;">🔍</span>
+                <input type="text" id="clientSearchInput" class="form-input" style="border: none; background: transparent; padding: 0.2rem 0.5rem; width: 220px; font-size: 0.9rem; box-shadow: none; outline: none;" placeholder="Buscar cliente ou OS por Enter..." onkeypress="if(event.key === 'Enter') Dashboard.searchClient()">
             </div>
         </div>
-        <div id="clientSearchResult" style="color: var(--accent-color); font-weight: 500; min-height: 20px;"></div>
+        <div id="clientSearchResult" style="display: none;"></div>
 
 
-        <div class="glass-card fade-in" style="padding: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; justify-content: center;">
-            <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
-                <label class="form-label" style="font-size: 0.8rem;">Período</label>
-                <select id="filterPeriod" class="form-input" onchange="Dashboard.checkPendingFilters()">
+        <div class="glass-card fade-in" style="padding: 0.75rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: nowrap;">
+
+            <div id="greetingContainer" style="display: flex; flex-direction: column; justify-content: center; flex-shrink: 0; min-width: 180px;">
+                <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">Olá, bem-vindo! 👋</span>
+                <span id="greetingPending" style="font-size: 0.95rem; font-weight: 600; color: var(--accent-color);">Analisando requisições...</span>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; flex-wrap: nowrap; flex: 1;">
+                <select id="filterPeriod" class="form-input" onchange="Dashboard.checkPendingFilters()" style="height: 38px; padding: 0 2.5rem 0 0.75rem; width: auto; min-width: 150px;">
                     <option value="ALL">Todo o Período</option>
                     <option value="7_DAYS">Últimos 7 Dias</option>
                     <option value="30_DAYS" selected>Últimos 30 Dias</option>
                     <option value="3_MONTHS">Últimos 3 Meses</option>
                     <option value="THIS_YEAR">Este Ano</option>
                 </select>
-            </div>
-            
-            <div class="form-group" style="margin-bottom: 0; min-width: 150px;">
-                <label class="form-label" style="font-size: 0.8rem;">Status</label>
-                <select id="filterStatus" class="form-input" onchange="Dashboard.checkPendingFilters()">
-                    <option value="">Todos</option>
+                <select id="filterStatus" class="form-input" onchange="Dashboard.checkPendingFilters()" style="height: 38px; padding: 0 2.5rem 0 0.75rem; width: auto; min-width: 140px;">
+                    <option value="">Todos Status</option>
                     <option value="OS_REALIZADA">OS Realizada</option>
                     <option value="FEEDBACK_ENVIADO">Feedback Enviado</option>
                     <option value="FEEDBACK_CONCLUIDO">Feedback Concluído</option>
                     <option value="PENDENTE">Pendente</option>
                 </select>
-            </div>
-
-            <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
-                <label class="form-label" style="font-size: 0.8rem;">Motivo</label>
-                <select id="filterReason" class="form-input" onchange="Dashboard.checkPendingFilters()">
-                    <option value="">Todos</option>
+                <select id="filterReason" class="form-input" onchange="Dashboard.checkPendingFilters()" style="height: 38px; padding: 0 2.5rem 0 0.75rem; width: auto; min-width: 150px;">
+                    <option value="">Todos Motivos</option>
                     <option value="SEM_CONEXAO">Sem Conexão</option>
                     <option value="LENTIDAO">Lentidão</option>
                     <option value="UPGRADE">Upgrade</option>
@@ -87,12 +83,15 @@
                     <option value="N2">Suporte N2</option>
                     <option value="OUTROS">Outros</option>
                 </select>
+                <button id="btnFilter" onclick="Dashboard.updateFilters()" class="btn btn-primary" style="width: auto; height: 38px; padding: 0 1rem; flex-shrink: 0;">Filtrar</button>
+                <button onclick="Dashboard.resetFilters()" class="btn" style="width: auto; height: 38px; padding: 0 0.75rem; background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted); flex-shrink: 0;" title="Limpar Filtros">✖</button>
             </div>
-            
-            <div style="display: flex; gap: 0.5rem; align-items: flex-end; height: 100%; padding-top: 1.4rem;">
-                <button id="btnFilter" onclick="Dashboard.updateFilters()" class="btn btn-primary" style="width: auto; height: 42px;">Filtrar</button>
-                <button onclick="Dashboard.resetFilters()" class="btn" style="width: auto; height: 42px; background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted);" title="Limpar Filtros">✖</button>
+
+            <div style="display: flex; gap: 0.5rem; flex-shrink: 0;">
+                <button onclick="window.location.href='os.html'" class="btn" style="width: auto; height: 38px; padding: 0 1.2rem; font-size: 0.9rem; background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted); white-space: nowrap;">Ver todas as OS →</button>
+                <button onclick="window.location.href='os.html'" class="btn btn-primary" style="width: auto; height: 38px; padding: 0 1.2rem; font-size: 0.9rem; white-space: nowrap;">+ Nova OS</button>
             </div>
+
         </div>
 
 

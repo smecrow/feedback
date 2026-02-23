@@ -206,6 +206,23 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
     box-shadow: 0 0 0 3px rgba(31, 125, 83, 0.2);
 }
 
+select.form-input {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B0B3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.2em;
+    padding-right: 2.5rem;
+    cursor: pointer;
+    text-align: center;
+}
+
+select.form-input option {
+    background-color: #1a1a1a;
+    color: var(--text-color);
+}
+
 .input-with-icon {
     position: relative;
     display: flex;
@@ -537,7 +554,7 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
     box-shadow: var(--card-shadow);
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    height: 420px;
 }
 
 .chart-header {
@@ -558,8 +575,13 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
 .chart-container-relative {
     position: relative;
     width: 100%;
-    height: 180px;
-    flex-shrink: 0;
+    height: 200px;
+    margin: auto 0;
+}
+
+.chart-container-relative canvas {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 .chart-legend {
@@ -627,7 +649,7 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
 }
 
 .modern-table th {
-    text-align: left;
+    text-align: center;
     padding: 1rem;
     color: var(--text-muted);
     font-weight: 600;
@@ -640,6 +662,7 @@ nav, nav *, .brand-logo svg, .brand-text, .brand-text * {
     color: var(--text-color);
     border-bottom: 1px solid rgba(255, 255, 255, 0.03);
     vertical-align: middle;
+    text-align: center;
 }
 
 .modern-table tr:hover {

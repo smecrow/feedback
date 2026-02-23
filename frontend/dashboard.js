@@ -72,7 +72,10 @@ const Dashboard = {
         const end = new Date();
         let start = null;
 
-        if (period === '7_DAYS') {
+        if (period === 'TODAY') {
+            start = new Date();
+            start.setHours(0, 0, 0, 0); // Start of today
+        } else if (period === '7_DAYS') {
             start = new Date();
             start.setDate(end.getDate() - 7);
         } else if (period === '30_DAYS') {
@@ -202,7 +205,14 @@ const Dashboard = {
          let csvContent = "";
          let filename = `dashboard_${metric}_${new Date().toISOString().slice(0,10)}.csv`;
         if (metric === 'months') { const months = this.data.totalByMonths || {}; csvContent = "Mes,Quantidade\n"; Object.keys(months).forEach(m => { csvContent += `${m},${months[m]}\n`; }); }
-        else if (metric === 'status') { csvContent = "Status,Quantidade\n"; csvContent += `Concluido,${this.data.totalDone || 0}\n`; csvContent += `Pendente,${this.data.totalNotDone || 0}\n`; }
+        else if (metric === 'status') { 
+            csvContent = "Status,Quantidade\n"; 
+            const statuses = this.data.totalByStatus || {}; 
+            Object.keys(statuses).forEach(s => { 
+                const label = s === 'OS_REALIZADA' ? 'OS Realizada' : s === 'FEEDBACK_ENVIADO' ? 'Feedback Enviado' : s === 'FEEDBACK_CONCLUIDO' ? 'Feedback Concluido' : 'Pendente';
+                csvContent += `${label},${statuses[s]}\n`; 
+            }); 
+        }
         else if (metric === 'clients') { const clients = this.data.topClients || {}; csvContent = "Cliente,Chamados\n"; Object.keys(clients).forEach(c => { csvContent += `${c},${clients[c]}\n`; }); }
         else if (metric === 'reasons') { const reasons = this.data.totalByReasons || {}; csvContent = "Motivo,Quantidade\n"; Object.keys(reasons).forEach(r => { csvContent += `${this.formatReason(r)},${reasons[r]}\n`; }); }
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -223,10 +233,28 @@ const Dashboard = {
         window.requestAnimationFrame(step);
     },
 
+    searchClient: function() {
+        const term = document.getElementById('clientSearchInput').value.trim();
+        if (term) {
+            window.location.href = `os.html?client=${encodeURIComponent(term)}`;
+        }
+    },
+
     renderKPIs: function(data) {
         const total = data.totalOs || 0;
         const done = data.totalDone || 0;
         const pending = data.totalNotDone || 0;
+        
+        const greetingContainer = document.getElementById('greetingContainer');
+        if (greetingContainer) {
+            let username = localStorage.getItem('username') || 'bem-vindo';
+            username = username.charAt(0).toUpperCase() + username.slice(1).split('@')[0];
+            const greetingLabel = greetingContainer.querySelector('span:first-child');
+            if (greetingLabel) greetingLabel.innerText = `Olá, ${username}! 👋`;
+            
+            const greetingPending = document.getElementById('greetingPending');
+            if (greetingPending) greetingPending.innerText = pending === 1 ? 'Você tem 1 feedback pendente.' : `Você tem ${pending} feedbacks pendentes.`;
+        }
         
         const date = new Date();
         const currentMonthName = date.toLocaleString('en-US', { month: 'long' }).toUpperCase();
@@ -298,7 +326,7 @@ const Dashboard = {
             if (item.status === 'FEEDBACK_ENVIADO') { statusLabel = 'FEEDBACK ENVIADO'; badgeClass = 'feedback_enviado'; }
             if (item.status === 'FEEDBACK_CONCLUIDO') { statusLabel = 'FEEDBACK CONCLUÍDO'; badgeClass = 'feedback_concluido'; }
             
-            const statusBadge = `<div class="badge-status ${badgeClass}"><span>•</span> ${statusLabel}</div>`;
+            const statusBadge = `<div class="badge-status ${badgeClass}">${statusLabel}</div>`;
             
             const formattedReason = this.formatReason(item.reason);
 
@@ -353,6 +381,14 @@ const Dashboard = {
                     backgroundColor: statusItems.map(s => s.color),
                     borderWidth: 0
                 }]
+            }, {
+                onClick: (e, activeElements) => {
+                    if (activeElements.length > 0) {
+                        const index = activeElements[0].index;
+                        const statusKey = statusItems[index].key;
+                        window.location.href = `os.html?status=${statusKey}`;
+                    }
+                }
             });
 
             this.generateHtmlLegend('legendDone', labels, statusItems.map(s => s.color));
@@ -388,6 +424,14 @@ const Dashboard = {
                     backgroundColor: reasonColors,
                     borderWidth: 0
                 }]
+            }, {
+                onClick: (e, activeElements) => {
+                    if (activeElements.length > 0) {
+                        const index = activeElements[0].index;
+                        const reasonKey = reasonKeys[index];
+                        window.location.href = `os.html?reason=${reasonKey}`;
+                    }
+                }
             });
 
             this.generateHtmlLegend('legendReason', detailedLabels, reasonColors);
@@ -411,6 +455,16 @@ const Dashboard = {
                     backgroundColor: '#3B82F6',
                     borderRadius: 4
                 }]
+            }, {
+                onClick: (e, activeElements) => {
+                    if (activeElements.length > 0) {
+                        const index = activeElements[0].index;
+                        const monthName = sortedMonths[index];
+                        const monthInt = monthOrder.indexOf(monthName) + 1;
+                        const defaultYear = new Date().getFullYear(); // Assume current for simplicity
+                        window.location.href = `os.html?month=${monthInt}&year=${defaultYear}`;
+                    }
+                }
             });
         }
 
@@ -430,7 +484,15 @@ const Dashboard = {
                     backgroundColor: '#3B82F6', 
                     borderRadius: 4
                 }]
-            }, { indexAxis: 'y' }); 
+            }, { 
+                indexAxis: 'y',
+                onClick: (e, activeElements) => {
+                    if (activeElements.length > 0) {
+                        const index = activeElements[0].index;
+                        window.location.href = `os.html?client=${encodeURIComponent(clientNames[index])}`;
+                    }
+                }
+            }); 
         }
     },
 
@@ -475,6 +537,12 @@ const Dashboard = {
                 }
             },
             onClick: null,
+            onHover: (event, chartElement) => {
+                const target = event.native ? event.native.target : event.target;
+                if (target) {
+                    target.style.cursor = chartElement[0] ? 'pointer' : 'default';
+                }
+            },
             scales: (type === 'bar') ? {
                 y: {
                     beginAtZero: true,
@@ -489,40 +557,13 @@ const Dashboard = {
         };
 
         if (extraOptions.indexAxis) baseOptions.indexAxis = extraOptions.indexAxis;
+        if (extraOptions.onClick) baseOptions.onClick = extraOptions.onClick;
 
         this.charts[canvasId] = new Chart(ctx, {
             type: type,
             data: dataConfig,
             options: baseOptions
         });
-    },
-
-    searchClient: async function() {
-        const clientName = document.getElementById('clientSearchInput').value;
-        const resultDiv = document.getElementById('clientSearchResult');
-        
-        if (!clientName) {
-            resultDiv.textContent = '';
-            return;
-        }
-
-        try {
-            const response = await Auth.fetch(`${API_URL}/api/dashboard/stats?client=${encodeURIComponent(clientName)}`);
-            const data = await response.json();
-            
-            const clientsMap = data.totalByClients || {};
-            const count = clientsMap[clientName] || 0;
-
-            if (count > 0) {
-                resultDiv.innerHTML = `<span style="color: var(--accent-color)">${clientName}</span> possui <b>${count}</b> Ordens de Serviço.`;
-            } else {
-                resultDiv.innerHTML = `Nenhuma OS encontrada para "${clientName}".`;
-            }
-
-        } catch (error) {
-            console.error(error);
-            resultDiv.textContent = 'Erro ao buscar.';
-        }
     },
 
     formatReason: function(reason) {
