@@ -244,6 +244,7 @@ const Dashboard = {
         const total = data.totalOs || 0;
         const done = data.totalDone || 0;
         const pending = data.totalNotDone || 0;
+        const absolutePending = data.absolutePending || 0;
         
         const greetingContainer = document.getElementById('greetingContainer');
         if (greetingContainer) {
@@ -253,7 +254,7 @@ const Dashboard = {
             if (greetingLabel) greetingLabel.innerText = `Olá, ${username}! 👋`;
             
             const greetingPending = document.getElementById('greetingPending');
-            if (greetingPending) greetingPending.innerText = pending === 1 ? 'Você tem 1 feedback pendente.' : `Você tem ${pending} feedbacks pendentes.`;
+            if (greetingPending) greetingPending.innerText = absolutePending === 1 ? 'Você tem 1 feedback pendente.' : `Você tem ${absolutePending} feedbacks pendentes.`;
         }
         
         const date = new Date();

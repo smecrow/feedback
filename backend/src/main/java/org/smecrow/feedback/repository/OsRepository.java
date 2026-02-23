@@ -19,4 +19,6 @@ public interface OsRepository extends JpaRepository<Os, Long> {
     Page<Os> findByUserAndReason(org.smecrow.feedback.model.User user, org.smecrow.feedback.model.Reason reason, Pageable pageable);
 
     void deleteByUser(org.smecrow.feedback.model.User user);
+
+    long countByUserAndStatus(org.smecrow.feedback.model.User user, org.smecrow.feedback.model.OsStatus status);
 }
