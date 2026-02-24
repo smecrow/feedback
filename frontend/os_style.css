@@ -97,12 +97,6 @@
     font-size: 0.9rem;
 }
 
-/* Center the 'OUTROS' button on the last line */
-.reason-grid .reason-OUTROS {
-    grid-column: 1 / -1; /* Span full width of grid */
-    width: calc(50% - 8px); /* Exact width of one column (50% minus half gap) */
-    justify-self: center; /* Center horizontally */
-}
 
 
 .reason-SEM_CONEXAO { background-color: #ef4444; }
@@ -111,8 +105,36 @@
 .reason-TROCA_DE_LUGAR { background-color: #a855f7; }
 .reason-SEGUNDO_PONTO { background-color: #22c55e; }
 .reason-N2 { background-color: #3b82f6; }
+.reason-SINAL_ALTO { background-color: #0ea5e9; }
+.reason-CABEAMENTO { background-color: #10b981; }
+.reason-TV_BOX { background-color: #f43f5e; }
+.reason-EQUIPAMENTO_COM_DEFEITO { background-color: #d946ef; }
+.reason-RADIO { background-color: #84cc16; }
 .reason-OUTROS { background-color: #eab308; }
 
+
+/* --- Filter Reasons Bar Layout --- */
+.reason-filter-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.75rem;
+    padding: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+.reason-filter-container .reason-btn {
+    width: 100%;
+    margin: 0;
+    white-space: normal;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 40px;
+}
+/* --------------------------------- */
 
 .table-container {
     width: 100%;
@@ -167,7 +189,7 @@
     gap: 6px;
     padding: 6px 12px;
     border-radius: 9999px;
-    width: 180px; /* Fixed width for uniform sizing */
+    width: 220px; /* Fixed width for uniform sizing */
     justify-content: center; /* Center align content */
     font-size: 0.75rem;
     font-weight: 700;
@@ -178,6 +200,22 @@
     transition: all 0.2s;
     user-select: none;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+}
+
+.badge-reason {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 220px;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    color: #ffffff; /* Override text color to white */
 }
 
 .badge-status span {

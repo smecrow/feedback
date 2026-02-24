@@ -1,172 +1,420 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard - Feedbacks</title>
-    <link rel="icon" type="image/png" href="app-icon.png?v=1">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="os_style.css">
-</head>
-<body>
-
+    <link rel="icon" type="image/png" href="app-icon.png?v=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="os_style.css" />
+  </head>
+  <body>
     <div id="toast-container"></div>
 
-
-    <nav style="padding: 1rem 2rem; display: flex; align-items: center; border-bottom: 1px solid var(--glass-border); background: var(--glass-bg); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; gap: 2rem;">
-        
-
-        <div style="display: flex; align-items: center; gap: 2rem;">
-            <div class="brand-text" style="font-weight: 700; font-size: 1.2rem; color: var(--accent-color); display: flex; align-items: center; gap: 8px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9l1 1-9 9-1 1-2-2 1-1 9-9 1 1z"></path><path d="M18 6l2-2"></path><path d="M16 8l-2-2"></path><path d="M22 2l-5 5"></path><path d="M19 5l-2 2"></path></svg>
-                Feedbacks
-            </div>
-            <div style="display: flex; gap: 1.5rem; align-items: center;">
-                <a href="home.html" style="color: var(--accent-color); text-decoration: none; font-weight: 600; font-size: 0.95rem;">Home</a>
-                <a href="os.html" style="color: var(--text-color); text-decoration: none; opacity: 0.7; transition: opacity 0.2s; font-size: 0.95rem;">OS</a>
-            </div>
+    <nav
+      style="
+        padding: 1rem 2rem;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid var(--glass-border);
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        gap: 2rem;
+      "
+    >
+      <div style="display: flex; align-items: center; gap: 2rem">
+        <div
+          class="brand-text"
+          style="
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          "
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M14 9l1 1-9 9-1 1-2-2 1-1 9-9 1 1z"></path>
+            <path d="M18 6l2-2"></path>
+            <path d="M16 8l-2-2"></path>
+            <path d="M22 2l-5 5"></path>
+            <path d="M19 5l-2 2"></path>
+          </svg>
+          Feedbacks
         </div>
-
-
-        <div style="margin-left: auto; display: flex; gap: 1rem; align-items: center;">
-            <button onclick="Auth.logout()" class="btn btn-primary" style="width: auto; padding: 0.5rem 1rem; font-size: 0.9rem;">Sair</button>
+        <div style="display: flex; gap: 1.5rem; align-items: center">
+          <a
+            href="home.html"
+            style="
+              color: var(--accent-color);
+              text-decoration: none;
+              font-weight: 600;
+              font-size: 0.95rem;
+            "
+            >Home</a
+          >
+          <a
+            href="os.html"
+            style="
+              color: var(--text-color);
+              text-decoration: none;
+              opacity: 0.7;
+              transition: opacity 0.2s;
+              font-size: 0.95rem;
+            "
+            >OS</a
+          >
         </div>
+      </div>
+
+      <div
+        style="margin-left: auto; display: flex; gap: 1rem; align-items: center"
+      >
+        <button
+          onclick="Auth.logout()"
+          class="btn btn-primary"
+          style="width: auto; padding: 0.5rem 1rem; font-size: 0.9rem"
+        >
+          Sair
+        </button>
+      </div>
     </nav>
 
-
     <div class="dashboard-container">
-        
-
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-            <h2 style="font-size: 1.5rem; font-weight: 700;">Visão Geral</h2>
-            
-            <div style="display: flex; align-items: center; gap: 0.75rem; background: var(--input-bg); padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid var(--glass-border); transition: all 0.2s;">
-                <span style="font-size: 1rem; color: var(--text-muted); opacity: 0.7;">🔍</span>
-                <input type="text" id="clientSearchInput" class="form-input" style="border: none; background: transparent; padding: 0.2rem 0.5rem; width: 220px; font-size: 0.9rem; box-shadow: none; outline: none;" placeholder="Buscar cliente ou OS por Enter..." onkeypress="if(event.key === 'Enter') Dashboard.searchClient()">
-            </div>
-        </div>
-        <div id="clientSearchResult" style="display: none;"></div>
-
-
-        <div class="glass-card fade-in" style="padding: 0.75rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: nowrap;">
-
-            <div id="greetingContainer" style="display: flex; flex-direction: column; justify-content: center; flex-shrink: 0; min-width: 180px;">
-                <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">Olá, bem-vindo! 👋</span>
-                <span id="greetingPending" style="font-size: 0.95rem; font-weight: 600; color: var(--accent-color);">Analisando requisições...</span>
-            </div>
-
-            <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; flex-wrap: nowrap; flex: 1;">
-                <select id="filterPeriod" class="form-input" onchange="Dashboard.checkPendingFilters()" style="height: 38px; padding: 0 2.5rem 0 0.75rem; width: auto; min-width: 150px;">
-                    <option value="ALL">Todo o Período</option>
-                    <option value="7_DAYS">Últimos 7 Dias</option>
-                    <option value="30_DAYS" selected>Últimos 30 Dias</option>
-                    <option value="3_MONTHS">Últimos 3 Meses</option>
-                    <option value="THIS_YEAR">Este Ano</option>
-                </select>
-                <select id="filterStatus" class="form-input" onchange="Dashboard.checkPendingFilters()" style="height: 38px; padding: 0 2.5rem 0 0.75rem; width: auto; min-width: 140px;">
-                    <option value="">Todos Status</option>
-                    <option value="OS_REALIZADA">OS Realizada</option>
-                    <option value="FEEDBACK_ENVIADO">Feedback Enviado</option>
-                    <option value="FEEDBACK_CONCLUIDO">Feedback Concluído</option>
-                    <option value="PENDENTE">Pendente</option>
-                </select>
-                <select id="filterReason" class="form-input" onchange="Dashboard.checkPendingFilters()" style="height: 38px; padding: 0 2.5rem 0 0.75rem; width: auto; min-width: 150px;">
-                    <option value="">Todos Motivos</option>
-                    <option value="SEM_CONEXAO">Sem Conexão</option>
-                    <option value="LENTIDAO">Lentidão</option>
-                    <option value="UPGRADE">Upgrade</option>
-                    <option value="TROCA_DE_LUGAR">Troca de Lugar</option>
-                    <option value="SEGUNDO_PONTO">Segundo Ponto</option>
-                    <option value="N2">Suporte N2</option>
-                    <option value="OUTROS">Outros</option>
-                </select>
-                <button id="btnFilter" onclick="Dashboard.updateFilters()" class="btn btn-primary" style="width: auto; height: 38px; padding: 0 1rem; flex-shrink: 0;">Filtrar</button>
-                <button onclick="Dashboard.resetFilters()" class="btn" style="width: auto; height: 38px; padding: 0 0.75rem; background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted); flex-shrink: 0;" title="Limpar Filtros">✖</button>
-            </div>
-
-            <div style="display: flex; gap: 0.5rem; flex-shrink: 0;">
-                <button onclick="window.location.href='os.html'" class="btn" style="width: auto; height: 38px; padding: 0 1.2rem; font-size: 0.9rem; background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted); white-space: nowrap;">Ver todas as OS →</button>
-                <button onclick="window.location.href='os.html'" class="btn btn-primary" style="width: auto; height: 38px; padding: 0 1.2rem; font-size: 0.9rem; white-space: nowrap;">+ Nova OS</button>
-            </div>
-
+      <!-- First Card: Greeting, Search, and Actions -->
+      <div
+        class="glass-card fade-in"
+        style="
+          padding: 1rem 2rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1.5rem;
+          flex-wrap: wrap;
+        "
+      >
+        <div
+          id="greetingContainer"
+          style="display: flex; flex-direction: column; justify-content: center"
+        >
+          <span
+            style="
+              font-size: 0.85rem;
+              color: var(--text-muted);
+              font-weight: 500;
+            "
+            >Olá, bem-vindo! 👋</span
+          >
+          <span
+            id="greetingPending"
+            style="
+              font-size: 0.95rem;
+              font-weight: 600;
+              color: var(--accent-color);
+            "
+            >Analisando requisições...</span
+          >
         </div>
 
-
-        <div class="kpi-grid" id="kpiContainer">
-
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--input-bg);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.2s;
+            flex: 1;
+            max-width: 400px;
+          "
+        >
+          <span style="font-size: 1rem; color: var(--text-muted); opacity: 0.7"
+            >🔍</span
+          >
+          <input
+            type="text"
+            id="clientSearchInput"
+            class="form-input"
+            style="
+              border: none;
+              background: transparent;
+              padding: 0.2rem 0.5rem;
+              width: 100%;
+              font-size: 0.9rem;
+              box-shadow: none;
+              outline: none;
+            "
+            placeholder="Buscar cliente ou OS por Enter..."
+            onkeypress="if (event.key === 'Enter') Dashboard.searchClient();"
+          />
         </div>
 
-
-        <div class="charts-grid-4">
-            <div class="chart-card fade-in">
-                <div class="chart-header">
-                    <h3>Volume Anual</h3>
-                    <button onclick="Dashboard.exportData('months')" class="btn-sm" title="Exportar CSV">⬇ CSV</button>
-                </div>
-                <div class="chart-container-relative">
-                    <canvas id="chartMonth"></canvas>
-                </div>
-            </div>
-            <div class="chart-card fade-in">
-                <div class="chart-header">
-                    <h3>Status Geral</h3>
-                    <button onclick="Dashboard.exportData('status')" class="btn-sm" title="Exportar CSV">⬇ CSV</button>
-                </div>
-                <div class="chart-container-relative">
-                    <canvas id="chartDone"></canvas>
-                </div>
-                <div id="legendDone" class="chart-legend"></div>
-            </div>
-            <div class="chart-card fade-in">
-                <div class="chart-header">
-                    <h3>Top 5 Clientes</h3>
-                    <button onclick="Dashboard.exportData('clients')" class="btn-sm" title="Exportar CSV">⬇ CSV</button>
-                </div>
-                <div class="chart-container-relative">
-                    <canvas id="chartTopClients"></canvas>
-                </div>
-            </div>
-            <div class="chart-card fade-in">
-                <div class="chart-header">
-                    <h3>Motivos</h3>
-                    <button onclick="Dashboard.exportData('reasons')" class="btn-sm" title="Exportar CSV">⬇ CSV</button>
-                </div>
-                <div class="chart-container-relative">
-                    <canvas id="chartReason"></canvas>
-                </div>
-                <div id="legendReason" class="chart-legend"></div>
-            </div>
+        <div style="display: flex; gap: 0.5rem; flex-shrink: 0">
+          <button
+            onclick="window.location.href = 'os.html'"
+            class="btn"
+            style="
+              width: auto;
+              height: 38px;
+              padding: 0 1.2rem;
+              font-size: 0.9rem;
+              background: transparent;
+              border: 1px solid var(--glass-border);
+              color: var(--text-muted);
+              white-space: nowrap;
+            "
+          >
+            Ver todas as OS →
+          </button>
+          <button
+            onclick="window.location.href = 'os.html'"
+            class="btn btn-primary"
+            style="
+              width: auto;
+              height: 38px;
+              padding: 0 1.2rem;
+              font-size: 0.9rem;
+              white-space: nowrap;
+            "
+          >
+            + Nova OS
+          </button>
         </div>
+      </div>
 
+      <div id="clientSearchResult" style="display: none"></div>
 
-        <div class="recent-table-card fade-in">
-            <h3 style="margin-bottom: 1rem; color: var(--accent-color);">Últimas Atualizações</h3>
-            <table class="modern-table">
-                <thead>
-                    <tr>
-                        <th>Cliente</th>
-                        <th>Motivo</th>
-                        <th>Status</th>
-                        <th>Data</th>
-                    </tr>
-                </thead>
-                <tbody id="recentOsTableBody">
-
-                </tbody>
-            </table>
+      <!-- Second Card: Filters -->
+      <div
+        class="glass-card fade-in"
+        style="
+          padding: 1rem 2rem;
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+          flex-wrap: wrap;
+        "
+      >
+        <div
+          style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500"
+        >
+          Filtros do Dashboard:
         </div>
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            flex: 1;
+          "
+        >
+          <select
+            id="filterPeriod"
+            class="form-input"
+            onchange="Dashboard.checkPendingFilters()"
+            style="
+              height: 38px;
+              padding: 0 2.5rem 0 0.75rem;
+              width: auto;
+              min-width: 150px;
+            "
+          >
+            <option value="30_DAYS" selected disabled hidden>Período</option>
+            <option value="TODAY">Hoje</option>
+            <option value="7_DAYS">Últimos 7 Dias</option>
+            <option value="30_DAYS">Últimos 30 Dias</option>
+            <option value="3_MONTHS">Últimos 3 Meses</option>
+            <option value="THIS_YEAR">Este Ano</option>
+            <option value="ALL">Todo o Período</option>
+          </select>
+          <select
+            id="filterStatus"
+            class="form-input"
+            onchange="Dashboard.checkPendingFilters()"
+            style="
+              height: 38px;
+              padding: 0 2.5rem 0 0.75rem;
+              width: auto;
+              min-width: 140px;
+            "
+          >
+            <option value="" selected disabled hidden>Status</option>
+            <option value="">Todos Status</option>
+            <option value="OS_REALIZADA">OS Realizada</option>
+            <option value="FEEDBACK_ENVIADO">Feedback Enviado</option>
+            <option value="FEEDBACK_CONCLUIDO">Feedback Concluído</option>
+            <option value="PENDENTE">Pendente</option>
+          </select>
+          <select
+            id="filterReason"
+            class="form-input"
+            onchange="Dashboard.checkPendingFilters()"
+            style="
+              height: 38px;
+              padding: 0 2.5rem 0 0.75rem;
+              width: auto;
+              min-width: 150px;
+            "
+          >
+            <option value="" selected disabled hidden>Motivos</option>
+            <option value="">Todos Motivos</option>
+            <option value="SEM_CONEXAO">Sem Conexão</option>
+            <option value="LENTIDAO">Lentidão</option>
+            <option value="UPGRADE">Upgrade</option>
+            <option value="TROCA_DE_LUGAR">Troca de Lugar</option>
+            <option value="SEGUNDO_PONTO">Segundo Ponto</option>
+            <option value="N2">Nível 2</option>
+            <option value="SINAL_ALTO">Sinal Alto</option>
+            <option value="CABEAMENTO">Cabeamento</option>
+            <option value="TV_BOX">TV Box</option>
+            <option value="EQUIPAMENTO_COM_DEFEITO">
+              Equipamento com Defeito
+            </option>
+            <option value="RADIO">Rádio</option>
+            <option value="OUTROS">Outros</option>
+          </select>
+          <button
+            id="btnFilter"
+            onclick="Dashboard.updateFilters()"
+            class="btn btn-primary"
+            style="width: auto; height: 38px; padding: 0 1rem; flex-shrink: 0"
+          >
+            Filtrar
+          </button>
+          <button
+            onclick="Dashboard.resetFilters()"
+            class="btn"
+            style="
+              width: auto;
+              height: 38px;
+              padding: 0 0.75rem;
+              background: transparent;
+              border: 1px solid var(--glass-border);
+              color: var(--text-muted);
+              flex-shrink: 0;
+            "
+            title="Limpar Filtros"
+          >
+            ✖
+          </button>
+        </div>
+      </div>
 
+      <div class="kpi-grid" id="kpiContainer"></div>
+
+      <div class="charts-grid-4">
+        <div class="chart-card fade-in">
+          <div class="chart-header">
+            <h3>Volume Anual</h3>
+            <button
+              onclick="Dashboard.exportData('months')"
+              class="btn-sm"
+              title="Exportar CSV"
+            >
+              ⬇ CSV
+            </button>
+          </div>
+          <div class="chart-container-relative">
+            <canvas id="chartMonth"></canvas>
+          </div>
+        </div>
+        <div class="chart-card fade-in">
+          <div class="chart-header">
+            <h3>Status Geral</h3>
+            <button
+              onclick="Dashboard.exportData('status')"
+              class="btn-sm"
+              title="Exportar CSV"
+            >
+              ⬇ CSV
+            </button>
+          </div>
+          <div class="chart-container-relative">
+            <canvas id="chartDone"></canvas>
+          </div>
+          <div id="legendDone" class="chart-legend"></div>
+        </div>
+        <div class="chart-card fade-in">
+          <div class="chart-header">
+            <h3>Top 5 Clientes</h3>
+            <button
+              onclick="Dashboard.exportData('clients')"
+              class="btn-sm"
+              title="Exportar CSV"
+            >
+              ⬇ CSV
+            </button>
+          </div>
+          <div class="chart-container-relative">
+            <canvas id="chartTopClients"></canvas>
+          </div>
+        </div>
+        <div class="chart-card fade-in">
+          <div class="chart-header">
+            <h3>Motivos</h3>
+            <button
+              onclick="Dashboard.exportData('reasons')"
+              class="btn-sm"
+              title="Exportar CSV"
+            >
+              ⬇ CSV
+            </button>
+          </div>
+          <div class="chart-container-relative">
+            <canvas id="chartReason"></canvas>
+          </div>
+          <div id="legendReason" class="chart-legend"></div>
+        </div>
+      </div>
+
+      <div class="recent-table-card fade-in">
+        <h3 style="margin-bottom: 1rem; color: var(--accent-color)">
+          Últimas Atualizações
+        </h3>
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Motivo</th>
+              <th>Status</th>
+              <th>Data</th>
+            </tr>
+          </thead>
+          <tbody id="recentOsTableBody"></tbody>
+        </table>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="auth.js"></script>
     <script src="dashboard.js"></script>
     <script>
-        Auth.checkAuth();
-        Dashboard.init();
+      Auth.checkAuth();
+      Dashboard.init();
     </script>
-</body>
+  </body>
 </html>

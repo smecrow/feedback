@@ -1,267 +1,790 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gerenciamento de OS - Feedbacks</title>
-    <link rel="icon" type="image/png" href="app-icon.png?v=1">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="os_style.css">
+    <link rel="icon" type="image/png" href="app-icon.png?v=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="os_style.css" />
 
-    <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+    <link
+      rel="stylesheet"
+      href="https://npmcdn.com/flatpickr/dist/themes/dark.css"
+    />
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/plugins/monthSelect/index.js"></script>
-    <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/plugins/monthSelect/style.css">
-</head>
-<body>
-
-
-    <nav style="padding: 1rem 2rem; display: flex; align-items: center; border-bottom: 1px solid var(--glass-border); background: var(--glass-bg); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; gap: 2rem;">
-        
-
-        <div style="display: flex; align-items: center; gap: 2rem;">
-            <div class="brand-text" style="font-weight: 700; font-size: 1.2rem; color: var(--accent-color); display: flex; align-items: center; gap: 8px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9l1 1-9 9-1 1-2-2 1-1 9-9 1 1z"></path><path d="M18 6l2-2"></path><path d="M16 8l-2-2"></path><path d="M22 2l-5 5"></path><path d="M19 5l-2 2"></path></svg>
-                Feedbacks
-            </div>
-            <div style="display: flex; gap: 1.5rem; align-items: center;">
-                <a href="home.html" style="color: var(--text-color); text-decoration: none; opacity: 0.7; transition: opacity 0.2s; font-size: 0.95rem;">Home</a>
-                <a href="os.html" style="color: var(--accent-color); text-decoration: none; font-weight: 600; font-size: 0.95rem;">OS</a>
-            </div>
+    <link
+      rel="stylesheet"
+      href="https://npmcdn.com/flatpickr/dist/plugins/monthSelect/style.css"
+    />
+  </head>
+  <body>
+    <nav
+      style="
+        padding: 1rem 2rem;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid var(--glass-border);
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        gap: 2rem;
+      "
+    >
+      <div style="display: flex; align-items: center; gap: 2rem">
+        <div
+          class="brand-text"
+          style="
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          "
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M14 9l1 1-9 9-1 1-2-2 1-1 9-9 1 1z"></path>
+            <path d="M18 6l2-2"></path>
+            <path d="M16 8l-2-2"></path>
+            <path d="M22 2l-5 5"></path>
+            <path d="M19 5l-2 2"></path>
+          </svg>
+          Feedbacks
         </div>
-
-
-        <div style="margin-left: auto; display: flex; gap: 1rem; align-items: center;">
-            <button onclick="Auth.logout()" class="btn btn-primary" style="width: auto; padding: 0.5rem 1rem; font-size: 0.9rem;">Sair</button>
+        <div style="display: flex; gap: 1.5rem; align-items: center">
+          <a
+            href="home.html"
+            style="
+              color: var(--text-color);
+              text-decoration: none;
+              opacity: 0.7;
+              transition: opacity 0.2s;
+              font-size: 0.95rem;
+            "
+            >Home</a
+          >
+          <a
+            href="os.html"
+            style="
+              color: var(--accent-color);
+              text-decoration: none;
+              font-weight: 600;
+              font-size: 0.95rem;
+            "
+            >OS</a
+          >
         </div>
+      </div>
+
+      <div
+        style="margin-left: auto; display: flex; gap: 1rem; align-items: center"
+      >
+        <button
+          onclick="Auth.logout()"
+          class="btn btn-primary"
+          style="width: auto; padding: 0.5rem 1rem; font-size: 0.9rem"
+        >
+          Sair
+        </button>
+      </div>
     </nav>
 
-    <div style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
-        
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <h1>Ordens de serviço</h1>
-            <div style="display: flex; gap: 1rem;">
-                <button onclick="openImportModal()" class="btn" style="width: auto; background: transparent; border: 1px solid var(--glass-border); color: var(--text-color);">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: text-bottom;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                    Importar CSV
-                </button>
-                <button onclick="exportCsv()" class="btn" style="width: auto; background: transparent; border: 1px solid var(--glass-border); color: var(--text-color);">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: text-bottom;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                    Exportar CSV
-                </button>
-                <button onclick="openCreateModal()" class="btn btn-primary" style="width: auto;">+ Nova OS</button>
-            </div>
+    <div
+      style="
+        padding: 2rem;
+        width: 100%;
+        max-width: 1480px;
+        margin: 0 auto;
+        box-sizing: border-box;
+      "
+    >
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1.5rem;
+        "
+      >
+        <h1>Ordens de serviço</h1>
+        <div style="display: flex; gap: 1rem">
+          <button
+            onclick="openImportModal()"
+            class="btn"
+            style="
+              width: auto;
+              background: transparent;
+              border: 1px solid var(--glass-border);
+              color: var(--text-color);
+            "
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              style="margin-right: 8px; vertical-align: text-bottom"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            Importar CSV
+          </button>
+          <button
+            onclick="exportCsv()"
+            class="btn"
+            style="
+              width: auto;
+              background: transparent;
+              border: 1px solid var(--glass-border);
+              color: var(--text-color);
+            "
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              style="margin-right: 8px; vertical-align: text-bottom"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Exportar CSV
+          </button>
+          <button
+            onclick="openCreateModal()"
+            class="btn btn-primary"
+            style="width: auto"
+          >
+            + Nova OS
+          </button>
+        </div>
+      </div>
+
+      <div
+        class="filter-bar"
+        style="
+          margin-bottom: 3rem;
+          justify-content: space-between;
+          flex-wrap: wrap;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex: 1;
+            min-width: 300px;
+          "
+        >
+          <div class="search-container" style="flex: 1; max-width: 800px">
+            <input
+              type="text"
+              id="clientSearch"
+              class="form-input"
+              placeholder="Pesquisar cliente..."
+              autocomplete="off"
+            />
+            <div id="searchResults" class="search-results-dropdown"></div>
+          </div>
+
+          <input
+            type="text"
+            id="monthPicker"
+            class="form-input"
+            placeholder="Selecione o Mês"
+            style="
+              width: auto;
+              min-width: 160px;
+              cursor: pointer;
+              background: var(--input-bg);
+            "
+          />
         </div>
 
+        <div
+          style="
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-left: 1rem;
+          "
+        >
+          <select
+            id="statusFilter"
+            class="form-input"
+            style="
+              width: auto;
+              background: var(--glass-border);
+              color: var(--text-color);
+              border: none;
+              padding: 0.5rem 1rem;
+              border-radius: 20px;
+            "
+          >
+            <option value="">Todos Status</option>
+            <option value="PENDENTE">Pendentes</option>
+            <option value="OS_REALIZADA">OS Realizadas</option>
+            <option value="FEEDBACK_ENVIADO">Feedbacks Enviados</option>
+            <option value="FEEDBACK_CONCLUIDO">Feedbacks Concluídos</option>
+          </select>
+          <button
+            id="resetFiltersBtn"
+            class="btn"
+            style="
+              width: auto;
+              background: transparent;
+              border: 1px solid var(--glass-border);
+              color: var(--text-muted);
+            "
+          >
+            Limpar Filtros
+          </button>
+        </div>
+      </div>
 
-        <div class="filter-bar" style="margin-bottom: 3rem; justify-content: space-between; flex-wrap: wrap;">
+      <div
+        style="
+          margin-bottom: 3rem;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        "
+      >
+        <span
+          style="
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+          "
+          >Filtrar por motivo:</span
+        >
+        <div class="reason-filter-container">
+          <button
+            class="reason-btn reason-SEM_CONEXAO"
+            onclick="filterByReason('SEM_CONEXAO')"
+          >
+            Sem Conexão
+          </button>
+          <button
+            class="reason-btn reason-LENTIDAO"
+            onclick="filterByReason('LENTIDAO')"
+          >
+            Lentidão
+          </button>
+          <button
+            class="reason-btn reason-UPGRADE"
+            onclick="filterByReason('UPGRADE')"
+          >
+            Upgrade
+          </button>
+          <button
+            class="reason-btn reason-TROCA_DE_LUGAR"
+            onclick="filterByReason('TROCA_DE_LUGAR')"
+          >
+            Troca de Lugar
+          </button>
+          <button
+            class="reason-btn reason-SEGUNDO_PONTO"
+            onclick="filterByReason('SEGUNDO_PONTO')"
+          >
+            Segundo Ponto
+          </button>
+          <button class="reason-btn reason-N2" onclick="filterByReason('N2')">
+            Nível 2
+          </button>
+          <button
+            class="reason-btn reason-SINAL_ALTO"
+            onclick="filterByReason('SINAL_ALTO')"
+          >
+            Sinal Alto
+          </button>
+          <button
+            class="reason-btn reason-CABEAMENTO"
+            onclick="filterByReason('CABEAMENTO')"
+          >
+            Cabeamento
+          </button>
+          <button
+            class="reason-btn reason-TV_BOX"
+            onclick="filterByReason('TV_BOX')"
+          >
+            TV Box
+          </button>
+          <button
+            class="reason-btn reason-EQUIPAMENTO_COM_DEFEITO"
+            onclick="filterByReason('EQUIPAMENTO_COM_DEFEITO')"
+          >
+            Equipamento com Defeito
+          </button>
+          <button
+            class="reason-btn reason-RADIO"
+            onclick="filterByReason('RADIO')"
+          >
+            Rádio
+          </button>
+          <button
+            class="reason-btn reason-OUTROS"
+            onclick="filterByReason('OUTROS')"
+          >
+            Outros
+          </button>
+        </div>
+      </div>
 
-            <div style="display: flex; gap: 1rem; align-items: center; flex: 1; min-width: 300px;">
+      <div class="table-container fade-in">
+        <table class="os-table">
+          <thead>
+            <tr>
+              <th class="sortable" onclick="handleSort('client')">
+                Cliente <span class="sort-icon" id="sort-client">↕</span>
+              </th>
+              <th class="sortable" onclick="handleSort('reason')">
+                Motivo <span class="sort-icon" id="sort-reason">↕</span>
+              </th>
+              <th class="sortable" onclick="handleSort('createdAt')">
+                Data Criação
+                <span class="sort-icon" id="sort-createdAt">↕</span>
+              </th>
+              <th
+                class="sortable"
+                style="width: 150px"
+                onclick="handleSort('status')"
+              >
+                Status <span class="sort-icon" id="sort-status">↕</span>
+              </th>
+              <th style="width: 100px">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="osList">
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 2rem">
+                Carregando OS...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-                <div class="search-container" style="flex: 1; max-width: 400px;">
-                    <input type="text" id="clientSearch" class="form-input" placeholder="Pesquisar cliente..." autocomplete="off">
-                    <div id="searchResults" class="search-results-dropdown"></div>
-                </div>
-
-
-                <input type="text" id="monthPicker" class="form-input" placeholder="Selecione o Mês" style="width: auto; min-width: 160px; cursor: pointer; background: var(--input-bg);">
-            </div>
-
-
-            <div style="display: flex; gap: 1rem; align-items: center; margin-left: 1rem;">
-                <select id="statusFilter" class="form-input" style="width: auto; background: var(--glass-border); color: var(--text-color); border: none; padding: 0.5rem 1rem; border-radius: 20px;">
-                    <option value="">Todos Status</option>
-                    <option value="PENDENTE">Pendentes</option>
-                    <option value="OS_REALIZADA">OS Realizadas</option>
-                    <option value="FEEDBACK_ENVIADO">Feedbacks Enviados</option>
-                    <option value="FEEDBACK_CONCLUIDO">Feedbacks Concluídos</option>
-                </select>
-                <button id="resetFiltersBtn" class="btn" style="width: auto; background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted);">Limpar Filtros</button>
-            </div>
+      <div id="paginationContainer" class="pagination-bar">
+        <div class="pagination-left">
+          <select id="rowsPerPage" onchange="changePageSize(this.value)">
+            <option value="10">10 por página</option>
+            <option value="20">20 por página</option>
+            <option value="50">50 por página</option>
+          </select>
         </div>
 
+        <div id="paginationControls" class="pagination-center"></div>
 
-        <div style="margin-bottom: 3rem; display: flex; flex-direction: column; gap: 1rem;">
-            <span style="color: var(--text-muted); font-size: 0.95rem; font-weight: 600; margin-left: 0.5rem;">Filtrar por motivo:</span>
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; padding-left: 0.5rem;">
-                <button class="reason-btn reason-SEM_CONEXAO" onclick="filterByReason('SEM_CONEXAO')">Sem Conexão</button>
-                <button class="reason-btn reason-LENTIDAO" onclick="filterByReason('LENTIDAO')">Lentidão</button>
-                <button class="reason-btn reason-UPGRADE" onclick="filterByReason('UPGRADE')">Upgrade</button>
-                <button class="reason-btn reason-TROCA_DE_LUGAR" onclick="filterByReason('TROCA_DE_LUGAR')">Troca de Lugar</button>
-                <button class="reason-btn reason-SEGUNDO_PONTO" onclick="filterByReason('SEGUNDO_PONTO')">Segundo Ponto</button>
-                <button class="reason-btn reason-N2" onclick="filterByReason('N2')">Nível 2</button>
-                <button class="reason-btn reason-OUTROS" onclick="filterByReason('OUTROS')">Outros</button>
-            </div>
+        <div id="paginationInfo" class="pagination-right">
+          Mostrando 0-0 de 0 registros
         </div>
-
-
-        <div class="table-container fade-in">
-            <table class="os-table">
-                <thead>
-                    <tr>
-                        <th class="sortable" onclick="handleSort('client')">Cliente <span class="sort-icon" id="sort-client">↕</span></th>
-                        <th class="sortable" onclick="handleSort('reason')">Motivo <span class="sort-icon" id="sort-reason">↕</span></th>
-                        <th class="sortable" onclick="handleSort('createdAt')">Data Criação <span class="sort-icon" id="sort-createdAt">↕</span></th>
-                        <th class="sortable" style="width: 150px;" onclick="handleSort('status')">Status <span class="sort-icon" id="sort-status">↕</span></th>
-                        <th style="width: 100px;">Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="osList">
-
-                    <tr><td colspan="6" style="text-align: center; padding: 2rem;">Carregando OS...</td></tr>
-                </tbody>
-            </table>
-        </div>
-        
-
-        <div id="paginationContainer" class="pagination-bar">
-
-            <div class="pagination-left">
-                <select id="rowsPerPage" onchange="changePageSize(this.value)">
-                    <option value="10">10 por página</option>
-                    <option value="20">20 por página</option>
-                    <option value="50">50 por página</option>
-                </select>
-            </div>
-
-
-            <div id="paginationControls" class="pagination-center">
-
-            </div>
-
-
-            <div id="paginationInfo" class="pagination-right">
-                Mostrando 0-0 de 0 registros
-            </div>
-        </div>
+      </div>
     </div>
-
 
     <div id="createModal" class="modal-overlay">
-        <div class="glass-card modal-content fade-in">
-            <button onclick="closeCreateModal()" class="btn-close-modal" title="Fechar">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-            <div class="auth-header">
-                <h2 id="modalTitle">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
-                    Nova Ordem de Serviço
-                </h2>
-                <p>Preencha os dados do cliente</p>
-            </div>
-            
-            <form id="createOsForm" onsubmit="handleCreateOs(event)">
-                <input type="hidden" id="osId">
-
-                <div class="form-group">
-                    <label class="form-label">Cliente</label>
-                    <div class="input-icon-wrapper">
-                        <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                        <input type="text" id="newClientName" class="form-input" placeholder="Nome do cliente" required autocomplete="off">
-                    </div>
-                    <div class="error-msg" id="clientError">Nome do cliente é obrigatório</div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Motivo</label>
-                    <div class="reason-grid">
-                         <button type="button" class="reason-btn reason-SEM_CONEXAO" onclick="selectReason(this, 'SEM_CONEXAO')">Sem Conexão</button>
-                        <button type="button" class="reason-btn reason-LENTIDAO" onclick="selectReason(this, 'LENTIDAO')">Lentidão</button>
-                        <button type="button" class="reason-btn reason-UPGRADE" onclick="selectReason(this, 'UPGRADE')">Upgrade</button>
-                        <button type="button" class="reason-btn reason-TROCA_DE_LUGAR" onclick="selectReason(this, 'TROCA_DE_LUGAR')">Troca de Lugar</button>
-                        <button type="button" class="reason-btn reason-SEGUNDO_PONTO" onclick="selectReason(this, 'SEGUNDO_PONTO')">Segundo Ponto</button>
-                        <button type="button" class="reason-btn reason-N2" onclick="selectReason(this, 'N2')">Nível 2</button>
-                        <button type="button" class="reason-btn reason-OUTROS" onclick="selectReason(this, 'OUTROS')">Outros</button>
-                    </div>
-                    <input type="hidden" id="selectedReason" required>
-                </div>
-
-                <div class="error-msg" id="reasonError" style="margin-bottom: 8px; text-align: center;">Selecione um motivo</div>
-
-                <div class="form-actions">
-                    <button type="button" onclick="closeCreateModal()" class="btn btn-lg btn-cancel" style="flex: 1;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                        Cancelar
-                    </button>
-                    <button type="submit" id="btnSubmit" class="btn btn-primary btn-lg" style="flex: 1;">
-                        Criar OS
-                    </button>
-                </div>
-            </form>
+      <div class="glass-card modal-content fade-in">
+        <button
+          onclick="closeCreateModal()"
+          class="btn-close-modal"
+          title="Fechar"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <div class="auth-header">
+          <h2 id="modalTitle">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              style="color: var(--accent-color)"
+            >
+              <path
+                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+              ></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="12" y1="18" x2="12" y2="12"></line>
+              <line x1="9" y1="15" x2="15" y2="15"></line>
+            </svg>
+            Nova Ordem de Serviço
+          </h2>
+          <p>Preencha os dados do cliente</p>
         </div>
-    </div>
 
+        <form id="createOsForm" onsubmit="handleCreateOs(event)">
+          <input type="hidden" id="osId" />
+
+          <div class="form-group">
+            <label class="form-label">Cliente</label>
+            <div class="input-icon-wrapper">
+              <svg
+                class="input-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <input
+                type="text"
+                id="newClientName"
+                class="form-input"
+                placeholder="Nome do cliente"
+                required
+                autocomplete="off"
+              />
+            </div>
+            <div class="error-msg" id="clientError">
+              Nome do cliente é obrigatório
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Motivo</label>
+            <div class="reason-grid">
+              <button
+                type="button"
+                class="reason-btn reason-SEM_CONEXAO"
+                onclick="selectReason(this, 'SEM_CONEXAO')"
+              >
+                Sem Conexão
+              </button>
+              <button
+                type="button"
+                class="reason-btn reason-LENTIDAO"
+                onclick="selectReason(this, 'LENTIDAO')"
+              >
+                Lentidão
+              </button>
+              <button
+                type="button"
+                class="reason-btn reason-UPGRADE"
+                onclick="selectReason(this, 'UPGRADE')"
+              >
+                Upgrade
+              </button>
+              <button
+                type="button"
+                class="reason-btn reason-TROCA_DE_LUGAR"
+                onclick="selectReason(this, 'TROCA_DE_LUGAR')"
+              >
+                Troca de Lugar
+              </button>
+              <button
+                type="button"
+                class="reason-btn reason-SEGUNDO_PONTO"
+                onclick="selectReason(this, 'SEGUNDO_PONTO')"
+              >
+                Segundo Ponto
+              </button>
+              <button
+                type="button"
+                class="reason-btn reason-N2"
+                onclick="selectReason(this, 'N2')"
+              >
+                Nível 2
+              </button>
+              <button
+                type="button"
+                class="reason-btn reason-SINAL_ALTO"
+                onclick="selectReason(this, 'SINAL_ALTO')"
+              >
+                Sinal Alto
+              </button>
+              <button
+                type="button"
+                class="reason-btn reason-CABEAMENTO"
+                onclick="selectReason(this, 'CABEAMENTO')"
+              >
+                Cabeamento
+              </button>
+              <button
+                type="button"
+                class="reason-btn reason-TV_BOX"
+                onclick="selectReason(this, 'TV_BOX')"
+              >
+                TV Box
+              </button>
+              <button
+                type="button"
+                class="reason-btn reason-EQUIPAMENTO_COM_DEFEITO"
+                onclick="selectReason(this, 'EQUIPAMENTO_COM_DEFEITO')"
+              >
+                Equipamento com Defeito
+              </button>
+              <button
+                type="button"
+                class="reason-btn reason-RADIO"
+                onclick="selectReason(this, 'RADIO')"
+              >
+                Rádio
+              </button>
+              <button
+                type="button"
+                class="reason-btn reason-OUTROS"
+                onclick="selectReason(this, 'OUTROS')"
+              >
+                Outros
+              </button>
+            </div>
+            <input type="hidden" id="selectedReason" required />
+          </div>
+
+          <div
+            class="error-msg"
+            id="reasonError"
+            style="margin-bottom: 8px; text-align: center"
+          >
+            Selecione um motivo
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              onclick="closeCreateModal()"
+              class="btn btn-lg btn-cancel"
+              style="flex: 1"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              id="btnSubmit"
+              class="btn btn-primary btn-lg"
+              style="flex: 1"
+            >
+              Criar OS
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <div id="importModal" class="modal-overlay">
-        <div class="glass-card modal-content fade-in" style="max-width: 600px;">
-            <button onclick="closeImportModal()" class="btn-close-modal" title="Fechar">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-            <div class="auth-header">
-                <h2>Importar CSV</h2>
-                <p>Arraste seu arquivo ou clique para selecionar</p>
-            </div>
-
-            <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color); margin-bottom: 1rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                <p>Solte o arquivo CSV aqui</p>
-                <span class="file-info" id="fileInfo">Nenhum arquivo selecionado</span>
-                <input type="file" id="fileInput" accept=".csv" hidden onchange="handleFileSelect(this.files[0])">
-            </div>
-
-
-            <div id="importPreview" class="import-preview" style="display: none;">
-                <h4>Pré-visualização (<span id="previewCount">0</span> registros)</h4>
-                <div class="table-container-preview">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Cliente</th>
-                                <th>Motivo</th>
-                                <th>Data</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="previewBody"></tbody>
-                    </table>
-                </div>
-            </div>
-            
-
-             <div id="importProgress" class="import-progress" style="display: none;">
-                <div class="progress-bar-container">
-                    <div class="progress-bar" id="progressBar" style="width: 0%"></div>
-                </div>
-                <p id="progressText" style="text-align: center; font-size: 0.9rem; margin-top: 0.5rem;">Aguardando confirmação...</p>
-            </div>
-
-            <div class="form-actions" style="margin-top: 1.5rem;">
-                <button onclick="closeImportModal()" class="btn btn-cancel" id="btnCancelImport">Cancelar</button>
-                <button onclick="executeImport()" class="btn btn-primary" id="btnConfirmImport" disabled>Importar Dados</button>
-            </div>
+      <div class="glass-card modal-content fade-in" style="max-width: 600px">
+        <button
+          onclick="closeImportModal()"
+          class="btn-close-modal"
+          title="Fechar"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <div class="auth-header">
+          <h2>Importar CSV</h2>
+          <p>Arraste seu arquivo ou clique para selecionar</p>
         </div>
+
+        <div
+          class="drop-zone"
+          id="dropZone"
+          onclick="document.getElementById('fileInput').click()"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            style="color: var(--accent-color); margin-bottom: 1rem"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <p>Solte o arquivo CSV aqui</p>
+          <span class="file-info" id="fileInfo"
+            >Nenhum arquivo selecionado</span
+          >
+          <input
+            type="file"
+            id="fileInput"
+            accept=".csv"
+            hidden
+            onchange="handleFileSelect(this.files[0])"
+          />
+        </div>
+
+        <div id="importPreview" class="import-preview" style="display: none">
+          <h4>Pré-visualização (<span id="previewCount">0</span> registros)</h4>
+          <div class="table-container-preview">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Motivo</th>
+                  <th>Data</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="previewBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="importProgress" class="import-progress" style="display: none">
+          <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+          </div>
+          <p
+            id="progressText"
+            style="text-align: center; font-size: 0.9rem; margin-top: 0.5rem"
+          >
+            Aguardando confirmação...
+          </p>
+        </div>
+
+        <div class="form-actions" style="margin-top: 1.5rem">
+          <button
+            onclick="closeImportModal()"
+            class="btn btn-cancel"
+            id="btnCancelImport"
+          >
+            Cancelar
+          </button>
+          <button
+            onclick="executeImport()"
+            class="btn btn-primary"
+            id="btnConfirmImport"
+            disabled
+          >
+            Importar Dados
+          </button>
+        </div>
+      </div>
     </div>
 
-
     <div id="confirmModal" class="modal-overlay">
-        <div class="glass-card modal-content fade-in" style="max-width: 400px; text-align: center;">
-            <div style="margin-bottom: 1.5rem;">
-                <h2 style="color: #ef4444; margin-bottom: 0.5rem;">Excluir OS?</h2>
-                <p style="color: var(--text-muted);">Tem certeza que deseja excluir esta Ordem de Serviço? Esta ação não pode ser desfeita.</p>
-            </div>
-            <div style="display: flex; gap: 1rem; justify-content: center;">
-                <button onclick="closeConfirmModal()" class="btn" style="background: transparent; border: 1px solid var(--glass-border); color: var(--text-color); width: auto;">Cancelar</button>
-                <button onclick="confirmDeleteAction()" class="btn btn-primary" style="background-color: #ef4444; width: auto;">Excluir</button>
-            </div>
+      <div
+        class="glass-card modal-content fade-in"
+        style="max-width: 400px; text-align: center"
+      >
+        <div style="margin-bottom: 1.5rem">
+          <h2 style="color: #ef4444; margin-bottom: 0.5rem">Excluir OS?</h2>
+          <p style="color: var(--text-muted)">
+            Tem certeza que deseja excluir esta Ordem de Serviço? Esta ação não
+            pode ser desfeita.
+          </p>
         </div>
+        <div style="display: flex; gap: 1rem; justify-content: center">
+          <button
+            onclick="closeConfirmModal()"
+            class="btn"
+            style="
+              background: transparent;
+              border: 1px solid var(--glass-border);
+              color: var(--text-color);
+              width: auto;
+            "
+          >
+            Cancelar
+          </button>
+          <button
+            onclick="confirmDeleteAction()"
+            class="btn btn-primary"
+            style="background-color: #ef4444; width: auto"
+          >
+            Excluir
+          </button>
+        </div>
+      </div>
     </div>
 
     <div id="toast-container"></div>
     <script src="auth.js"></script>
     <script src="os_manager.js"></script>
-</body>
+  </body>
 </html>
