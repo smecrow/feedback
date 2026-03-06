@@ -132,6 +132,23 @@ document.addEventListener('DOMContentLoaded', () => {
   setupEventListeners();
 });
 
+function copyToClipboard(text, btnElement) {
+    navigator.clipboard.writeText(text).then(() => {
+        const originalHtml = btnElement.innerHTML;
+        // Changer para icone check
+        btnElement.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+        btnElement.style.opacity = '1';
+        
+        setTimeout(() => {
+            btnElement.innerHTML = originalHtml;
+            btnElement.style.opacity = '0.6';
+        }, 1500);
+    }).catch(err => {
+        console.error('Falha ao copiar texto: ', err);
+        showToast('Falha ao copiar nome do cliente', 'error');
+    });
+}
+
 function setupEventListeners() {
   // Search Client (Instant Search Logic)
   const searchInput = document.getElementById('clientSearch');
@@ -430,6 +447,9 @@ function renderOsList(osList) {
     row.innerHTML = `
             <td>
                <div style="display:flex; align-items:center; gap: 8px;">
+                   <button onclick="copyToClipboard('${os.client.replace(/'/g, "\\'")}', this)" class="btn-icon copy-btn" title="Copiar nome do cliente" style="padding: 4px; border: none; background: transparent; cursor: pointer; color: var(--text-muted); opacity: 0.6; transition: opacity 0.2s; flex-shrink: 0;">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                   </button>
                    <span style="font-weight: 600; color: var(--text-color);">${os.client}</span>
                </div>
             </td>

@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.smecrow.feedback.dto.AuthResponse;
 import org.smecrow.feedback.dto.LoginRequest;
 import org.smecrow.feedback.dto.RegisterRequest;
+import org.smecrow.feedback.dto.TokenRefreshRequest;
+import org.smecrow.feedback.dto.LogoutRequest;
 import org.smecrow.feedback.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,5 +40,17 @@ public class AuthController {
         catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
+        AuthResponse response = authService.refreshToken(request.refreshToken());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@Valid @RequestBody LogoutRequest request) {
+        authService.logout(request.refreshToken());
+        return ResponseEntity.ok().build();
     }
 }

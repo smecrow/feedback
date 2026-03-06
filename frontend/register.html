@@ -120,7 +120,7 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    Auth.saveToken(data.token, data.username);
+                    Auth.saveToken(data.token, data.refreshToken, data.username);
                     window.location.href = '/home.html';
                 } else {
                     const msg = data.message || 'Falha no registro';

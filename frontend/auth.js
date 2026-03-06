@@ -12,13 +12,32 @@ const Auth = {
         return localStorage.getItem('token');
     },
 
-    saveToken: (token, username) => {
-        localStorage.setItem('token', token);
-        localStorage.setItem('username', username);
+    getRefreshToken: () => {
+        return localStorage.getItem('refreshToken');
     },
 
-    logout: () => {
+    saveToken: (token, refreshToken, username) => {
+        localStorage.setItem('token', token);
+        if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
+        if (username) localStorage.setItem('username', username);
+    },
+
+    logout: async () => {
+        const refreshToken = Auth.getRefreshToken();
+        if (refreshToken) {
+            // We do a fire-and-forget native fetch here to not get trapped in loops with Auth.fetch
+            try {
+                await fetch(`${API_URL}/api/auth/logout`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ refreshToken })
+                });
+            } catch (e) {
+                console.error('Erro ao fazer logout no servidor', e);
+            }
+        }
         localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
         localStorage.removeItem('username');
         window.location.href = '/login.html';
     },
@@ -45,9 +64,32 @@ const Auth = {
         }
         
         try {
-            const response = await fetch(url, options);
+            let response = await fetch(url, options);
             
             if (response.status === 401 || response.status === 403) {
+                const refreshToken = Auth.getRefreshToken();
+                if (refreshToken) {
+                    try {
+                        const refreshResponse = await fetch(`${API_URL}/api/auth/refresh`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ refreshToken })
+                        });
+
+                        if (refreshResponse.ok) {
+                            const data = await refreshResponse.json();
+                            Auth.saveToken(data.token, data.refreshToken, data.username);
+                            
+                            // Retry the original request
+                            options.headers['Authorization'] = `Bearer ${data.token}`;
+                            response = await fetch(url, options);
+                            return response;
+                        }
+                    } catch (e) {
+                        console.error('Erro ao renovar token', e);
+                    }
+                }
+
                 console.warn('Sessão expirada. Redirecionando...');
                 Auth.logout();
                 throw new Error('Sessão expirada');
