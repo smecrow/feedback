@@ -28,6 +28,15 @@
 - Resolução do usuário autenticado padronizada em autenticação, dashboard e OS para buscar por `email` ou `username`, evitando falhas após login de contas antigas.
 - Build Docker do backend endurecido para ambiente Linux/Render, com normalização do `mvnw` antes do `./mvnw clean package`.
 - `backend/mvnw` convertido para `LF` e `.gitattributes` ajustado para preservar `LF` em scripts Unix e `CRLF` em `*.cmd`.
+- Nova leitura do estado do projeto concluída para retomada do contexto, com confirmação da arquitetura backend Spring Boot + frontend estático e dos principais pontos pendentes para continuidade.
+- Fluxo de login endurecido para aceitar `email` e `username` com espaços acidentais e diferenças de caixa, reduzindo falsos negativos na autenticação.
+- Resolução do usuário autenticado alinhada em autenticação, segurança, dashboard e OS para a mesma busca case-insensitive por identificador.
+- Formulário de login ajustado para enviar o identificador com `trim()`.
+- Testes de autenticação e autorização ajustados para o novo comportamento de resolução de usuário.
+- Validação automatizada local da suíte ainda não pôde ser concluída neste ambiente porque o wrapper Maven agora depende de Java instalado e `JAVA_HOME` configurado, mas `java` não está disponível.
+- Tratamento global de exceções ampliado para retornar JSON com `message`, `status`, `error`, `path` e `details`, facilitando diagnóstico de falhas de login e backend.
+- Validação de token e configuração de JWT endurecidas para expor causas úteis quando `Authorization` estiver inválido ou `JWT_SECRET` estiver ausente/fraco.
+- Formulário de login ajustado para tolerar respostas não-JSON e exibir `details` do backend quando houver falha.
 
 ## Arquivos modificados
 - `codex-progress.md`
@@ -55,6 +64,15 @@
 - `backend/Dockerfile`
 - `backend/mvnw`
 - `.gitattributes`
+- `backend/src/main/java/org/smecrow/feedback/repository/UserRepository.java`
+- `backend/src/main/java/org/smecrow/feedback/service/AuthService.java`
+- `backend/src/main/java/org/smecrow/feedback/security/CustomUserDetailsService.java`
+- `backend/src/main/java/org/smecrow/feedback/service/DashboardService.java`
+- `frontend/login.html`
+- `backend/src/main/java/org/smecrow/feedback/exceptions/ErrorResponse.java`
+- `backend/src/main/java/org/smecrow/feedback/exceptions/GlobalExceptionHandler.java`
+- `backend/src/main/java/org/smecrow/feedback/security/JwtTokenProvider.java`
+- `backend/src/main/java/org/smecrow/feedback/controller/AuthController.java`
 
 ## Status atual do projeto
 - Projeto mapeado como aplicação Spring Boot + frontend estático empacotado no backend.
@@ -69,6 +87,8 @@
 - Dashboard agora consulta períodos no horário local do navegador e abre sem toast de filtro aplicado no primeiro carregamento.
 - Backend agora tolera contas legadas sem `email` utilizável no subject do JWT, usando fallback por `username` onde necessário.
 - Backend agora está mais resiliente a checkout com finais de linha Windows ao construir imagem Docker no Render.
+- Backend agora procura usuário de login e usuário autenticado com tolerância a caixa e espaços laterais no identificador.
+- Backend agora responde falhas com payload de erro estruturado e mais descritivo, útil para depuração de autenticação, JWT e acesso a banco.
 
 ## Próximos passos recomendados
 - Manter segredos apenas no `backend/.env` e fora de arquivos versionados.
@@ -81,3 +101,6 @@
 - Validar manualmente em navegador os períodos `Hoje`, `7 Dias` e `30 Dias` para confirmar que a janela filtrada está correta no fuso local.
 - Após o próximo deploy, validar em produção o login de uma conta antiga e confirmar se o registro correspondente na tabela `users` possui `email` nulo ou vazio.
 - Após o próximo push, refazer o deploy no Render e verificar se o build avança além da etapa `RUN ./mvnw clean package -DskipTests`.
+- Priorizar na próxima intervenção a escolha entre estabilizar build/testes do backend ou revisar os endpoints de OS e dashboard com testes de integração.
+- Validar manualmente o login usando `username` e `email` com variações de caixa e com espaços antes/depois do valor.
+- Após o próximo deploy, capturar o payload de erro do `POST /api/auth/login` se a falha persistir para confirmar se a causa é credencial, JWT, banco ou configuração.

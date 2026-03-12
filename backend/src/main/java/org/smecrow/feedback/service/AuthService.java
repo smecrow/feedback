@@ -21,6 +21,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -35,6 +36,18 @@ public class AuthService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
+    private String normalizeIdentifier(String identifier) {
+        return identifier == null ? "" : identifier.trim();
+    }
+
+    private String normalizeEmail(String email) {
+        return normalizeIdentifier(email).toLowerCase(Locale.ROOT);
+    }
+
+    private String normalizeUsername(String username) {
+        return normalizeIdentifier(username);
+    }
 
     private RefreshToken createRefreshToken(User user) {
         RefreshToken refreshToken = new RefreshToken();
@@ -51,7 +64,9 @@ public class AuthService {
 
     @Transactional
     public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByEmailOrUsername(request.login(), request.login())
+        String normalizedLogin = normalizeIdentifier(request.login());
+
+        User user = userRepository.findByEmailIgnoreCaseOrUsernameIgnoreCase(normalizedLogin, normalizedLogin)
                 .orElseThrow(() -> new BadCredentialsException("Usuário não encontrado"));
 
         log.info("Usuário: {} encontrado.", user.getUsername());
@@ -73,12 +88,14 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request) {
         java.util.List<String> errors = new java.util.ArrayList<>();
+        String normalizedEmail = normalizeEmail(request.email());
+        String normalizedUsername = normalizeUsername(request.username());
 
-        if (userRepository.existsByEmail(request.email())) {
+        if (userRepository.existsByEmailIgnoreCase(normalizedEmail)) {
             errors.add("Email já cadastrado");
         }
 
-        if (userRepository.existsByUsername(request.username())) {
+        if (userRepository.existsByUsernameIgnoreCase(normalizedUsername)) {
             errors.add("Nome de usuário já cadastrado");
         }
 
@@ -87,9 +104,9 @@ public class AuthService {
         }
 
         User user = new User();
-        user.setUsername(request.username());
+        user.setUsername(normalizedUsername);
         log.info("Usuário: {}.", user.getUsername());
-        user.setEmail(request.email());
+        user.setEmail(normalizedEmail);
         log.info("Email: {}.", user.getEmail());
         user.setPassword(passwordEncoder.encode(request.password()));
         log.info("Senha criptografada.");
@@ -130,12 +147,16 @@ public class AuthService {
 
     public Map<String, String> validateToken(String authHeader) {
         try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                throw new NotAllowedException("Cabeçalho Authorization ausente ou inválido.");
+            }
+
             String token = authHeader.substring(7);
 
             if (jwtTokenProvider.validateToken(token)) {
                 String identifier = jwtTokenProvider.getSubjectFromToken(token);
 
-                User user = userRepository.findByEmailOrUsername(identifier, identifier)
+                User user = userRepository.findByEmailIgnoreCaseOrUsernameIgnoreCase(identifier.trim(), identifier.trim())
                         .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
                 Map<String, String> response = new HashMap<>();
@@ -149,7 +170,12 @@ public class AuthService {
             }
         }
         catch (Exception e) {
-            throw new NotAllowedException("Ocorreu um erro ao validar o token");
+            if (e instanceof NotAllowedException notAllowedException) {
+                throw notAllowedException;
+            }
+
+            String causeMessage = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+            throw new NotAllowedException("Ocorreu um erro ao validar o token: " + causeMessage);
         }
     }
 }

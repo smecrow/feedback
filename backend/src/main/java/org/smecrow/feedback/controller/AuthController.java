@@ -33,13 +33,8 @@ public class AuthController {
 
     @GetMapping("/validate")
     public ResponseEntity<Map<String, String>> validateToken(@RequestHeader("Authorization") String authHeader) {
-        try {
-            Map<String, String> response = authService.validateToken(authHeader);
-            return ResponseEntity.ok(response);
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+        Map<String, String> response = authService.validateToken(authHeader);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/refresh")

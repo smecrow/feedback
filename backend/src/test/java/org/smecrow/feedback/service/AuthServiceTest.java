@@ -50,7 +50,7 @@ class AuthServiceTest {
         User user = buildUser(1L, "smecrow", "smecrow@email.com", "encoded-password");
         RefreshToken savedRefreshToken = new RefreshToken(1L, user, "refresh-token", Instant.now().plusSeconds(3600));
 
-        when(userRepository.findByEmailOrUsername("smecrow", "smecrow")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailIgnoreCaseOrUsernameIgnoreCase("smecrow", "smecrow")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("senha-segura", "encoded-password")).thenReturn(true);
         when(jwtTokenProvider.generateToken(user)).thenReturn("jwt-token");
         when(refreshTokenRepository.save(any(RefreshToken.class))).thenReturn(savedRefreshToken);
@@ -68,7 +68,7 @@ class AuthServiceTest {
     void shouldRejectLoginWithInvalidPassword() {
         User user = buildUser(1L, "smecrow", "smecrow@email.com", "encoded-password");
 
-        when(userRepository.findByEmailOrUsername("smecrow", "smecrow")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmailIgnoreCaseOrUsernameIgnoreCase("smecrow", "smecrow")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("senha-incorreta", "encoded-password")).thenReturn(false);
 
         BadCredentialsException exception = assertThrows(
@@ -77,6 +77,24 @@ class AuthServiceTest {
         );
 
         assertEquals("Senha incorreta", exception.getMessage());
+    }
+
+    @Test
+    void shouldLoginWithTrimmedIdentifierIgnoringCase() {
+        User user = buildUser(1L, "smecrow", "smecrowl9@gmail.com", "encoded-password");
+        RefreshToken savedRefreshToken = new RefreshToken(1L, user, "refresh-token", Instant.now().plusSeconds(3600));
+
+        when(userRepository.findByEmailIgnoreCaseOrUsernameIgnoreCase("SMECROWL9@GMAIL.COM", "SMECROWL9@GMAIL.COM"))
+                .thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("senha-segura", "encoded-password")).thenReturn(true);
+        when(jwtTokenProvider.generateToken(user)).thenReturn("jwt-token");
+        when(refreshTokenRepository.save(any(RefreshToken.class))).thenReturn(savedRefreshToken);
+
+        AuthResponse response = authService.login(new LoginRequest("  SMECROWL9@GMAIL.COM  ", "senha-segura"));
+
+        assertEquals("jwt-token", response.token());
+        assertEquals("smecrow", response.username());
+        verify(refreshTokenRepository).deleteByUser(user);
     }
 
     @Test

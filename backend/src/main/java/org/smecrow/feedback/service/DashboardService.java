@@ -45,7 +45,9 @@ public class DashboardService {
             identifier = principal.toString();
         }
 
-        return userRepository.findByEmailOrUsername(identifier, identifier)
+        String normalizedIdentifier = identifier == null ? "" : identifier.trim();
+
+        return userRepository.findByEmailIgnoreCaseOrUsernameIgnoreCase(normalizedIdentifier, normalizedIdentifier)
                 .orElseThrow(() -> new RuntimeException("Usuário logado não encontrado"));
     }
 }

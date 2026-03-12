@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.WeakKeyException;
 import lombok.extern.slf4j.Slf4j;
 import org.smecrow.feedback.model.User;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +26,15 @@ public class JwtTokenProvider {
 
     // Gera chave secreta a partir da string
     private SecretKey getSigningKey() {
+        if (secret == null || secret.isBlank()) {
+            throw new IllegalStateException("JWT secret não configurado.");
+        }
+
+        try {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        } catch (WeakKeyException e) {
+            throw new IllegalStateException("JWT secret inválido: use pelo menos 32 bytes.", e);
+        }
     }
 
     private String resolveSubject(User user) {

@@ -33,7 +33,9 @@ public class OsService {
     private final UserRepository userRepository;
 
     private User findUserByIdentifier(String identifier) {
-        return userRepository.findByEmailOrUsername(identifier, identifier)
+        String normalizedIdentifier = identifier == null ? "" : identifier.trim();
+
+        return userRepository.findByEmailIgnoreCaseOrUsernameIgnoreCase(normalizedIdentifier, normalizedIdentifier)
                 .orElseThrow(() -> new NotFoundException("Usuário logado não encontrado no banco."));
     }
 

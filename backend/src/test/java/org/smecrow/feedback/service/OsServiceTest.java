@@ -43,8 +43,11 @@ class OsServiceTest {
     void shouldUpdateStatusWhenAuthenticatedUserOwnsTheOs() {
         Os os = buildOs(10L, "owner@email.com", OsStatus.PENDENTE);
         Authentication authentication = authenticationFor("owner@email.com");
+        org.smecrow.feedback.model.User authenticatedUser = buildAuthenticatedUser(1L, "owner", "owner@email.com");
 
         when(osRepository.findById(10L)).thenReturn(Optional.of(os));
+        when(userRepository.findByEmailIgnoreCaseOrUsernameIgnoreCase("owner@email.com", "owner@email.com"))
+                .thenReturn(Optional.of(authenticatedUser));
         when(osRepository.save(os)).thenReturn(os);
 
         OsResponse response = osService.updateStatus(
@@ -62,8 +65,11 @@ class OsServiceTest {
     void shouldRejectStatusUpdateWhenUserDoesNotOwnTheOs() {
         Os os = buildOs(10L, "owner@email.com", OsStatus.PENDENTE);
         Authentication authentication = authenticationFor("other@email.com");
+        org.smecrow.feedback.model.User authenticatedUser = buildAuthenticatedUser(2L, "other", "other@email.com");
 
         when(osRepository.findById(10L)).thenReturn(Optional.of(os));
+        when(userRepository.findByEmailIgnoreCaseOrUsernameIgnoreCase("other@email.com", "other@email.com"))
+                .thenReturn(Optional.of(authenticatedUser));
 
         NotAllowedException exception = assertThrows(
                 NotAllowedException.class,
@@ -78,8 +84,11 @@ class OsServiceTest {
     void shouldRejectDeleteWhenUserDoesNotOwnTheOs() {
         Os os = buildOs(10L, "owner@email.com", OsStatus.PENDENTE);
         Authentication authentication = authenticationFor("other@email.com");
+        org.smecrow.feedback.model.User authenticatedUser = buildAuthenticatedUser(2L, "other", "other@email.com");
 
         when(osRepository.findById(10L)).thenReturn(Optional.of(os));
+        when(userRepository.findByEmailIgnoreCaseOrUsernameIgnoreCase("other@email.com", "other@email.com"))
+                .thenReturn(Optional.of(authenticatedUser));
 
         assertThrows(NotAllowedException.class, () -> osService.deleteOs(10L, authentication));
 
@@ -90,8 +99,11 @@ class OsServiceTest {
     void shouldRejectUpdateWhenUserDoesNotOwnTheOs() {
         Os os = buildOs(10L, "owner@email.com", OsStatus.PENDENTE);
         Authentication authentication = authenticationFor("other@email.com");
+        org.smecrow.feedback.model.User authenticatedUser = buildAuthenticatedUser(2L, "other", "other@email.com");
 
         when(osRepository.findById(10L)).thenReturn(Optional.of(os));
+        when(userRepository.findByEmailIgnoreCaseOrUsernameIgnoreCase("other@email.com", "other@email.com"))
+                .thenReturn(Optional.of(authenticatedUser));
 
         assertThrows(
                 NotAllowedException.class,
@@ -107,11 +119,7 @@ class OsServiceTest {
     }
 
     private Os buildOs(Long id, String ownerEmail, OsStatus status) {
-        org.smecrow.feedback.model.User owner = new org.smecrow.feedback.model.User();
-        owner.setId(1L);
-        owner.setEmail(ownerEmail);
-        owner.setUsername("owner");
-        owner.setPassword("encoded");
+        org.smecrow.feedback.model.User owner = buildAuthenticatedUser(1L, "owner", ownerEmail);
 
         Os os = new Os();
         os.setId(id);
@@ -121,5 +129,14 @@ class OsServiceTest {
         os.setStatus(status);
         os.setUser(owner);
         return os;
+    }
+
+    private org.smecrow.feedback.model.User buildAuthenticatedUser(Long id, String username, String email) {
+        org.smecrow.feedback.model.User user = new org.smecrow.feedback.model.User();
+        user.setId(id);
+        user.setEmail(email);
+        user.setUsername(username);
+        user.setPassword("encoded");
+        return user;
     }
 }

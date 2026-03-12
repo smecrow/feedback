@@ -79,19 +79,24 @@
             submitBtn.textContent = 'Entrando...';
 
             try {
+                const login = loginInput.value.trim();
                 const response = await fetch(`${API_URL}/api/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ login: loginInput.value, password: passwordInput.value })
+                    body: JSON.stringify({ login, password: passwordInput.value })
                 });
 
-                const data = await response.json();
+                const contentType = response.headers.get('content-type') || '';
+                const data = contentType.includes('application/json')
+                    ? await response.json()
+                    : { message: (await response.text()) || 'Falha no login' };
 
                 if (response.ok) {
                     Auth.saveToken(data.token, data.refreshToken, data.username);
                     window.location.href = '/home.html';
                 } else {
-                    const msg = data.message || 'Falha no login';
+                    const detailSuffix = data.details ? ` Detalhes: ${data.details}` : '';
+                    const msg = `${data.message || 'Falha no login'}${detailSuffix}`;
                     throw new Error(msg);
                 }
             } catch (error) {
