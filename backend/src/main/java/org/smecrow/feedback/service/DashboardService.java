@@ -38,14 +38,14 @@ public class DashboardService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
 
-        String userEmail;
+        String identifier;
         if (principal instanceof UserDetails) {
-            userEmail = ((UserDetails) principal).getUsername();
+            identifier = ((UserDetails) principal).getUsername();
         } else {
-            userEmail = principal.toString();
+            identifier = principal.toString();
         }
 
-        return userRepository.findByEmail(userEmail)
+        return userRepository.findByEmailOrUsername(identifier, identifier)
                 .orElseThrow(() -> new RuntimeException("Usuário logado não encontrado"));
     }
 }

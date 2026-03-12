@@ -32,6 +32,11 @@ public class OsService {
     private final OsRepository osRepository;
     private final UserRepository userRepository;
 
+    private User findUserByIdentifier(String identifier) {
+        return userRepository.findByEmailOrUsername(identifier, identifier)
+                .orElseThrow(() -> new NotFoundException("Usuário logado não encontrado no banco."));
+    }
+
     public OsResponse createOs(@Valid OsRequest request, Authentication authentication) {
         log.info("Criando nova OS.");
         log.info("Criando nova OS.");
@@ -41,9 +46,8 @@ public class OsService {
 
         log.info("Extraindo o usuário logado.");
         log.info("Extraindo o usuário logado.");
-        String userEmail = getAuthenticatedEmail(authentication);
-
-        User managedUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new NotFoundException("Usuário com o email: " + userEmail + " não encontrado."));
+        String userIdentifier = getAuthenticatedIdentifier(authentication);
+        User managedUser = findUserByIdentifier(userIdentifier);
         log.info("Usuário logado extraído com sucesso.");
         log.info("Usuário logado extraído com sucesso.");
 
@@ -179,9 +183,10 @@ public class OsService {
 
         if (os.isEmpty()) return false;
 
-        String authenticatedEmail = getAuthenticatedEmail(authentication);
+        String authenticatedIdentifier = getAuthenticatedIdentifier(authentication);
+        User authenticatedUser = findUserByIdentifier(authenticatedIdentifier);
 
-        return authenticatedEmail.equals(os.get().getUser().getEmail());
+        return authenticatedUser.getId().equals(os.get().getUser().getId());
     }
 
     public Reason stringToReasonConverter(String reason) {
@@ -206,12 +211,11 @@ public class OsService {
 
     private User getLoggedUser() {
         Authentication authentication = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = getAuthenticatedEmail(authentication);
-
-        return userRepository.findByEmail(userEmail).orElseThrow(() -> new NotFoundException("Usuário logado não encontrado no banco."));
+        String userIdentifier = getAuthenticatedIdentifier(authentication);
+        return findUserByIdentifier(userIdentifier);
     }
 
-    private String getAuthenticatedEmail(Authentication authentication) {
+    private String getAuthenticatedIdentifier(Authentication authentication) {
         Object principal = authentication.getPrincipal();
 
         if (principal instanceof UserDetails userDetails) {

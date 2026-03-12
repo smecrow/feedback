@@ -37,10 +37,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 logger.info("JWT Filter: Token valid? " + isValid);
                 
                 if (isValid) {
-                    String email = jwtTokenProvider.getEmailFromToken(jwt);
-                    logger.info("JWT Filter: Email from token: " + email);
+                    String identifier = jwtTokenProvider.getSubjectFromToken(jwt);
+                    logger.info("JWT Filter: Subject from token: " + identifier);
 
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(identifier);
                     logger.info("JWT Filter: User loaded: " + (userDetails != null ? userDetails.getUsername() : "null"));
                     
                     if (userDetails != null) {
