@@ -41,14 +41,7 @@ public class OsService {
 
         log.info("Extraindo o usuário logado.");
         log.info("Extraindo o usuário logado.");
-        Object principal = authentication.getPrincipal();
-
-        String userEmail;
-        if (principal instanceof UserDetails) {
-            userEmail = ((UserDetails) principal).getUsername();
-        } else {
-             userEmail = principal.toString();
-        }
+        String userEmail = getAuthenticatedEmail(authentication);
 
         User managedUser = userRepository.findByEmail(userEmail).orElseThrow(() -> new NotFoundException("Usuário com o email: " + userEmail + " não encontrado."));
         log.info("Usuário logado extraído com sucesso.");
@@ -129,7 +122,12 @@ public class OsService {
         return osPage.map(OsResponse::fromEntity);
     }
 
-    public OsResponse updateStatus(Long id, OsUpdateStatusRequest req) {
+    public OsResponse updateStatus(Long id, OsUpdateStatusRequest req, Authentication authentication) {
+        if (!authenticated(id, authentication)) {
+            log.error("Permissão negada para alterar status da OS: {}", id);
+            throw new NotAllowedException("Você não tem permissão para alterar o status desta OS.");
+        }
+
         Os os = osRepository.findById(id).orElseThrow(() -> new NotFoundException("OS com o ID: " + id + " não encontrada"));
 
         org.smecrow.feedback.model.OsStatus newState = req.status();
@@ -181,8 +179,7 @@ public class OsService {
 
         if (os.isEmpty()) return false;
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String authenticatedEmail = userDetails.getUsername();
+        String authenticatedEmail = getAuthenticatedEmail(authentication);
 
         return authenticatedEmail.equals(os.get().getUser().getEmail());
     }
@@ -209,16 +206,19 @@ public class OsService {
 
     private User getLoggedUser() {
         Authentication authentication = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-
-        String userEmail;
-        if (principal instanceof UserDetails) {
-            userEmail = ((UserDetails) principal).getUsername();
-        } else {
-            userEmail = principal.toString();
-        }
+        String userEmail = getAuthenticatedEmail(authentication);
 
         return userRepository.findByEmail(userEmail).orElseThrow(() -> new NotFoundException("Usuário logado não encontrado no banco."));
+    }
+
+    private String getAuthenticatedEmail(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof UserDetails userDetails) {
+            return userDetails.getUsername();
+        }
+
+        return principal.toString();
     }
 
     @org.springframework.transaction.annotation.Transactional

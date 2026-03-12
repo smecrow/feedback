@@ -60,8 +60,8 @@ public class OsController {
     }
 
     @PutMapping("/status/{id}")
-    public ResponseEntity<OsResponse> updateStatus(@PathVariable Long id, @RequestBody OsUpdateStatusRequest req) {
-        return ResponseEntity.ok(osService.updateStatus(id, req));
+    public ResponseEntity<OsResponse> updateStatus(@PathVariable Long id, @RequestBody OsUpdateStatusRequest req, Authentication authentication) {
+        return ResponseEntity.ok(osService.updateStatus(id, req, authentication));
     }
 
     @DeleteMapping("/delete/{id}")
