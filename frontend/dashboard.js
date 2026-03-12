@@ -9,7 +9,7 @@ const Dashboard = {
       status: document.getElementById('filterStatus').value,
       reason: document.getElementById('filterReason').value,
     };
-    this.updateFilters();
+    this.updateFilters({ showToast: false });
 
     const searchInput = document.getElementById('clientSearchInput');
     if (searchInput) {
@@ -21,7 +21,8 @@ const Dashboard = {
     }
   },
 
-  updateFilters: function () {
+  updateFilters: function (options = {}) {
+    const { showToast = true } = options;
     const period = document.getElementById('filterPeriod').value;
     const status = document.getElementById('filterStatus').value;
     const reason = document.getElementById('filterReason').value;
@@ -37,7 +38,7 @@ const Dashboard = {
     if (status) queryParams.append('status', status);
     if (reason) queryParams.append('reason', reason);
 
-    this.fetchStats(queryParams.toString());
+    this.fetchStats(queryParams.toString(), { showToast });
   },
 
   checkPendingFilters: function () {
@@ -88,12 +89,19 @@ const Dashboard = {
     }
 
     return {
-      start: start ? start.toISOString() : null,
-      end: start ? end.toISOString() : null,
+      start: start ? this.formatLocalDateTime(start) : null,
+      end: start ? this.formatLocalDateTime(end) : null,
     };
   },
 
-  fetchStats: async function (queryString = '') {
+  formatLocalDateTime: function (date) {
+    const pad = (value) => String(value).padStart(2, '0');
+
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  },
+
+  fetchStats: async function (queryString = '', options = {}) {
+    const { showToast = true } = options;
     this.setLoading(true);
     try {
       const url = queryString
@@ -113,13 +121,15 @@ const Dashboard = {
       this.renderCharts(data);
       this.renderLatestTable(data.latestOs || []);
 
-      if (data.totalOs === 0) {
-        this.showToast(
-          'Nenhum resultado encontrado para os filtros selecionados',
-          'warning',
-        );
-      } else {
-        this.showToast('Filtros aplicados com sucesso', 'success');
+      if (showToast) {
+        if (data.totalOs === 0) {
+          this.showToast(
+            'Nenhum resultado encontrado para os filtros selecionados',
+            'warning',
+          );
+        } else {
+          this.showToast('Filtros aplicados com sucesso', 'success');
+        }
       }
     } catch (error) {
       console.error('Erro ao carregar dashboard', error);

@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -132,12 +133,14 @@ public class AuthService {
             String token = authHeader.substring(7);
 
             if (jwtTokenProvider.validateToken(token)) {
-                String email = jwtTokenProvider.getEmailFromToken(token);
+                String identifier = jwtTokenProvider.getSubjectFromToken(token);
 
-                User user = userRepository.findByEmail(email)
+                User user = userRepository.findByEmailOrUsername(identifier, identifier)
                         .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-                Map<String, String> response = Map.of("username", user.getUsername(), "email", user.getEmail());
+                Map<String, String> response = new HashMap<>();
+                response.put("username", user.getUsername());
+                response.put("email", user.getEmail());
 
                 return response;
             }

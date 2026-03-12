@@ -28,6 +28,18 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
+    private String resolveSubject(User user) {
+        if (user.getEmail() != null && !user.getEmail().isBlank()) {
+            return user.getEmail();
+        }
+
+        if (user.getUsername() != null && !user.getUsername().isBlank()) {
+            return user.getUsername();
+        }
+
+        throw new IllegalStateException("Usuário sem identificador válido para o token");
+    }
+
     // Gera o token
     public String generateToken(User user) {
         Date now = new Date();
@@ -39,7 +51,7 @@ public class JwtTokenProvider {
         log.info("Tempo de vida: {} milissegundos", expiration);
 
         return Jwts.builder()
-                .subject(user.getEmail())
+                .subject(resolveSubject(user))
                 .claim("userId", user.getId())
                 .claim("username", user.getUsername())
                 .issuedAt(now)
@@ -48,8 +60,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // Extrai o email do token
-    public String getEmailFromToken(String token) {
+    public String getSubjectFromToken(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
