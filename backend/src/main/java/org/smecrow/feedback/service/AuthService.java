@@ -50,15 +50,16 @@ public class AuthService {
     }
 
     private RefreshToken createRefreshToken(User user) {
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setUser(user);
+        RefreshToken refreshToken = refreshTokenRepository.findByUser(user)
+                .orElseGet(() -> {
+                    RefreshToken newRefreshToken = new RefreshToken();
+                    newRefreshToken.setUser(user);
+                    return newRefreshToken;
+                });
+
         refreshToken.setExpiryDate(Instant.now().plus(7, ChronoUnit.DAYS));
         refreshToken.setToken(UUID.randomUUID().toString());
-        
-        // Remove existing refresh token if they login again from another device (optional, depends on multi-device requirements, but usually good to avoid zombie tokens)
-        // For simplicity, let's just delete the existing ones for the user to keep one valid token per user
-        refreshTokenRepository.deleteByUser(user);
-        
+
         return refreshTokenRepository.save(refreshToken);
     }
 

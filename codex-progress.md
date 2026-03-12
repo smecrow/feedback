@@ -37,6 +37,12 @@
 - Tratamento global de exceções ampliado para retornar JSON com `message`, `status`, `error`, `path` e `details`, facilitando diagnóstico de falhas de login e backend.
 - Validação de token e configuração de JWT endurecidas para expor causas úteis quando `Authorization` estiver inválido ou `JWT_SECRET` estiver ausente/fraco.
 - Formulário de login ajustado para tolerar respostas não-JSON e exibir `details` do backend quando houver falha.
+- Ambiente WSL do usuário agora possui JDK 25 instalado em `~/.local/jdk/jdk-25`, com `JAVA_HOME` persistido em `~/.bashrc` e `~/.profile`.
+- Ambiente WSL também passou a expor `MAVEN_OPTS=-Dmaven.repo.local=/tmp/maven-repo`, evitando bloqueio do sandbox ao escrever em `~/.m2`.
+- Suíte do backend validada após a instalação do Java no WSL: 9 testes, 0 falhas, `BUILD SUCCESS`.
+- Fluxo de refresh token corrigido para reutilizar o registro existente por usuário em vez de deletar e reinserir, eliminando violação de chave única em `refresh_tokens.user_id`.
+- Teste adicional criado para garantir que um login repetido do mesmo usuário atualiza o refresh token existente sem gerar duplicidade.
+- Suíte do backend executada novamente após a correção do refresh token: 10 testes, 0 falhas, `BUILD SUCCESS`.
 
 ## Arquivos modificados
 - `codex-progress.md`
@@ -73,6 +79,9 @@
 - `backend/src/main/java/org/smecrow/feedback/exceptions/GlobalExceptionHandler.java`
 - `backend/src/main/java/org/smecrow/feedback/security/JwtTokenProvider.java`
 - `backend/src/main/java/org/smecrow/feedback/controller/AuthController.java`
+- `/home/smecrow/.bashrc` (ambiente do usuário)
+- `/home/smecrow/.profile` (ambiente do usuário)
+- `backend/src/main/java/org/smecrow/feedback/repository/RefreshTokenRepository.java`
 
 ## Status atual do projeto
 - Projeto mapeado como aplicação Spring Boot + frontend estático empacotado no backend.
@@ -89,6 +98,9 @@
 - Backend agora está mais resiliente a checkout com finais de linha Windows ao construir imagem Docker no Render.
 - Backend agora procura usuário de login e usuário autenticado com tolerância a caixa e espaços laterais no identificador.
 - Backend agora responde falhas com payload de erro estruturado e mais descritivo, útil para depuração de autenticação, JWT e acesso a banco.
+- WSL agora expõe `java` e `JAVA_HOME` de forma persistente entre shells e próximos chats.
+- WSL agora expõe `java`, `JAVA_HOME` e `MAVEN_OPTS` de forma persistente, e o backend consegue executar `./mvnw test`.
+- Backend agora atualiza o `refresh_token` existente do usuário sem colidir na constraint única de `user_id`.
 
 ## Próximos passos recomendados
 - Manter segredos apenas no `backend/.env` e fora de arquivos versionados.
@@ -104,3 +116,6 @@
 - Priorizar na próxima intervenção a escolha entre estabilizar build/testes do backend ou revisar os endpoints de OS e dashboard com testes de integração.
 - Validar manualmente o login usando `username` e `email` com variações de caixa e com espaços antes/depois do valor.
 - Após o próximo deploy, capturar o payload de erro do `POST /api/auth/login` se a falha persistir para confirmar se a causa é credencial, JWT, banco ou configuração.
+- Rodar novamente `./mvnw test` no backend agora que o JDK 25 está disponível no WSL.
+- Se surgir novo erro de login em ambiente publicado, usar o payload estruturado do backend para isolar se a causa está em autenticação, banco, JWT ou configuração de deploy.
+- Após publicar esta correção, validar novamente o login da conta `smecrow` e confirmar que o `refresh_token` do usuário é atualizado sem erro 500.
