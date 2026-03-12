@@ -26,6 +26,8 @@
 - Carregamento inicial do dashboard ajustado para não exibir toast de sucesso antes de uma ação explícita do usuário.
 - Fluxo de autenticação endurecido para aceitar usuários legados cujo identificador disponível no banco seja `username` em vez de `email`.
 - Resolução do usuário autenticado padronizada em autenticação, dashboard e OS para buscar por `email` ou `username`, evitando falhas após login de contas antigas.
+- Build Docker do backend endurecido para ambiente Linux/Render, com normalização do `mvnw` antes do `./mvnw clean package`.
+- `backend/mvnw` convertido para `LF` e `.gitattributes` ajustado para preservar `LF` em scripts Unix e `CRLF` em `*.cmd`.
 
 ## Arquivos modificados
 - `codex-progress.md`
@@ -50,6 +52,9 @@
 - `backend/src/main/java/org/smecrow/feedback/service/AuthService.java`
 - `backend/src/main/java/org/smecrow/feedback/service/DashboardService.java`
 - `backend/src/main/java/org/smecrow/feedback/service/OsService.java`
+- `backend/Dockerfile`
+- `backend/mvnw`
+- `.gitattributes`
 
 ## Status atual do projeto
 - Projeto mapeado como aplicação Spring Boot + frontend estático empacotado no backend.
@@ -63,6 +68,7 @@
 - Deploy da Vercel mantém compatibilidade via rewrite `/api/*` para o backend do Render.
 - Dashboard agora consulta períodos no horário local do navegador e abre sem toast de filtro aplicado no primeiro carregamento.
 - Backend agora tolera contas legadas sem `email` utilizável no subject do JWT, usando fallback por `username` onde necessário.
+- Backend agora está mais resiliente a checkout com finais de linha Windows ao construir imagem Docker no Render.
 
 ## Próximos passos recomendados
 - Manter segredos apenas no `backend/.env` e fora de arquivos versionados.
@@ -74,3 +80,4 @@
 - Adicionar testes para autenticação, autorização e fluxos de OS.
 - Validar manualmente em navegador os períodos `Hoje`, `7 Dias` e `30 Dias` para confirmar que a janela filtrada está correta no fuso local.
 - Após o próximo deploy, validar em produção o login de uma conta antiga e confirmar se o registro correspondente na tabela `users` possui `email` nulo ou vazio.
+- Após o próximo push, refazer o deploy no Render e verificar se o build avança além da etapa `RUN ./mvnw clean package -DskipTests`.
